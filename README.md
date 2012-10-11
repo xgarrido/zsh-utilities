@@ -14,7 +14,7 @@ $ git clone git://github.com/xgarrido/zsh-functions.git
 * Source all the scripts **at the end** of `~/.zshrc`:
 
 ``` bash
-$ for plugin in /path/to/zsh-snailware/*.plugin.zsh; do source $plugin; done
+for plugin in /path/to/zsh-snailware/*.plugin.zsh; do source $plugin; done
 ```
 
 * Source `~/.zshrc`  to take changes into account:
