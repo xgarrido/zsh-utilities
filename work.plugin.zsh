@@ -7,7 +7,7 @@ function do_nemo_setup ()
         nemo_software_version="$1"
     fi
 
-    export NEMO_SOFTWARE_VERSION=${nemo_software_version}
+    export SNAILWARE_SOFTWARE_VERSION=${nemo_software_version}
     bash --rcfile ~/.bashrc.work
 }
 

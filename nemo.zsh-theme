@@ -2,8 +2,8 @@
 # the svn plugin has to be activated for this to work.
 ZSH_THEME_NEMO_USE_POWERLINE=0
 
-if [ -n "${NEMO_SETUP_DONE}" ]; then
-    ZSH_THEME_NEMO_SETUP="nemo_${NEMO_SOFTWARE_VERSION}@"
+if [ -n "${SNAILWARE_SETUP_DONE}" ]; then
+    ZSH_THEME_NEMO_SETUP="snailware/${SNAILWARE_SOFTWARE_VERSION}@"
 fi
 if [ "$TERM" = "eterm-color" ]; then
     ZSH_THEME_NEMO_HOSTNAME=$FX[bold]$fg[green]
@@ -42,7 +42,7 @@ else
             POWERLINE_COLOR_FG_WHITE2=$FG[255]
             ;;
         lx*.lal.in2p3.fr|nemo*.lal.in2p3.fr)
-            ZSH_THEME_NEMO_HOSTNAME_SUFFIX=$BG[002]
+            ZSH_THEME_NEMO_HOSTNAME_SUFFIX=
             ZSH_THEME_NEMO_HOSTNAME=$FG[184]
             ZSH_THEME_NEMO_TIME=$fg[green]
 
@@ -58,7 +58,7 @@ else
             POWERLINE_COLOR_FG_WHITE2=$FG[184]
             ;;
         ccige*|ccage*)
-            ZSH_THEME_NEMO_HOSTNAME_SUFFIX=$BG[005]
+            ZSH_THEME_NEMO_HOSTNAME_SUFFIX=
             ZSH_THEME_NEMO_HOSTNAME=$FG[012]
             ZSH_THEME_NEMO_TIME=$FG[005]
 

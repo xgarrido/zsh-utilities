@@ -88,8 +88,8 @@ function connect ()
             local bin="useless_ssh_pwd.sh"
             which ${bin} > /dev/null
             if [ $? -ne 0 ]; then
-                pkgtools__msg_error "'useless_ssh_pwd.sh' binary has not been found! Exit!"
-                return 1
+                pkgtools__msg_warning "'useless_ssh_pwd.sh' binary has not been found! Exit!"
+                server_name="ccage.in2p3.fr"
             else
                 ${bin} baia ccage.in2p3.fr garrido
             fi
@@ -472,7 +472,8 @@ function notifyerr ()
 }
 
 # Screen title names
-function precmd () {
+function precmd ()
+{
     # must be first
     notifyerr
 
@@ -496,13 +497,14 @@ function precmd () {
 
     # Hack to make the prompt working in LAL machine
     case "$HOSTNAME" in
-        lx*.lal.in2p3.fr|nemo*.lal.in2p3.fr)
+        lx*.lal.in2p3.fr|nemo*.lal.in2p3.fr|ccige*|ccage*)
             PROMPT='%{${ZSH_THEME_NEMO_TIME}%}%T%{$reset_color%} %{${ZSH_THEME_NEMO_HOSTNAME_SUFFIX}${ZSH_THEME_NEMO_HOSTNAME}%}${ZSH_THEME_NEMO_SETUP}${HOSTNAME}%{$reset_color%} %{${ZSH_THEME_NEMO_DIRECTORY}%}${PWD/#$HOME/~}%{$reset_color%}
 $ '
     esac
 }
 
-function preexec () {
+function preexec ()
+{
     if [[ "$TERM" == "screen" ]]; then
         local CMD=${1}
         echo -ne "\ek$CMD\e\\"
