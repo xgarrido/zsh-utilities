@@ -45,7 +45,9 @@ if [ ! -n "${ZSH_SETUP_DONE}" ]; then
             export PATH=$PATH:/opt/local/bin
             ;;
         ccige*|ccage*)
+            export SW_BASE_DIR=${GROUP_DIR}/sw2
             export SCRATCH_DIR=/sps/nemo/scratch/garrido
+            source ${SW_BASE_DIR}/config/current/nemo_basics_sw.bash > /dev/null 2>&1 && do_nemo_basics_sw_setup > /dev/null 2>&1
             ;;
         SynoServer)
             ;;
