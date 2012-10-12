@@ -43,19 +43,19 @@ else
             ;;
         lx*.lal.in2p3.fr|nemo*.lal.in2p3.fr)
             ZSH_THEME_NEMO_HOSTNAME_SUFFIX=
-            ZSH_THEME_NEMO_HOSTNAME=$FG[184]
+            ZSH_THEME_NEMO_HOSTNAME=$FG[172]
             ZSH_THEME_NEMO_TIME=$fg[green]
 
             ZSH_THEME_NEMO_USE_POWERLINE=0
-            POWERLINE_COLOR_BG_GRAY1=$BG[184]
+            POWERLINE_COLOR_BG_GRAY1=$BG[172]
             POWERLINE_COLOR_BG_GRAY2=$bg[green]
             POWERLINE_COLOR_BG_GRAY3=
 
-            POWERLINE_COLOR_FG_GRAY1=$FG[184]
+            POWERLINE_COLOR_FG_GRAY1=$FG[172]
             POWERLINE_COLOR_FG_GRAY2=$fg[green]
             POWERLINE_COLOR_FG_GRAY3=$FG[235]
             POWERLINE_COLOR_FG_WHITE1=$fg[green]
-            POWERLINE_COLOR_FG_WHITE2=$FG[184]
+            POWERLINE_COLOR_FG_WHITE2=$FG[172]
             ;;
         ccige*|ccage*)
             ZSH_THEME_NEMO_HOSTNAME_SUFFIX=

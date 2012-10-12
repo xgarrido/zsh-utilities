@@ -497,8 +497,8 @@ function precmd () {
     # Hack to make the prompt working in LAL machine
     case "$HOSTNAME" in
         lx*.lal.in2p3.fr|nemo*.lal.in2p3.fr|ccige*|ccage*)
-            PROMPT='%{${ZSH_THEME_NEMO_TIME}%}%T%{$reset_color%} %{${ZSH_THEME_NEMO_HOSTNAME_SUFFIX}${ZSH_THEME_NEMO_HOSTNAME}%}${ZSH_THEME_NEMO_SETUP}${HOSTNAME}%{$reset_color%} %{${ZSH_THEME_NEMO_DIRECTORY}%}${PWD/#$HOME/~}%{$reset_color%}
-$ '
+            PROMPT='%{${ZSH_THEME_NEMO_TIME}%}%T %{$ZSH_THEME_NEMO_HOSTNAME_SUFFIX%}%{$ZSH_THEME_NEMO_HOSTNAME%}${ZSH_THEME_NEMO_SETUP}${HOSTNAME} %{${ZSH_THEME_NEMO_HOSTNAME}%}${PWD/#$HOME/~}%{$reset_color%}
+%{${ZSH_THEME_NEMO_HOSTNAME}%}$ %{$reset_color%}'
     esac
 }
 
