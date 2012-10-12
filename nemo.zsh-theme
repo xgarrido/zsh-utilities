@@ -43,11 +43,7 @@ else
             ;;
         lx*.lal.in2p3.fr|nemo*.lal.in2p3.fr)
             ZSH_THEME_NEMO_HOSTNAME_SUFFIX=
-<<<<<<< HEAD
-            ZSH_THEME_NEMO_HOSTNAME=$FG[184]
-=======
             ZSH_THEME_NEMO_HOSTNAME=$FG[172]
->>>>>>> de77fc4148249eafe0795d7f96bf86b8ffb29fcc
             ZSH_THEME_NEMO_TIME=$fg[green]
 
             ZSH_THEME_NEMO_USE_POWERLINE=0
