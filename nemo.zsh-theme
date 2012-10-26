@@ -6,8 +6,9 @@ if [ -n "${SNAILWARE_SETUP_DONE}" ]; then
     ZSH_THEME_NEMO_SETUP="snailware/${SNAILWARE_SOFTWARE_VERSION}@"
 fi
 if [ "$TERM" = "eterm-color" ]; then
-    ZSH_THEME_NEMO_HOSTNAME=$FX[bold]$fg[green]
-    ZSH_THEME_NEMO_DIRECTORY=$fg[green]
+    ZSH_THEME_NEMO_TIME=$fg[red]
+    ZSH_THEME_NEMO_HOSTNAME=$reset_color
+    ZSH_THEME_NEMO_DIRECTORY=$reset_color
         # Redefine color for ls
     export LS_COLORS='di=33:ex=31'
 else
@@ -106,7 +107,6 @@ else
 #     PROMPT='%{$POWERLINE_COLOR_FG_GRAY2%}%T %{$ZSH_THEME_NEMO_HOSTNAME_SUFFIX$POWERLINE_COLOR_FG_GRAY1%}${ZSH_THEME_NEMO_SETUP}${HOSTNAME}$FX[reset] %{$POWERLINE_COLOR_FG_GRAY2%}${PWD/#$HOME/~}
 # %{$POWERLINE_COLOR_FG_GRAY2%}$ %{$reset_color%}'
     if [[ "$HOSTNAME" = "garrido-laptop" || "$HOSTNAME" = "pc-91089" ]]; then
-        RPROMPT='%{${ZSH_THEME_NEMO_HOSTNAME}%}$(git_prompt_info)%{${ZSH_THEME_NEMO_HOSTNAME}%}$(svn_prompt_info)%{$reset_color%}'
-        #RPROMPT='%{${ZSH_THEME_NEMO_DIRECTORY}%}$(git_prompt_info)%{${ZSH_THEME_NEMO_DIRECTORY}%}$(svn_prompt_info)%{$reset_color%}'
+        RPROMPT='%{${ZSH_THEME_NEMO_TIME}%}$(git_prompt_info)%{${ZSH_THEME_NEMO_TIME}%}$(svn_prompt_info)%{$reset_color%}'
     fi
 fi
