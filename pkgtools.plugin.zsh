@@ -3,14 +3,14 @@
 # Copyright (C) 2012 Xavier Garrido
 #
 # Author: garrido@lal.in2p3.fr
-# Keywords:
+# Keywords: pkgtools
 # Requirements:
 # Status: not intended to be distributed yet
 
 # 'pkgtools' message handling and function facilities
 
 # Default values
-__pkgtools__msg_use_color=1
+_msg_use_color=1
 __pkgtools__msg_use_date=0
 __pkgtools__msg_split_lines=0
 __pkgtools__msg_quiet=0
