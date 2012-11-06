@@ -10,7 +10,7 @@
 # 'pkgtools' message handling and function facilities
 
 # Default values
-_msg_use_color=1
+__pkgtools__msg_use_color=1
 __pkgtools__msg_use_date=0
 __pkgtools__msg_split_lines=0
 __pkgtools__msg_quiet=0
