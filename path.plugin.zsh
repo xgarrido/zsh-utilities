@@ -16,13 +16,17 @@ if [ ! -n "${ZSH_SETUP_DONE}" ]; then
             export PATH=$HOME/Development/texlive/2012/bin/i386-linux:$PATH
             export TEXMFHOME=$HOME/.config/texmf
 
+            # Load Go Programming Language
+            export GOROOT=$HOME/Development/go
+            export PATH=$GOROOT/bin:$PATH
+
             # Adding also /usr/local/lib to LD_LIBRARY_PATH
             export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
             # Adding rootpy utilities path
             export PATH=$HOME/.local/bin:$PATH
 
-            # set HOST
+            # Set HOST
             export HOST=${HOSTNAME}
             export WORKDIR=~/Workdir
             ;;

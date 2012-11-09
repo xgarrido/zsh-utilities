@@ -2,6 +2,7 @@
 
 function do_nemo_setup ()
 {
+#    nemo_software_version="branches/dev0"
     nemo_software_version="trunk"
     if [ "x$1" != "x" ]; then
         nemo_software_version="$1"
