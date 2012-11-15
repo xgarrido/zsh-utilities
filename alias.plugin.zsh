@@ -31,12 +31,17 @@ alias emacs='emacsclient -c -n'
 alias iemacs='emacsclient -n'
 alias ve='emacsclient -nw'
 
-export PAGER=less
+# Options for less program are the following:
+# -M : Shows more detailed prompt, including file position
+# -N : Shows line numbers
+# -X : Suppresses the terminal clearing at exit
+export PAGER='less -M -N -X'
 export SVN_EDITOR='emacsclient -nw'
+export GIT_EDITOR='emacsclient -nw'
 if [ -x "/usr/local/bin/src-hilite-lesspipe.sh" ]; then
     export LESSOPEN="| src-hilite-lesspipe.sh %s"
     export LESS=' -R '
-    alias more='less'
+    alias more='less -M -N -X'
 fi
 
 # set HOST
