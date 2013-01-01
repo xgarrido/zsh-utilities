@@ -466,7 +466,8 @@ function notify
 function notifyerr ()
 {
     if [ "$?" -gt 0 ]; then
-        notify -t 2000 -i stock_dialog-error -u critical "Error" "${PREEXEC_CMD:-Shell Command}"
+#        notify -t 2000 -i stock_dialog-error -u critical "Error" "${PREEXEC_CMD:-Shell Command}"
+        notify -t 2000 -i stock_dialog-error "Error" "${PREEXEC_CMD:-Shell Command}"
         return -1
     fi
 }
