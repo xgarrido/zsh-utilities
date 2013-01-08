@@ -17,10 +17,9 @@ function relaunch_emacs_daemon
 
     run_emacs_daemon
     if [[ "$1" != "" ]]; then
-        emacs -e "(my-desktop)" $1
+        emacs -e "(sk-desktop)" $1
     else
-        emacs -e "(my-desktop)"
+        emacs -e "(sk-desktop)"
     fi
-
 }
 ###
