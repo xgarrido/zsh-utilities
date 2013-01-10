@@ -17,8 +17,10 @@ plugins=(
     work.zsh
 )
 
+local_dir=$(dirname $0)
+
 for plugin in ${plugins}; do
-    source $plugin
+    source $local_dir/$plugin
 done
 
 
