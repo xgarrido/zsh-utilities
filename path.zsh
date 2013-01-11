@@ -1,7 +1,7 @@
 # -*- mode: shell-script; -*-
 export HOSTNAME=$(hostname)
 
-if [ ! -n "${ZSH_SETUP_DONE}" ]; then
+if [ ${ZSH_SETUP_DONE} != 0 ]; then
     case "$HOSTNAME" in
         garrido-laptop|pc-91089)
 
@@ -11,14 +11,12 @@ if [ ! -n "${ZSH_SETUP_DONE}" ]; then
             # Load RVM function (Ruby manager)
             [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
-            # Load local installation of texlive 2011
-            # Ubuntu package version is too old (2009)
-            export PATH=$HOME/Development/texlive/2012/bin/i386-linux:$PATH
+            # Home made latex style
             export TEXMFHOME=$HOME/.config/texmf
 
-            # # Load Go Programming Language
-            # export GOROOT=$HOME/Development/go
-            # export PATH=$GOROOT/bin:$PATH
+            # Load Go Programming Language
+            export GOPATH=$HOME/Development/go
+            export PATH=$GOPATH/bin:$PATH
 
             # Adding also /usr/local/lib to LD_LIBRARY_PATH
             export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
@@ -58,5 +56,5 @@ if [ ! -n "${ZSH_SETUP_DONE}" ]; then
         *)
             ;;
     esac
-    export ZSH_SETUP_DONE=1
+    export ZSH_SETUP_DONE=0
 fi
