@@ -35,6 +35,9 @@ alias emacs='emacsclient -c -n'
 alias iemacs='emacsclient -n'
 alias ve='emacsclient -nw'
 
+# dotfiles https://github.com/jbernard/dotfiles
+alias dotfiles='dotfiles -R ~/Development/dotfiles'
+
 # Options for less program are the following:
 # -M : Shows more detailed prompt, including file position
 # -N : Shows line numbers
