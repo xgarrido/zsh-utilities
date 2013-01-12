@@ -1,7 +1,7 @@
 # -*- mode: shell-script; -*-
 export HOSTNAME=$(hostname)
 
-if [ ${ZSH_SETUP_DONE} != 0 ]; then
+if [ "${ZSH_SETUP_DONE}" != "1" ]; then
     case "$HOSTNAME" in
         garrido-laptop|pc-91089)
 
@@ -56,5 +56,5 @@ if [ ${ZSH_SETUP_DONE} != 0 ]; then
         *)
             ;;
     esac
-    export ZSH_SETUP_DONE=0
+    export ZSH_SETUP_DONE=1
 fi
