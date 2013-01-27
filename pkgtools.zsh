@@ -1,16 +1,17 @@
 # -*- mode: shell-script; -*-
-
-# Copyright (C) 2012 Xavier Garrido
+#
+# Copyright (C) 2012-2013 Xavier Garrido
 #
 # Author: garrido@lal.in2p3.fr
 # Keywords: pkgtools
 # Requirements:
 # Status: not intended to be distributed yet
-
-# 'pkgtools' message handling and function facilities
+#
+# 'pkgtools' message handling and function facilities (stolen from F. Mauger
+# pkgtools package utilities)
 
 # Default values
-function pkgtools__default_values ()
+function __pkgtools__default_values ()
 {
     __pkgtools__msg_use_color=1
     __pkgtools__msg_use_date=0
@@ -26,6 +27,7 @@ function pkgtools__default_values ()
     __pkgtools__ui_gui=0
     return 0
 }
+__pkgtools__default_values
 
 #
 # UI utilities:
@@ -642,7 +644,5 @@ function pkgtools__msg_debug ()
     fi
     return 0
 }
-
-
 
 # end
