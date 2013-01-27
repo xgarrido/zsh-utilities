@@ -10,18 +10,22 @@
 # 'pkgtools' message handling and function facilities
 
 # Default values
-__pkgtools__msg_use_color=1
-__pkgtools__msg_use_date=0
-__pkgtools__msg_split_lines=0
-__pkgtools__msg_quiet=0
-__pkgtools__msg_verbose=0
-__pkgtools__msg_warning=1
-__pkgtools__msg_debug=0
-__pkgtools__msg_devel=0
-__pkgtools__msg_funcname=""
-__pkgtools__msg_funcname_deps=""
-__pkgtools__ui_interactive=1
-__pkgtools__ui_gui=0
+function pkgtools__default_values ()
+{
+    __pkgtools__msg_use_color=1
+    __pkgtools__msg_use_date=0
+    __pkgtools__msg_split_lines=0
+    __pkgtools__msg_quiet=0
+    __pkgtools__msg_verbose=0
+    __pkgtools__msg_warning=1
+    __pkgtools__msg_debug=0
+    __pkgtools__msg_devel=0
+    __pkgtools__msg_funcname=""
+    __pkgtools__msg_funcname_deps=""
+    __pkgtools__ui_interactive=1
+    __pkgtools__ui_gui=0
+    return 0
+}
 
 #
 # UI utilities:
