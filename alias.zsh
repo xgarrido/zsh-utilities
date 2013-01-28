@@ -75,8 +75,9 @@ elif [[ -x "/usr/bin/pacman" ]]; then
     is_debian=0
 fi
 
+alias pkg-notify='notify -t 2000 -i stock_dialog-info "${pkg_mgr}"'
+
 if [ ${is_debian} -eq 1 ]; then
-    alias pkg-notify='notify -t 2000 -i stock_dialog-info "${pkg_mgr}"'
 
     function install ()
     {
@@ -132,6 +133,22 @@ if [ ${is_debian} -eq 1 ]; then
     {
         __pkgtools__at_function_enter purge
         sudo ${pkg_mgr} autoremove && pkg-notify "Autoremove done"
+        __pkgtools__at_function_exit
+        return 0
+    }
+else
+    function upgrade ()
+    {
+        __pkgtools__at_function_enter upgrade
+        ${pkg_mgr} -Suy && pkg-notify "Upgrade done"
+        __pkgtools__at_function_exit
+        return 0
+    }
+
+    function search ()
+    {
+        __pkgtools__at_function_enter upgrade
+        ${pkg_mgr} -Ss $@
         __pkgtools__at_function_exit
         return 0
     }
