@@ -656,6 +656,8 @@ function pkgtools__add_path_to_env_variable ()
         return 1
     fi
     local _path=${(P)$(echo $1)}
+    # Export it if empty
+    [[ ! -n ${_path} ]] && export $1
     case ":$_path:" in
         *":$2:"*) :;; # already there
         *) eval $(echo $1="$2${_path:+":$_path"}");;
