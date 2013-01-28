@@ -680,8 +680,9 @@ function pkgtools__add_path_to_LD_LIBRARY_PATH ()
 function pkgtools__remove_path_to_env_variable ()
 {
     local _path=${(P)$(echo $1)}
-    pkgtools__msg_error "Initial path=${_path}"
-    eval $(echo $1=$(echo ${_path} | sed -e 's;\(^'$2':\|:'$2'$\|:'$2'\(:\)\);\2;g'))
+    eval $(echo $1=$(echo ${_path} | sed -e 's;\(^'$2':\|:'$2'$\|:'$2'\(:\)\)\|'$2';\2;g'))
+    # Unset it if empty
+    [[ ! -n ${(P)$(echo $1)} ]] && unset $1
     return 0
 }
 
