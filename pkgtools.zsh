@@ -645,4 +645,34 @@ function pkgtools__msg_debug ()
     return 0
 }
 
+#
+# Utilities
+#
+
+function pkgtools__add_path_to_env_variable ()
+{
+    if [ ! -d "$2" ]; then
+        pkgtools__msg_error "Directory '$2' does not exist!"
+        return 1
+    fi
+    local _path=${(P)$(echo $1)}
+    case ":$_path:" in
+        *":$2:"*) :;; # already there
+        *) eval $(echo $1="$2${_path:+":$_path"}");;
+    esac
+    return 0
+}
+
+function pkgtools__add_path_to_PATH ()
+{
+    pkgtools__add_path_to_env_variable PATH "$1"
+    return 0
+}
+
+function pkgtools__add_path_to_LD_LIBRARY_PATH ()
+{
+    pkgtools__add_path_to_env_variable LD_LIBRARY_PATH "$1"
+    return 0
+}
+
 # end
