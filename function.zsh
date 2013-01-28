@@ -357,7 +357,7 @@ EOF
         echo "NOTICE: Converting ${i} file to ${tikz_file}..."
 
         pstoedit -f xfig ${i} > ${fig_file} 2> /dev/null
-        ~/Development/python/fig2tikz ${fig_file} > ${tikz_file}
+        ~/Development/scripts/fig2tikz/fig2tikz ${fig_file} > ${tikz_file}
 
         if [[ ${keep_xfig} -eq 0 ]]; then
             rm -f ${fig_file}
