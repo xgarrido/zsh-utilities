@@ -35,12 +35,19 @@ function __set_path ()
                 pkgtools__add_path_to_PATH /exp/nemo/garrido/software/bin
                 pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/garrido/software/lib
                 pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/install/lib
+
                 # Add TeXLive 2012
                 pkgtools__add_path_to_PATH /exp/nemo/garrido/software/texlive/2012/bin/x86_64-linux
-                # Add python path
-                pkgtools__add_path_to_env_variable PYTHONPATH /exp/nemo/garrido/software/lib/python2.6/site-packages
                 unset TEXMFCNF
                 unset TETEXDIR
+
+                # Add python path
+                pkgtools__add_path_to_env_variable PYTHONPATH /exp/nemo/garrido/software/lib/python2.6/site-packages
+
+                # Load Go Programming Language
+                pkgtools__add_path_to_PATH /exp/nemo/garrido/software/go/bin
+                export GOPATH=$WORKDIR/development/go
+                pkgtools__add_path_to_PATH $GOPATH/bin
                 ;;
             auger*.lal.in2p3.fr)
                 umask 022
