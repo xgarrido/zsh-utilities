@@ -9,10 +9,10 @@
 
 plugins=(
     pkgtools.zsh
+    path.zsh
     alias.zsh
     emacs.zsh
     function.zsh
-    path.zsh
     svn.zsh
     work.zsh
 )
