@@ -698,4 +698,14 @@ function pkgtools__remove_path_to_LD_LIBRARY_PATH ()
     return 0
 }
 
+function pkgtools__set_variable ()
+{
+   if env | grep -q ^$1=
+    then
+        pkgtools__msg_warning "$1 is already set and exported"
+    else
+        export $1=$2
+    fi
+    return 0
+}
 # end
