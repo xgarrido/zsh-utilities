@@ -35,6 +35,8 @@ function __set_path ()
                 pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/garrido/software/lib:/exp/nemo/install/lib
                 # Add TeXLive 2012
                 pkgtools__add_path_to_PATH /exp/nemo/garrido/software/texlive/2012/bin/x86_64-linux
+                # Add python path
+                pkgtools__add_path_to_env_variable PYTHONPATH /exp/nemo/garrido/software/lib/python2.6/site-packages
                 unset TEXMFCNF
                 unset TETEXDIR
                 ;;
