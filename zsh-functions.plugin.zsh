@@ -8,11 +8,11 @@
 # Status: not intended to be distributed yet
 
 plugins=(
+    pkgtools.zsh
     alias.zsh
     emacs.zsh
     function.zsh
     path.zsh
-    pkgtools.zsh
     svn.zsh
     work.zsh
 )

@@ -9,7 +9,7 @@ if [ "$TERM" = "eterm-color" ]; then
     ZSH_THEME_NEMO_TIME=$fg[red]
     ZSH_THEME_NEMO_HOSTNAME=$reset_color
     ZSH_THEME_NEMO_DIRECTORY=$reset_color
-        # Redefine color for ls
+    # Redefine color for ls
     export LS_COLORS='di=33:ex=31'
 else
     case "$HOSTNAME" in
@@ -108,8 +108,6 @@ if [ "$ZSH_THEME_NEMO_USE_POWERLINE" = "1" ]; then
     PROMPT='
 '%{$POWERLINE_COLOR_BG_GRAY1%}%{$POWERLINE_COLOR_FG_WHITE1%}' '%T' '%{$reset_color%}%{$POWERLINE_COLOR_FG_GRAY1%}%{$POWERLINE_COLOR_BG_GRAY2%}$'\u2b80'%{$reset_color%}%{$POWERLINE_COLOR_FG_WHITE2%}%{$POWERLINE_COLOR_BG_GRAY2%}' ${ZSH_THEME_NEMO_SETUP}${HOSTNAME} '%{$reset_color%}%{$POWERLINE_COLOR_FG_GRAY2%}%{$POWERLINE_COLOR_BG_GRAY3%}$'\u2b80'%{$reset_color%}' ${PWD/#$HOME/~}
 ➜  '
-
-# ➜  '
     if [[ "$HOSTNAME" = "garrido-laptop" || "$HOSTNAME" = "pc-91089" ]]; then
         RPROMPT=%{$POWERLINE_COLOR_FG_GRAY1%}$'\u2b82%{$reset_color%}%{$POWERLINE_COLOR_BG_GRAY1%}%{$POWERLINE_COLOR_FG_WHITE1%} $(git_prompt_info)$(svn_prompt_info)%{$reset_color%}'
     fi
@@ -118,9 +116,6 @@ else
     PROMPT='%{${ZSH_THEME_NEMO_TIME}%}%T %{$ZSH_THEME_NEMO_HOSTNAME_SUFFIX%}%{$ZSH_THEME_NEMO_HOSTNAME%}${ZSH_THEME_NEMO_SETUP}${HOSTNAME} %{${ZSH_THEME_NEMO_HOSTNAME}%}${PWD/#$HOME/~}%{$reset_color%}
 %{${ZSH_THEME_NEMO_HOSTNAME}%}$ %{$reset_color%}'
 
-
-#     PROMPT='%{$POWERLINE_COLOR_FG_GRAY2%}%T %{$ZSH_THEME_NEMO_HOSTNAME_SUFFIX$POWERLINE_COLOR_FG_GRAY1%}${ZSH_THEME_NEMO_SETUP}${HOSTNAME}$FX[reset] %{$POWERLINE_COLOR_FG_GRAY2%}${PWD/#$HOME/~}
-# %{$POWERLINE_COLOR_FG_GRAY2%}$ %{$reset_color%}'
     if [[ "$HOSTNAME" = "garrido-laptop" || "$HOSTNAME" = "pc-91089" ]]; then
         RPROMPT='%{${ZSH_THEME_NEMO_TIME}%}$(git_prompt_info)%{${ZSH_THEME_NEMO_TIME}%}$(svn_prompt_info)%{$reset_color%}'
     fi
