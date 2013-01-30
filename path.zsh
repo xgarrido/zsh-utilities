@@ -31,8 +31,10 @@ function __set_path ()
             lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
                 umask 022
                 export WORKDIR=/exp/nemo/garrido
-                pkgtools__add_path_to_PATH /exp/nemo/install/bin:/exp/nemo/garrido/software/bin
-                pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/garrido/software/lib:/exp/nemo/install/lib
+                pkgtools__add_path_to_PATH /exp/nemo/install/bin
+                pkgtools__add_path_to_PATH /exp/nemo/garrido/software/bin
+                pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/garrido/software/lib
+                pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/install/lib
                 # Add TeXLive 2012
                 pkgtools__add_path_to_PATH /exp/nemo/garrido/software/texlive/2012/bin/x86_64-linux
                 # Add python path
