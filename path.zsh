@@ -45,6 +45,7 @@ function __set_path ()
                 pkgtools__add_path_to_env_variable PYTHONPATH /exp/nemo/garrido/software/lib/python2.6/site-packages
 
                 # Load Go Programming Language
+                export GOROOT=/exp/nemo/garrido/software/go
                 pkgtools__add_path_to_PATH /exp/nemo/garrido/software/go/bin
                 export GOPATH=$WORKDIR/development/go
                 pkgtools__add_path_to_PATH $GOPATH/bin
@@ -62,7 +63,10 @@ function __set_path ()
             SynoServer)
                 ;;
             *)
-                ;;
+                # Load Go Programming Language
+                export GOPATH=$HOME/Development/go
+                pkgtools__add_path_to_PATH $GOPATH/bin
+              ;;
         esac
         export ZSH_SETUP_DONE=1
     fi

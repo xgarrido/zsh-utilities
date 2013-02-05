@@ -72,7 +72,7 @@ function connect ()
         echo ""
         echo " LAL/Auger computers :"
         echo " lx*, auger* ... : connect to LAL machine"
-        echo ""
+       echo ""
         return 1
     fi
 
