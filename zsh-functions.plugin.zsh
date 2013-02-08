@@ -23,5 +23,7 @@ for plugin in ${plugins}; do
     source $local_dir/$plugin
 done
 
+# Reset path at runtime
+reset_path
 
 # end
