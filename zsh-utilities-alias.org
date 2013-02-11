@@ -12,6 +12,7 @@ This file defines some basic but nevertheless fundamental aliases.
 #+BEGIN_SRC sh
   alias cl='clear'
   alias h='history'
+  alias open='xdg-open'
 #+END_SRC
 
 ** List Segments aka =ls= command
