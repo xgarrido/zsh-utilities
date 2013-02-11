@@ -1,0 +1,772 @@
+#+TITLE:  Zsh Utilities Pkgtools
+#+AUTHOR: Xavier Garrido
+#+DATE:   2013-02-08
+#+OPTIONS: toc:nil num:nil ^:nil
+
+This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
+
+* Zsh Utilities - Pkgtools
+This file provides a set of =pkgtools= functions to ease definition and use of
+zsh functions, to handle message log and to have some function facilities. Thus,
+it is a quite central place since most of the function of [[file:zsh-utilities.org][Zsh Utilities]] relies
+to this file. The original idea was by F. Mauger and can be found at [[https://nemo.lpc-caen.in2p3.fr/wiki/pkgtools][LPC Wiki
+website]].
+
+** Default values
+#+BEGIN_SRC sh
+  function __pkgtools__default_values ()
+  {
+      __pkgtools__msg_use_color=1
+      __pkgtools__msg_use_date=0
+      __pkgtools__msg_split_lines=0
+      __pkgtools__msg_quiet=0
+      __pkgtools__msg_verbose=0
+      __pkgtools__msg_warning=1
+      __pkgtools__msg_debug=0
+      __pkgtools__msg_devel=0
+      __pkgtools__msg_funcname=""
+      __pkgtools__msg_funcname_deps=""
+      __pkgtools__ui_interactive=1
+      __pkgtools__ui_gui=0
+      return 0
+  }
+  __pkgtools__default_values
+#+END_SRC
+
+** User Interface utilities
+*** Setting batch or interactive session
+#+BEGIN_SRC sh
+  function pkgtools__ui_interactive ()
+  {
+      __pkgtools__ui_interactive=1
+      return 0
+  }
+
+  function pkgtools__ui_batch ()
+  {
+      __pkgtools__ui_interactive=0
+      return 0
+  }
+
+  function pkgtools__ui_is_interactive ()
+  {
+      if [ "x${PKGTOOLS_BATCH}" != "x" ]; then
+          if  [ "x${PKGTOOLS_BATCH}" != "x0" ]; then
+              return 1 # false;
+          fi
+      fi
+
+      if [ ${__pkgtools__ui_interactive} = 1 ]; then
+          return 0 # true
+      fi
+      return 1 # false
+  }
+
+  function pkgtools__ui_is_batch ()
+  {
+      pkgtools__ui_is_interactive
+      if [ $? -eq 0 ]; then
+          return 1
+      fi
+      return 0 # true
+  }
+#+END_SRC
+
+*** Using GUI
+#+BEGIN_SRC sh
+  function pkgtools__ui_is_gui ()
+  {
+      if [ ${__pkgtools__ui_gui} = 1 ]; then
+          return 0 # true
+      fi
+      return 1 # false
+  }
+
+  function pkgtools__ui_using_gui ()
+  {
+      __pkgtools__at_function_enter pkgtools__ui_using_gui
+      pkgtools__ui_is_batch
+      if [ $? -eq 0 ]; then
+          pkgtools__msg_warning "Forcing interactive mode !"
+          pkgtools__ui_interactive
+      fi
+      __pkgtools__ui_gui=1
+      __pkgtools__at_function_exit
+      return 0
+  }
+
+  function pkgtools__ui_not_using_gui ()
+  {
+      __pkgtools__ui_gui=0
+      return 0
+  }
+#+END_SRC
+
+** Function facilities
+*** Setting function name
+#+BEGIN_SRC sh
+  function pkgtools__set_funcname ()
+  {
+      local fname=$1
+      if [ "x${fname}" != "x" ]; then
+          if [ "x${__pkgtools__msg_funcname_deps}" != "x" ]; then
+              __pkgtools__msg_funcname_deps="${__pkgtools__msg_funcname_deps}@${fname}"
+          else
+              __pkgtools__msg_funcname_deps=${fname}
+          fi
+      fi
+      __pkgtools__msg_funcname=${fname}
+      return 0
+  }
+
+  function pkgtools__unset_funcname ()
+  {
+      local fname=$(echo ${__pkgtools__msg_funcname_deps} | tr "@" "\n" | tail -1)
+      if [ "x${__pkgtools__msg_funcname_deps}" != "x" ]; then
+          nfuncs=$(echo ${__pkgtools__msg_funcname_deps} | tr '@' '\n' | wc -l)
+          let ncut=nfuncs-1
+          tmp=$(echo -n ${__pkgtools__msg_funcname_deps} | tr "@" "\n" | head -${ncut} | tr '\n' '@' | sed 's/@$//g')
+          if [ ${ncut} -eq 0 ]; then
+              tmp=
+          fi
+          __pkgtools__msg_funcname_deps=${tmp}
+      fi
+      local previous_fname=$(echo ${__pkgtools__msg_funcname_deps} | tr "@" "\n" | tail -1)
+      __pkgtools__msg_funcname=${previous_fname}
+      return 0
+  }
+#+END_SRC
+
+*** Registering functions
+These functions must be used with interactive function for debug purpose as well
+as getting well prefixed message using the function name.
+
+#+BEGIN_SRC sh
+  function __pkgtools__at_function_enter ()
+  {
+      pkgtools__set_funcname $1
+      pkgtools__msg_devel "Entering..."
+      return 0
+  }
+
+  function __pkgtools__at_function_exit ()
+  {
+      pkgtools__msg_devel "Exiting."
+      pkgtools__unset_funcname
+      return 0
+  }
+#+END_SRC
+
+** Colorized message utilities
+The following functions provides some facilities to print colorized messages
+given the importance level of such message. Given the number of functions, each
+one is itemized to make navigation easier
+
+*** Default color message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_normal ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[0;39m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+*** Colorized message
+**** Red message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_red ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[0;31m" 1>&2
+      fi
+      return 0
+  }
+  function pkgtools__msg_color_bright_red ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[0;31m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+**** Green message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_green ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[0;32m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+**** Brown message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_brown ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[0;33m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+**** Blue message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_blue ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[0;34m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+**** Violet message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_violet ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[0;35m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+**** Grey message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_grey ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[0;37m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+**** White message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_white ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[1;37m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+**** Black message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_black ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[1;39m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+*** Reverse color
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_reverse ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[1;7m" 1>&2
+      fi
+      return 0
+  }
+
+  function pkgtools__msg_color_no_reverse ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[1;27m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+*** Cancel color
+#+BEGIN_SRC sh
+  function pkgtools__msg_color__cancel ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[1;m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+*** Underline message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_underline ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[0;38m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+*** Bold message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_bold ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "\\033[1;1m" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+*** Blinking message
+#+BEGIN_SRC sh
+  function pkgtools__msg_color_blink ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "" 1>&2
+      fi
+      return 0
+  }
+
+  function pkgtools__msg_color_no_blink ()
+  {
+      if [ ${__pkgtools__msg_use_color} = 1 ]; then
+          echo -en "" 1>&2
+      fi
+      return 0
+  }
+#+END_SRC
+*** Hightlight message
+#+BEGIN_SRC sh
+  function pkgtools__highlight ()
+  {
+      pkgtools__msg_color_bright_red
+      echo -en "$@" 1>&2
+      pkgtools__msg_color_normal
+      return 0
+  }
+#+END_SRC
+
+** Message log utilities
+Use to print message requiring different level of attention.
+
+*** Notice message
+#+BEGIN_SRC sh
+  function pkgtools__msg_notice ()
+  {
+      pkgtools__msg_is_quiet
+      if [ $? -eq 0 ]; then
+          return 0
+      fi
+
+      pkgtools__msg_color_blue
+      __pkgtools__base_msg_prefix "NOTICE"
+      __pkgtools__base_msg "$@"
+      pkgtools__msg_color_normal
+
+      pkgtools__ui_is_interactive
+      if [ $? -ne 0 ]; then
+          return 0
+      fi
+      pkgtools__ui_is_gui
+      if [ $? -eq 0 ]; then
+          message="$@"
+          term_nl=$(stty size | cut -d' ' -f1)
+          term_nc=$(stty size | cut -d' ' -f2)
+          let max_nlines=term_nl-3
+          let max_ncols=term_nc-4
+          nl=$(echo -e "${message}" | wc -l)
+          let nlines=nl+4
+          if [ ${nlines} -gt ${max_nlines} ]; then
+              nlines=${max_nlines}
+          fi
+          if [ ${nlines} -lt 6 ]; then
+              nlines=6
+          fi
+          ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
+              --colors --msgbox "\Z4NOTICE:\n\Zn ${message}" ${nlines} ${max_ncols}
+          return 0
+      fi
+      return 0
+  }
+
+  function pkgtools__msg_highlight_notice ()
+  {
+      pkgtools__msg_color_green
+      __pkgtools__base_msg_prefix "NOTICE"
+      __pkgtools__base_msg $@
+      pkgtools__msg_color_normal
+
+      pkgtools__ui_is_interactive
+      if [ $? -ne 0 ]; then
+          return 0
+      fi
+      pkgtools__ui_is_gui
+      if [ $? -eq 0 ]; then
+          message="$@"
+          ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
+              --colors --msgbox "\Z4\ZbNOTICE:\n\Zn ${message}" 10 40
+          return 0
+      fi
+      return 0
+  }
+#+END_SRC
+*** Info message
+#+BEGIN_SRC sh
+  function pkgtools__msg_info ()
+  {
+      pkgtools__msg_is_quiet
+      if [ $? -eq 0 ]; then
+          return 0
+      fi
+
+      if [ ${__pkgtools__msg_verbose} -eq 0 ]; then
+          return 0
+      fi
+
+      pkgtools__msg_color_blue
+      __pkgtools__base_msg_prefix "INFO"
+      __pkgtools__base_msg  $@
+      pkgtools__msg_color_normal
+
+      pkgtools__ui_is_interactive
+      if [ $? -ne 0 ]; then
+          return 0
+      fi
+      pkgtools__ui_is_gui
+      if [ $? -eq 0 ]; then
+          message="$@"
+          ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
+              --colors --msgbox "\Z4\ZbINFO:\n\Zn ${message}" 10 40
+          return 0
+      fi
+      return 0
+  }
+#+END_SRC
+*** Verbose message
+#+BEGIN_SRC sh
+  function pkgtools__msg_using_verbose ()
+  {
+      __pkgtools__msg_verbose=1
+      return 0
+  }
+
+  function pkgtools__msg_not_using_verbose ()
+  {
+      __pkgtools__msg_verbose=0
+      return 0
+  }
+
+  function pkgtools__msg_verbose ()
+  {
+      pkgtools__msg_info $@
+      return 0
+  }
+#+END_SRC
+*** Debug message
+#+BEGIN_SRC sh
+  function pkgtools__msg_using_debug ()
+  {
+      __pkgtools__msg_debug=1
+      return 0
+  }
+
+  function pkgtools__msg_not_using_debug ()
+  {
+      __pkgtools__msg_debug=0
+      return 0
+  }
+
+  function pkgtools__msg_debug ()
+  {
+      if [ ${__pkgtools__msg_debug} -eq 0 ]; then
+          return 0
+      fi
+      ok=1
+      if [ ${ok} -eq 1 ]; then
+          pkgtools__msg_color_brown
+          __pkgtools__base_msg_prefix "DEBUG"
+          __pkgtools__base_msg  $@
+          pkgtools__msg_color_normal
+      fi
+      return 0
+  }
+#+END_SRC
+*** Warning message
+#+BEGIN_SRC sh
+  function pkgtools__msg_using_warning ()
+  {
+      __pkgtools__msg_warning=1
+      return 0
+  }
+
+  function pkgtools__msg_not_using_warning ()
+  {
+      __pkgtools__msg_warning=0
+      return 0
+  }
+
+  function pkgtools__msg_warning ()
+  {
+      if [ ${__pkgtools__msg_warning} -eq 0 ]; then
+          return 0
+      fi
+      pkgtools__msg_color_violet
+      __pkgtools__base_msg_prefix "WARNING"
+      __pkgtools__base_msg  $@
+      pkgtools__msg_color_normal
+
+      pkgtools__ui_is_interactive
+      if [ $? -ne 0 ]; then
+          return 0
+      fi
+      pkgtools__ui_is_gui
+      if [ $? -eq 0 ]; then
+          message="$@"
+          ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
+              --colors --msgbox "\Z5WARNING:\n\Zn ${message}" 10 40
+          return 0
+      fi
+      return 0
+  }
+#+END_SRC
+*** Error message
+#+BEGIN_SRC sh
+  function pkgtools__msg_err ()
+  {
+      pkgtools__msg_color_red
+      __pkgtools__base_msg_prefix "ERROR"
+      __pkgtools__base_msg $@
+      pkgtools__msg_color_normal
+
+      pkgtools__ui_is_interactive
+      if [ $? -ne 0 ]; then
+          return 0
+      fi
+      pkgtools__ui_is_gui
+      if [ $? -eq 0 ]; then
+          message="$@"
+          ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
+              --colors --msgbox "\Z1ERROR:\n\Zn ${message}" 10 40
+          return 0
+      fi
+      return 0
+  }
+
+  function pkgtools__msg_error ()
+  {
+      pkgtools__msg_err $@
+      return 0
+  }
+#+END_SRC
+*** Devel message
+#+BEGIN_SRC sh
+  function pkgtools__msg_using_devel ()
+  {
+      __pkgtools__msg_devel=1
+      return 0
+  }
+
+  function pkgtools__msg_not_using_devel ()
+  {
+      __pkgtools__msg_devel=0
+      return 0
+  }
+
+  function pkgtools__msg_devel ()
+  {
+      if [ ${__pkgtools__msg_devel} -eq 0 ]; then
+          return 0
+      fi
+      ok=1
+      if [ ${ok} -eq 1 ]; then
+          pkgtools__msg_color_reverse
+          __pkgtools__base_msg_prefix "DEVEL"
+          __pkgtools__base_msg $@
+          pkgtools__msg_color_no_reverse
+      fi
+      pkgtools__msg_color_normal
+      return 0
+  }
+#+END_SRC
+*** Be quiet
+#+BEGIN_SRC sh
+  function pkgtools__msg_using_quiet ()
+  {
+      pkgtools__msg_using_verbose
+      __pkgtools__msg_quiet=1
+      return 0
+  }
+
+  function pkgtools__msg_not_using_quiet ()
+  {
+      __pkgtools__msg_quiet=0
+      return 0
+  }
+
+  function pkgtools__msg_is_quiet ()
+  {
+      local quiet_ret=1 # false
+      if [ "x${PKGTOOLS_MSG_QUIET}" != "x" ]; then
+          if [ "x${PKGTOOLS_MSG_QUIET}" != "x0" ]; then
+              quiet_ret=0 # false
+          fi
+      else
+          if [ ${__pkgtools__msg_quiet} -eq 1  ]; then
+              quiet_ret=0 # true
+          fi
+      fi
+      return ${quiet_ret}
+  }
+#+END_SRC
+*** Print date
+#+BEGIN_SRC sh
+  function pkgtools__msg_using_date ()
+  {
+      __pkgtools__msg_use_date=1
+      return 0
+  }
+
+  function pkgtools__msg_not_using_date ()
+  {
+      __pkgtools__msg_use_date=0
+      return 0
+  }
+#+END_SRC
+*** Make use of color
+#+BEGIN_SRC sh
+  function pkgtools__msg_using_color ()
+  {
+      __pkgtools__msg_use_color=1
+      return 0
+  }
+
+  function pkgtools__msg_not_using_color ()
+  {
+      __pkgtools__msg_use_color=0
+      pkgtools__msg_color_normal
+      return 0
+  }
+#+END_SRC
+*** Misc.
+  #+BEGIN_SRC sh
+    function __pkgtools__base_msg_prefix ()
+    {
+        local log_file=
+        if [ "x${PKGTOOLS_LOG_FILE}" != "x" ]; then
+            log_file=${PKGTOOLS_LOG_FILE}
+        else
+            log_file=/dev/null
+        fi
+        local msg_prefix="$1"
+        (
+            (
+                echo -n "${msg_prefix}: "
+            ) | tee -a ${log_file}
+        ) 1>&2
+        return 0
+    }
+
+    function __pkgtools__base_msg ()
+    {
+        local log_file=
+        if [ "x${PKGTOOLS_LOG_FILE}" != "x" ]; then
+            log_file=${PKGTOOLS_LOG_FILE}
+        else
+            log_file=/dev/null
+        fi
+        (
+            (
+                if [ ${__pkgtools__msg_use_date} -eq 1 ]; then
+                    date +%F-%T | tr -d '\n'
+                    echo -n " @ "
+                fi
+                if [ "x${appname}" != "x" ]; then
+                    echo -n "${appname}: "
+                fi
+                if [ "x${__pkgtools__msg_funcname}" != "x" ]; then
+                    echo -n "${__pkgtools__msg_funcname}: "
+                fi
+                if [ ${__pkgtools__msg_split_lines} -eq 1 ]; then
+                    echo ""
+                    echo -n "  "
+                fi
+                echo "$@"
+            ) | tee -a ${log_file}
+        ) 1>&2
+        return 0;
+    }
+ #+END_SRC
+
+** Shell utilities
+*** Add path to environment variable
+This function add a directory to an environment variable such as =PATH= or
+=LD_LIBRARY_PATH=. It does it gently since it does not add the path if it is
+already present. In such way, it prevents cumbersome of environment variables.
+
+#+BEGIN_SRC sh
+  function pkgtools__add_path_to_env_variable ()
+  {
+      if [ ! -d "$2" ]; then
+          pkgtools__msg_error "Directory '$2' does not exist!"
+          return 1
+      fi
+      local _path=${(P)$(echo $1)}
+      # Export it if empty
+      [[ ! -n ${_path} ]] && export $1
+      case ":$_path:" in
+          *":$2:"*) :;; # already there
+          *) eval $(echo $1="$2${_path:+":$_path"}");;
+      esac
+      return 0
+  }
+
+  function pkgtools__add_path_to_PATH ()
+  {
+      pkgtools__add_path_to_env_variable PATH "$1"
+      return 0
+  }
+
+  function pkgtools__add_path_to_LD_LIBRARY_PATH ()
+  {
+      pkgtools__add_path_to_env_variable LD_LIBRARY_PATH "$1"
+      return 0
+  }
+#+END_SRC
+*** Remove path to environment variable
+The same as before: it keeps safe the environment variable by only removing the
+relevant path.
+#+BEGIN_SRC sh
+  function pkgtools__remove_path_to_env_variable ()
+  {
+      local _path=${(P)$(echo $1)}
+      eval $(echo $1=$(echo ${_path} | sed -e 's;\(^'$2':\|:'$2'$\|:'$2'\(:\)\)\|'$2';\2;g'))
+      # Unset it if empty
+      [[ ! -n ${(P)$(echo $1)} ]] && unset $1
+      return 0
+  }
+
+  function pkgtools__remove_path_to_PATH ()
+  {
+      pkgtools__remove_path_to_env_variable PATH "$1"
+      return 0
+  }
+
+  function pkgtools__remove_path_to_LD_LIBRARY_PATH ()
+  {
+      pkgtools__remove_path_to_env_variable LD_LIBRARY_PATH "$1"
+      return 0
+  }
+#+END_SRC
+
+*** Set variable if not already exported
+#+BEGIN_SRC sh
+  function pkgtools__set_variable ()
+  {
+      if env | grep -q ^$1=
+      then
+          pkgtools__msg_warning "$1 is already set and exported"
+      else
+          export $1=$2
+      fi
+      return 0
+  }
+#+END_SRC
+*** Unset variable
+#+BEGIN_SRC sh
+  function pkgtools__unset_variable ()
+  {
+      unset $1
+      return 0
+  }
+#+END_SRC

@@ -1,0 +1,28 @@
+FILES  = zsh-utilities-alias.org	\
+	 zsh-utilities-functions.org	\
+	 zsh-utilities-pkgtools.org	\
+	 zsh-utilities-path.org		\
+	 zsh-utilities-emacs.org	\
+	 zsh-utilities-svn.org		\
+	 zsh-utilities-work.org
+FILESO = $(FILES:.org=.zsh)
+
+all: zsh
+
+zsh: $(FILESO)
+
+%.zsh: %.org
+	@sed -e '/:tangle\s\+no/d' $< | sed -n '/BEGIN_SRC/,/END_SRC/p' | sed -e '/END_SRC/d' -e '/BEGIN_SRC/d' > $@
+
+doc: doc/index.html
+
+doc/index.html:
+	mkdir -p doc
+	$(EMACS) --batch -Q --eval '(org-babel-load-file "zsh-utilities-publish.org")'
+	rm zsh-utilities-publish.el
+	cp doc/zsh-utilities.html doc/index.html
+	echo "Documentation published to doc/"
+
+clean:
+	rm -f *.aux *.tex *.pdf starter-kit*.el starter-kit*.html doc/*html *~ .starter-kit*.part.org
+	rm -rf doc

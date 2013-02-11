@@ -1,0 +1,29 @@
+#+TITLE:  Zsh Utilities Emacs
+#+AUTHOR: Xavier Garrido
+#+DATE:   2013-02-08
+#+OPTIONS: toc:nil num:nil ^:nil
+
+This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
+
+* Zsh Utilities - Emacs
+This file provides some functions to handle =emacs= and its daemon.
+
+#+BEGIN_SRC sh
+  function relaunch_emacs_daemon ()
+  {
+      __pkgtools__at_function_enter relaunch_emacs_daemon
+      local pid=$(ps -edf | grep ${USER} | grep emacs | grep daemon | awk '{print $2}')
+      if [[ "${pid}" != "" ]]; then
+          kill -9 ${pid}
+      fi
+
+      \emacs --daemon > /dev/null 2>&1 && notify -t 1000 -u low -i emacs "Emacs" "Restart daemon done"
+      if [[ "$1" != "" ]]; then
+          emacs -e "(sk-desktop)" $1
+      else
+          emacs -e "(sk-desktop)"
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC

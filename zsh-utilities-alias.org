@@ -1,0 +1,55 @@
+#+TITLE:  Zsh Utilities Aliases
+#+AUTHOR: Xavier Garrido
+#+DATE:   2013-02-08
+#+OPTIONS: toc:nil num:nil ^:nil
+
+This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
+
+* Zsh Utilities - Aliases
+This file defines some basic but nevertheless fundamental aliases.
+
+** Basic
+#+BEGIN_SRC sh
+  alias cl='clear'
+  alias h='history'
+#+END_SRC
+
+** List Segments aka =ls= command
+#+BEGIN_SRC sh
+  alias ll='ls -ltrh'
+  alias la='ls -rtha'
+  alias lla='ls -rthal'
+  alias lsd='ls -l | grep ^d'
+#+END_SRC
+
+** Greping stuff
+#+BEGIN_SRC sh
+  alias grep='grep --color=auto'
+  if [[ -x $(which ack-grep) ]]; then
+      alias ack='ack-grep'
+  elif [[ -x $(which /usr/bin/vendor_perl/ack) ]]; then
+      alias ack='/usr/bin/vendor_perl/ack'
+  fi
+#+END_SRC
+
+** Emacs shortcuts
+#+BEGIN_SRC sh
+  alias emacs='emacsclient -c -n'
+  alias iemacs='emacsclient -n'
+  alias ve='emacsclient -nw'
+#+END_SRC
+
+** Terminal pager program
+Options for =less= program are the following
++ =-M= : shows more detailed prompt, including file position
++ =-N= : shows line number
++ =-X= : supresses the terminal clearing at exit
+
+#+BEGIN_SRC sh
+  export PAGER='less -M -N -X'
+  if [[ -x $(which /usr/local/bin/src-hilite-lesspipe.sh) ]]; then
+      export LESSOPEN="| src-hilite-lesspipe.sh %s"
+      export LESS=' -R '
+      alias more='less -M -N -X'
+  fi
+#+END_SRC

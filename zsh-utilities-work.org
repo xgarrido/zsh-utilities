@@ -1,0 +1,40 @@
+#+TITLE:  Zsh Utilities Work
+#+AUTHOR: Xavier Garrido
+#+DATE:   2013-02-08
+#+OPTIONS: toc:nil num:nil ^:nil
+
+This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
+
+* Zsh Utilities - Work
+This file contains some function/alias in relation with "work" topic.
+** pkgtools aliases
+=pkgtools= is used as wrapper for installation. It is a bash program which wraps
+=cmake= or some =Makefile= and is intensively used with SuperNEMO software.
+#+BEGIN_SRC sh
+  alias pkg-notify='notify -t 2000 -i stock_dialog-info "pkgtools"'
+
+  function pkgc ()
+  {
+      ./pkgtools.d/pkgtool configure $@ && pkg-notify "Configure done"
+  }
+
+  function pkgb ()
+  {
+      ./pkgtools.d/pkgtool build && pkg-notify "Build done"
+  }
+
+  function pkgt ()
+  {
+      ./pkgtools.d/pkgtool test && pkg-notify "Running test programs done"
+  }
+
+  function pkgr ()
+  {
+      ./pkgtools.d/pkgtool reset && pkg-notify "Reset done"
+  }
+
+  function pkgi ()
+  {
+      ./pkgtools.d/pkgtool install && pkg-notify "Install done"
+  }
+#+END_SRC

@@ -1,0 +1,464 @@
+#+TITLE:  Zsh Utilities Functions
+#+AUTHOR: Xavier Garrido
+#+DATE:   2013-02-08
+#+OPTIONS: toc:nil num:nil ^:nil
+
+This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
+
+* Zsh Utilities - Functions
+This file provides several functions for very different use. See the description
+to understand the aim of each of them.
+
+** Extract archive
+#+BEGIN_SRC sh
+  function extract ()
+  {
+      __pkgtools__at_function_enter extract
+    local remove_archive
+    local success
+    local file_name
+    local extract_dir
+
+    if [[ "$1" == "" ]]; then
+        echo "Usage: extract [-option] [file ...]"
+        echo
+        echo "Options:"
+        echo "    -r, --remove : Remove archive."
+        echo
+    fi
+
+    remove_archive=1
+    if [[ "$1" == "-r" ]] || [[ "$1" == "--remove" ]]; then
+      remove_archive=0
+      shift
+    fi
+
+    while [ -n "$1" ]; do
+      if [[ ! -f "$1" ]]; then
+          pkgtools__msg_warning "'$1' is not a valid file"
+          shift
+          continue
+      fi
+
+      success=0
+      file_name="$( basename "$1" )"
+      extract_dir="$( echo "$file_name" | sed "s/\.${1##*.}//g" )"
+      case "$1" in
+        (*.tar.gz|*.tgz) tar xvzf "$1" ;;
+        (*.tar.bz2|*.tbz|*.tbz2) tar xvjf "$1" ;;
+        (*.tar.xz|*.txz) tar --xz --help &> /dev/null \
+          && tar --xz -xvf "$1" \
+          || xzcat "$1" | tar xvf - ;;
+        (*.tar.zma|*.tlz) tar --lzma --help &> /dev/null \
+          && tar --lzma -xvf "$1" \
+          || lzcat "$1" | tar xvf - ;;
+        (*.tar) tar xvf "$1" ;;
+        (*.gz) gunzip "$1" ;;
+        (*.bz2) bunzip2 "$1" ;;
+        (*.xz) unxz "$1" ;;
+        (*.lzma) unlzma "$1" ;;
+        (*.Z) uncompress "$1" ;;
+        (*.zip) unzip "$1" -d $extract_dir ;;
+        (*.rar) unrar e -ad "$1" ;;
+        (*.7z) 7za x "$1" ;;
+        (*.deb)
+          mkdir -p "$extract_dir/control"
+          mkdir -p "$extract_dir/data"
+          cd "$extract_dir"; ar vx "../${1}" > /dev/null
+          cd control; tar xzvf ../control.tar.gz
+          cd ../data; tar xzvf ../data.tar.gz
+          cd ..; rm *.tar.gz debian-binary
+          cd ..
+        ;;
+        (*)
+          pkgtools__msg_error "'$1' cannot be extracted" 1>&2
+          success=1
+        ;;
+      esac
+
+      (( success = $success > 0 ? $success : $? ))
+      (( $success == 0 )) && (( $remove_archive == 0 )) && rm "$1"
+      shift
+    done
+    __pkgtools__at_function_exit
+    return 0
+  }
+#+END_SRC
+
+** Notification
+Base function for notification
+#+BEGIN_SRC sh
+  function notify ()
+  {
+      __pkgtools__at_function_enter notify
+      if [[ -x $(which notify-send) ]]; then
+          if [ "$HOSTNAME" = "garrido-laptop" ]; then
+              notify-send $@ > /dev/null 2>&1
+          fi
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+*** Success
+#+BEGIN_SRC sh
+  function notify_success ()
+  {
+      __pkgtools__at_function_enter notify_success
+      if [ $? -ne 0 ]; then
+          notify -t 2000 -i stock_dialog-info "Notice" "${PREEXEC_CMD:-Shell Command}"
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+*** Error
+#+BEGIN_SRC sh
+  function notify_error ()
+  {
+      __pkgtools__at_function_enter notify_error
+      if [ $? -ne 0 ]; then
+          notify -t 2000 -i stock_dialog-error "Error" "${PREEXEC_CMD:-Shell Command} $@"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+*** Warning
+#+BEGIN_SRC sh
+  function notify_warning ()
+  {
+      __pkgtools__at_function_enter notify_warning
+      if [ $? -ne 0 ]; then
+          notify -t 2000 -i stock_dialog-warning "Warning" "${PREEXEC_CMD:-Shell Command} $@"
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
+** Zsh =precmd= and =preexec=
+These two functions are only available for =zsh= shell. There are run at every
+shell command and trigger notification events in case of long time command or
+failling ones. This is pretty useful when long command such as compilation
+command are running : user can go to another desktop do whatever he wants but
+get warned when the command has finished or has failed.
+#+BEGIN_SRC sh
+  function precmd ()
+  {
+      __pkgtools__at_function_enter precmd
+      # must be first
+      notify_error
+
+      # BEGIN notify long running cmds
+      stop=$(date +'%s')
+      start=${PREEXEC_TIME:-$stop}
+      let elapsed=$stop-$start
+      max=${PREEXEC_MAX:-10}
+
+      for i in ${PREEXEC_EXCLUDE_LIST:-}; do
+          if [ "x$i" = "x$PREEXEC_CMD" ]; then
+              max=999999;
+              break;
+          fi
+      done
+
+      if [ $elapsed -gt $max ]; then
+          notify_warning "finished ($elapsed secs)"
+      fi
+      # END notify long running cmds
+
+      # Hack to make the prompt working in LAL machine
+      case "$HOSTNAME" in
+          lx*.lal.in2p3.fr|nemo*.lal.in2p3.fr|ccige*|ccage*)
+              PROMPT='%{${ZSH_THEME_NEMO_TIME}%}%T%{$reset_color%} %{${ZSH_THEME_NEMO_HOSTNAME_SUFFIX}${ZSH_THEME_NEMO_HOSTNAME}%}${ZSH_THEME_NEMO_SETUP}${HOSTNAME}%{$reset_color%} %{${ZSH_THEME_NEMO_DIRECTORY}%}${PWD/#$HOME/~}%{$reset_color%}
+  $ '
+      esac
+      __pkgtools__at_function_exit
+      return 0
+  }
+
+  function preexec ()
+  {
+      __pkgtools__at_function_enter preexec
+      if [[ "$TERM" == "screen" ]]; then
+          local CMD=${1}
+          echo -ne "\ek$CMD\e\\"
+      fi
+      # for notifying of long running commands
+      export PREEXEC_CMD=`echo $1 | awk '{ print $1; }'`
+      export PREEXEC_TIME=$(date +'%s')
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
+** SSH connection
+This should be improved by doing something as wakeonlan did with a small machine
+db.
+
+#+BEGIN_SRC sh
+  function connect ()
+  {
+      __pkgtools__at_function_enter connect
+      local use_screen=0
+      local server_name=
+      local ssh_option=
+      local append_command=
+
+      if [[ "$1" == "" ]]; then
+          echo "Missing the name of machine to connect !"
+          echo ""
+          echo "Machines can be :"
+          echo "         fzk : FZK machines (deprecated)"
+          echo "        cern : CERN machines"
+          echo " ccage|ccige : CC Lyon "
+          echo "         ovh : OVH server (thanks to Jérémie )"
+          echo "          pc : PC @ LAL"
+          echo "      laptop : Laptop @ LAL"
+          echo "         mac : Mac @ home"
+          echo "        syno : Synology @ home"
+          echo "      debian : Debian @ home"
+          echo ""
+          echo " Nemo computers :"
+          echo "     nemo* : nemo machines"
+          echo "  daq-nemo : DAQ pc-nemo12 (salle blanche)"
+          echo "   daq-lsm : DAQ lsmlx5 (interface computer @ Modane)"
+          echo ""
+          echo " LAL/Auger computers :"
+          echo " lx*, auger* ... : connect to LAL machine"
+          echo ""
+          __pkgtools__at_function_exit
+          return 1
+      fi
+
+      while [ -n "$1" ]; do
+          if [[ "$1" == "-s" ]]; then
+              use_screen=1
+          elif [[ "$1" == "fzk" ]]; then
+              ssh_option="-p 24"
+              server_name="augerlogin.fzk.de"
+          elif [[ "$1" == "cern" ]]; then
+              server_name="xgarrido@lxplus.cern.ch"
+          elif [[ "$1" == "lyon" ]]; then
+              server_name="garrido@ccage.in2p3.fr"
+          elif [[ $1 == ccige* ]]; then
+              server_name="garrido@$1.in2p3.fr"
+          elif [[ $1 == ccage* ]]; then
+              server_name="garrido@$1.in2p3.fr"
+          elif [[ "$1" == "ovh" ]]; then
+              ssh_option="-p 1234"
+              server_name="garrido@r17187.ovh.net"
+          elif [[ "$1" == "laptop" ]]; then
+              server_name="garrido@nb-76121.lal.in2p3.fr"
+          elif [[ "$1" == "mac" ]]; then
+              ssh_option="-p 24"
+              server_name="garrido@xgarrido.dyndns.org"
+          elif [[ "$1" == "syno" ]]; then
+              echo "Connecting via telnet ..."
+              telnet -l garrido xgarrido.dyndns.org
+          elif [[ "$1" == "debian" ]]; then
+              server_name="debian@xgarrido.dyndns.org"
+          elif [[ "$1" == "lx3" ]]; then
+              server_name="garrido@lx3.lal.in2p3.fr"
+          elif [[ "$1" == "daq-nemo" ]]; then
+              server_name="bipolal@pc-nemo12.lal.in2p3.fr"
+          elif [[ "$1" == "daq-lsm" ]]; then
+              server_name="nemoacq@lsmlx5.in2p3.fr"
+          else
+              if [ "${HOSTNAME}" = "garrido-laptop" ]; then
+                  if [[ "$1" == "nemo3" ]]; then
+                      ssh_option="-p 6261"
+                      server_name="garrido@localhost"
+                  elif [[ "$1" == "nemo4" ]]; then
+                      ssh_option="-p 6262"
+                      server_name="garrido@localhost"
+                  elif [[ "$1" == "pc" ]]; then
+                      ssh_option="-p 6263"
+                      server_name="garrido@localhost"
+                  else
+                      append_command+="$1 "
+                  fi
+              else
+                  if [[ "$1" == "pc" ]]; then
+                      server_name="pc-91089.lal.in2p3.fr"
+                  else
+                      server_name="$1.lal.in2p3.fr"
+                  fi
+              fi
+          fi
+          shift 1
+      done
+
+      if [ ${use_screen} -eq 0 ]; then
+          pkgtools__msg_notice "Connecting to ${server_name}..."
+          ssh -Y ${ssh_option} ${server_name} "${append_command}"
+      else
+          pkgtools__msg_notice "Connecting to ${server_name} with screen support..."
+          screen ssh -Y ${ssh_option} ${server_name}
+      fi
+
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
+** Grepping information
+*** Find a running job
+#+BEGIN_SRC sh
+  function psgrep ()
+  {
+      __pkgtools__at_function_enter psgrep
+      if [[ ! -z $1 ]] ; then
+          pkgtools__msg_notice "Grepping for processes matching $1..."
+          ps aux | grep $1 | grep -v grep
+      else
+          pkgtools__msg_error "Need name to grep for !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
+*** Find a command within history
+#+BEGIN_SRC sh
+  function hgrep ()
+  {
+      __pkgtools__at_function_enter hgrep
+      if [[ ! -z $1 ]] ; then
+          pkgtools__msg_notice "Grepping for command matching $1..."
+          history | grep $1
+      else
+          pkgtools__msg_error "Need name to grep for !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
+** Text edition
+Remove all trailing whitespace in a given file
+#+BEGIN_SRC sh
+  function remove_trailing_whitespace ()
+  {
+      __pkgtools__at_function_enter remove_trailing_whitespace
+      if [[ ! -z $1 ]] ; then
+          pkgtools__msg_notice "Removing trailing whitespace in file $1..."
+          find $1 -type f -exec sed -i 's/ *$//' '{}' ';'
+      else
+          pkgtools__msg_error "Missing filename !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+** Image edition
+*** Convert an EPS figure into tikz
+#+BEGIN_SRC sh
+  function eps2tikz ()
+  {
+      __pkgtools__at_function_enter eps2tikz
+      local use_helvetica=0
+      local keep_xfig=0
+      local eps_file=
+      local parse_switch=1
+
+      if [[ "$1" == "" ]]; then
+          echo "Usage: eps2tikz [-option] [eps files ...]"
+          echo
+          echo "Options:"
+          echo "    -k, --keep-xfig : Keep the intermediate xfig file."
+          echo
+      fi
+
+      while [ -n "$1" ]; do
+          token="$1"
+          if [[ "${token[1]}" = "-" ]]; then
+              opt=${token}
+              if [[ ${parse_switch} -eq 0 ]]; then
+                  break
+              fi
+              if [ "${opt}" = "--keep-xfig" ]; then
+                  keep_xfig=1
+              else
+                  pkgtools__msg_warning "Ignoring option '${opt}' !"
+              fi
+          else
+              arg=${token}
+              parse_switch=0
+              if [ "${arg##*.}" = "eps" ]; then
+                  eps_file="${eps_file} ${arg}"
+              else
+                  pkgtools_msg_warning "'${eps_file}' is not an Encapsulated PostScript"
+              fi
+          fi
+          shift
+      done
+
+      if [[ -z "${eps_file}" ]]; then
+          pkgtools__msg_error "Missing EPS file !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+
+      for i in $(echo ${eps_file}); do
+          if [ ! -f "${i}" ]; then
+              pkgtools__msg_warning "File ${i} does not exist! Skip it"
+              continue
+          fi
+
+          local fig_file=${i/.eps/.fig}
+          local tikz_file=${i/.eps/.tikz}
+
+          pkgtools__msg_notice "Converting ${i} file to ${tikz_file}..."
+
+          if [[ ! -x $(which pstoedit) ]]; then
+              pkgtools__msg_error "Missing 'pstoedit' binary !"
+              __pkgtools__at_function_exit
+              return 1
+          fi
+          pstoedit -f xfig ${i} > ${fig_file} 2> /dev/null
+
+          if [[ ! -x $(which fig2tikz) ]]; then
+              pkgtools__msg_error "Missing fig2tikz' binary !"
+              __pkgtools__at_function_exit
+              return 1
+          fi
+          fig2tikz ${fig_file} > ${tikz_file}
+
+          if [[ ${keep_xfig} -eq 0 ]]; then
+              rm -f ${fig_file}
+          fi
+
+      done
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
+** Misc.
+*** Grabbing video from mms link
+#+BEGIN_SRC sh
+  function grab_video ()
+  {
+      __pkgtools__at_function_enter grab_video
+      if [[ ! -z $1 ]] ; then
+          pkgtools__msg_notice "Grabing video from $1 link and saving it to /tmp/dump_video.avi..."
+          mplayer -dumpstream "$1" -dumpfile /tmp/dump_video.avi
+      else
+          pkgtools__msg_error "Missing mms link !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC

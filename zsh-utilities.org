@@ -1,0 +1,130 @@
+#+TITLE:  Zsh Utilities
+#+AUTHOR: Xavier Garrido
+#+DATE:   2013-02-08
+#+OPTIONS: toc:nil num:nil ^:nil
+
+* Introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
+This sould provides a saner set of default functions and/or aliases for =zsh=
+shell. It includes
+- many useful libraries and configurations
+- "literate" customization embedded in Org-mode files
+
+The latest version is at http://github.com/xgarrido/zsh-utilities
+
+* Installation
+:PROPERTIES:
+:CUSTOM_ID: installation
+:END:
+
+There are different way to install this plugin :
+** In your =~/.zshrc=
+1) Download the script or clone this repository:
+   #+BEGIN_SRC sh :tangle no
+     git clone git://github.com/xgarrido/zsh-utilities.git
+   #+END_SRC
+2) Source this script *at the end* of =~/.zshrc=:
+   #+BEGIN_SRC sh :tangle no
+     source /path/to/zsh-utilities/zsh-utilities.plugin.zsh
+   #+END_SRC
+3) Source =~/.zshrc= to take changes into account:
+   #+BEGIN_SRC sh :tangle no
+     source ~/.zshrc
+   #+END_SRC
+** With oh-my-zsh
+1) Download the script or clone this repository in [[http://github.com/robbyrussell/oh-my-zsh][oh-my-zsh]] plugins directory:
+   #+BEGIN_SRC sh :tangle no
+     cd ~/.oh-my-zsh/custom/plugins
+     git clone git://github.com/xgarrido/zsh-utilities.git
+   #+END_SRC
+2) Activate the plugin in =~/.zshrc= (in *last* position)
+   #+BEGIN_SRC sh :tangle no
+     plugins=( [plugins...] zsh-utilities)
+   #+END_SRC
+3) Source =~/.zshrc= to take changes into account:
+   #+BEGIN_SRC sh :tangle no
+     source ~/.zshrc
+   #+END_SRC
+** With [[https://github.com/zsh-users/antigen][antigen]] (recommended way)
+Add the following line into your =~/.zshrc= file:
+#+BEGIN_SRC sh :tangle no
+  antigen-bundle xgarrido/zsh-utilities
+#+END_SRC
+If you want to use the =nemo= theme, then write :
+#+BEGIN_SRC sh :tangle no
+  antigen-theme xgarrido/zsh-utilities nemo
+#+END_SRC
+
+* Structure
+:PROPERTIES:
+:CUSTOM_ID: structure
+:END:
+
+This =zsh-utilities.org= file is where everything begins. It is loaded
+automatically on =zsh= startup if you have well followed the [[#installation][installation]]
+process. The sole purpose of this file is to load the shell code embedded in
+it and goes on to load plugin files.
+
+* Implementation
+:PROPERTIES:
+:CUSTOM_ID: implementation
+:END:
+
+Besides the fact that [[http://orgmode.org/][org-mode]] is used, this plugin does not use the org-babel
+tangling features and thus, does not assume that emacs is properly installed and
+set. All the tangling stuff is done through a simple [[file:Makefile][Makefile]] and some [[http://www.gnu.org/software/sed/][sed]]
+tricks. In this way, it can be used without emacs. The only needed knowledge
+about org-mode is the code wrapping that *must* be done using proper
+=#+BEGIN_SRC/#+END_SRC= calls. Nevertheless, it is recommended to have a look on
+org-mode features especially folding/unfolding abilities which make the read and
+the navigation pretty easy.
+
+** Core settings
+The only "core" thing is to know where the files are.
+#+BEGIN_SRC sh
+  zsh_utilities_dir=$(dirname $0)
+#+END_SRC
+
+** Load plugin files
+The following files contain specific settings for several plugins
+
+- Message handling and function facilities in [[zsh-utilities-pkgtools.zsh][zsh-utilities-pkgtools]]
+  #+BEGIN_SRC sh
+    source ${zsh_utilities_dir}/zsh-utilities-pkgtools.zsh
+  #+END_SRC
+
+- Machine configuration in [[file:zsh-utilities-configure.org][zsh-utilities-configure]]
+  #+BEGIN_SRC sh
+    source ${zsh_utilities_dir}/zsh-utilities-configure.zsh
+  #+END_SRC
+
+- Basic zsh functions in [[file:zsh-utilities-functions.org][zsh-utilities-functions]]
+  #+BEGIN_SRC sh
+    source ${zsh_utilities_dir}/zsh-utilities-functions.zsh
+  #+END_SRC
+
+- Definition of some =shell= aliases in [[file:zsh-utilities-alias.org][zsh-utilities-alias]]
+  #+BEGIN_SRC sh
+    source ${zsh_utilities_dir}/zsh-utilities-alias.zsh
+  #+END_SRC
+
+- Emacs related functions in [[file:zsh-utilities-emacs.org][zsh-utilities-emacs]]
+  #+BEGIN_SRC sh
+    source ${zsh_utilities_dir}/zsh-utilities-emacs.zsh
+  #+END_SRC
+
+- SVN related functions in [[file:zsh-utilities-svn.org][zsh-utilities-svn]]
+  #+BEGIN_SRC sh
+    source ${zsh_utilities_dir}/zsh-utilities-svn.zsh
+  #+END_SRC
+
+- Work (mainly SuperNEMO software) related functions in [[file:zsh-utilities-work.org][zsh-utilities-work]]
+  #+BEGIN_SRC sh
+    source ${zsh_utilities_dir}/zsh-utilities-work.zsh
+  #+END_SRC
+
+** Custom plugins
+If you want to add your plugins to the list you can =source= it here. This
+section my change latter if a =custom= directory is one day provided.
