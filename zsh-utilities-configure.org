@@ -20,26 +20,26 @@ way it should be easy to add its own configuration.
       # This must be done by default
       export HOSTNAME=$(hostname)
 
-       case "$HOSTNAME" in
-           garrido-laptop|pc-91089)
-               __configure_laptop
-               ;;
-           lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
-               __configure_lal_machines
-               ;;
-           ccige*|ccage*)
-               __configure_lyon_machines
-               ;;
-           *)
-               type __configure_$(hostname) | grep -q "shell function" > /dev/null 2>&1
-               if [ $? -eq 0 ]; then
-                   __configure_$(hostname)
-               else
-                   pkgtools__msg_warning "No configuration for machine '$(hostname)' has been found ! Use default one"
-                   __configure_default
-               fi
-               ;;
-       esac
+      case "$HOSTNAME" in
+          garrido-laptop|pc-91089)
+              __configure_laptop
+              ;;
+          lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
+              __configure_lal_machines
+              ;;
+          ccige*|ccage*)
+              __configure_lyon_machines
+              ;;
+          *)
+              type __configure_$(hostname) | grep -q "shell function" > /dev/null 2>&1
+              if [ $? -eq 0 ]; then
+                  __configure_$(hostname)
+              else
+                  pkgtools__msg_warning "No configuration for machine '$(hostname)' has been found ! Use default one"
+                  __configure_default
+              fi
+              ;;
+      esac
 
       __pkgtools__at_function_exit
       return 0
@@ -64,10 +64,10 @@ way it should be easy to add its own configuration.
       #[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
       # Homemade latex style
-      pkgtools__set_variable TEXMFHOME ${HOME}/.config/texmf
+      pkgtools__reset_variable TEXMFHOME ${HOME}/.config/texmf
 
       # Load Go Programming Language
-      pkgtools__set_variable GOPATH ${HOME}/Development/go
+      pkgtools__reset_variable GOPATH ${HOME}/Development/go
       pkgtools__add_path_to_PATH ${GOPATH}/bin
 
       # Adding also /usr/local/lib to LD_LIBRARY_PATH
@@ -77,8 +77,8 @@ way it should be easy to add its own configuration.
       pkgtools__add_path_to_PATH ${HOME}/.bin
 
       # Set HOST
-      pkgtools__set_variable HOST ${HOSTNAME}
-      pkgtools__set_variable WORKDIR ${HOME}/Workdir
+      pkgtools__reset_variable HOST ${HOSTNAME}
+      pkgtools__reset_variable WORKDIR ${HOME}/Workdir
 
       __pkgtools__at_function_exit
       return 0
@@ -92,7 +92,7 @@ way it should be easy to add its own configuration.
       __pkgtools__at_function_enter __configure_lal_machines
 
       umask 022
-      pkgtools__set_variable WORKDIR /exp/nemo/garrido
+      pkgtools__reset_variable WORKDIR /exp/nemo/garrido
       pkgtools__add_path_to_PATH /exp/nemo/install/bin
       pkgtools__add_path_to_PATH ${WORKDIR}/software/bin
       pkgtools__add_path_to_LD_LIBRARY_PATH ${WORKDIR}/software/lib
@@ -107,9 +107,9 @@ way it should be easy to add its own configuration.
       pkgtools__add_path_to_env_variable PYTHONPATH ${WORKDIR}/software/lib/python2.6/site-packages
 
       # Load Go Programming Language
-      pkgtools__set_variable GOROOT ${WORKDIR}/software/go
+      pkgtools__reset_variable GOROOT ${WORKDIR}/software/go
       pkgtools__add_path_to_PATH ${WORKDIR}/software/go/bin
-      pkgtools__set_variable GOPATH ${WORKDIR}/development/go
+      pkgtools__reet_variable GOPATH ${WORKDIR}/development/go
       pkgtools__add_path_to_PATH $GOPATH/bin
 
       __pkgtools__at_function_exit
@@ -121,8 +121,8 @@ way it should be easy to add its own configuration.
   function __configure_lyon_machines ()
   {
       __pkgtools__at_function_enter __configure_lyon_machines
-      pkgtools__set_variable SW_BASE_DIR ${GROUP_DIR}/sw2
-      pkgtools__set_variable SCRATCH_DIR /sps/nemo/scratch/garrido
+      pkgtools__reset_variable SW_BASE_DIR ${GROUP_DIR}/sw2
+      pkgtools__reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
       source ${SW_BASE_DIR}/config/current/nemo_basics_sw.bash > /dev/null 2>&1 \
           && do_nemo_basics_sw_setup > /dev/null 2>&1
       __pkgtools__at_function_exit

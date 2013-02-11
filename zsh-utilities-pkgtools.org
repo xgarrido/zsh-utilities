@@ -9,8 +9,7 @@ This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
 This file provides a set of =pkgtools= functions to ease definition and use of
 zsh functions, to handle message log and to have some function facilities. Thus,
 it is a quite central place since most of the function of [[file:zsh-utilities.org][Zsh Utilities]] relies
-to this file. The original idea was by F. Mauger and can be found at [[https://nemo.lpc-caen.in2p3.fr/wiki/pkgtools][LPC Wiki
-website]].
+to this file. The original idea was by F. Mauger and can be found at [[https://nemo.lpc-caen.in2p3.fr/wiki/pkgtools][LPC Wiki website]].
 
 ** Default values
 #+BEGIN_SRC sh
@@ -768,5 +767,15 @@ relevant path.
   {
       unset $1
       return 0
+  }
+#+END_SRC
+*** Reset variable
+This is just a combination of the two previous functions to force the export a
+variable.
+#+BEGIN_SRC sh
+  function pkgtools__reset_variable ()
+  {
+      pkgtools__unset_variable $1
+      pkgtools__set_variable $1 $2
   }
 #+END_SRC

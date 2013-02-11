@@ -11,7 +11,6 @@
 local_dir=$(dirname $0)
 make -C ${local_dir} > /dev/null
 
-# Reset path at runtime
-reset_path
-
+source ${local_dir}/zsh-utilities.zsh
+__configure_machine
 # end

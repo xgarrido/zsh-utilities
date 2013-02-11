@@ -1,8 +1,9 @@
-FILES  = zsh-utilities-alias.org	\
+FILES  = zsh-utilities.org              \
+	 zsh-utilities-alias.org	\
+	 zsh-utilities-configure.org    \
 	 zsh-utilities-functions.org	\
-	 zsh-utilities-pkgtools.org	\
-	 zsh-utilities-path.org		\
 	 zsh-utilities-emacs.org	\
+	 zsh-utilities-pkgtools.org	\
 	 zsh-utilities-svn.org		\
 	 zsh-utilities-work.org
 FILESO = $(FILES:.org=.zsh)
@@ -24,5 +25,5 @@ doc/index.html:
 	echo "Documentation published to doc/"
 
 clean:
-	rm -f *.aux *.tex *.pdf starter-kit*.el starter-kit*.html doc/*html *~ .starter-kit*.part.org
+	rm -f *.aux *.tex *.pdf zsh-utilities-*.zsh zsh-utilities-*.html doc/*html *~
 	rm -rf doc

@@ -76,10 +76,10 @@ Besides the fact that [[http://orgmode.org/][org-mode]] is used, this plugin doe
 tangling features and thus, does not assume that emacs is properly installed and
 set. All the tangling stuff is done through a simple [[file:Makefile][Makefile]] and some [[http://www.gnu.org/software/sed/][sed]]
 tricks. In this way, it can be used without emacs. The only needed knowledge
-about org-mode is the code wrapping that *must* be done using proper
-=#+BEGIN_SRC/#+END_SRC= calls. Nevertheless, it is recommended to have a look on
-org-mode features especially folding/unfolding abilities which make the read and
-the navigation pretty easy.
+about org-mode is the code wrapping that *must* be done using proper code blocks
+calls (see [[http://orgmode.org/manual/Structure-of-code-blocks.html#Structure-of-code-blocks][org babel documentation]]). Nevertheless, it is recommended to have a
+look on org-mode features especially folding/unfolding abilities which make the
+read and the navigation pretty easy.
 
 ** Core settings
 The only "core" thing is to know where the files are.
@@ -88,7 +88,8 @@ The only "core" thing is to know where the files are.
 #+END_SRC
 
 ** Load plugin files
-The following files contain specific settings for several plugins
+The following files contain specific settings for several plugins. *Keep this
+order* since there are some dependencies.
 
 - Message handling and function facilities in [[zsh-utilities-pkgtools.zsh][zsh-utilities-pkgtools]]
   #+BEGIN_SRC sh
