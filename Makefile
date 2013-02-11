@@ -13,6 +13,7 @@ all: zsh
 zsh: $(FILESO)
 
 %.zsh: %.org
+	@echo "Tangling $< file"
 	@sed -e '/:tangle\s\+no/d' $< | sed -n '/BEGIN_SRC/,/END_SRC/p' | sed -e '/END_SRC/d' -e '/BEGIN_SRC/d' > $@
 
 doc: doc/index.html

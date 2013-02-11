@@ -21,12 +21,12 @@ This file provides some function in relation with =subversion= management.
       return 0
   }
 #+END_SRC
-** Better svn status
+** Better SVN status
 #+BEGIN_SRC sh
   function svnstatus ()
   {
       __pkgtools__at_function_enter svnstatus
-      local templist=$(svn status $*)
+      templist=$(svn status $*)
       echo "$(echo $templist | grep '^?' | wc -l) unversioned files/directories"
       echo $templist | grep -v '^?'
       __pkgtools__at_function_exit
@@ -49,8 +49,7 @@ This file provides some function in relation with =subversion= management.
   {
       __pkgtools__at_function_enter svn_prompt_info
       if [ $(in_svn) ]; then
-          echo "$ZSH_PROMPT_BASE_COLOR$ZSH_THEME_SVN_PROMPT_PREFIX\
-  $ZSH_THEME_REPO_NAME_COLOR$(svn_get_repo_name)$ZSH_PROMPT_BASE_COLOR$ZSH_THEME_SVN_PROMPT_SUFFIX$ZSH_PROMPT_BASE_COLOR$(svn_dirty)$ZSH_PROMPT_BASE_COLOR"
+          echo "$ZSH_PROMPT_BASE_COLOR$ZSH_THEME_SVN_PROMPT_PREFIX$(svn_get_repo_name)$ZSH_THEME_SVN_PROMPT_SUFFIX$(svn_dirty)"
       fi
       __pkgtools__at_function_exit
       return 0
@@ -64,9 +63,9 @@ This file provides some function in relation with =subversion= management.
       if [ $(in_svn) ]; then
           # LC_MESSAGES=en_GB svn info | sed -n 's/Repository\ Root:\ .*\///p' | read SVN_ROOT
           # LC_MESSAGES=en_GB svn info | sed -n "s/URL:\ .*$SVN_ROOT\///p" | sed "s/\/.*$//"
-          local info=$(LC_MESSAGES=en_GB svn info)
-          local repo=$(echo ${info} | sed -n 's/URL:\ .*\///p')
-          local rev=$(echo ${info} | sed -n 's/Revision:\ //p')
+          info=$(LC_MESSAGES=en_GB svn info)
+          repo=$(echo ${info} | sed -n 's/URL:\ .*\///p')
+          rev=$(echo ${info} | sed -n 's/Revision:\ //p')
           echo "${repo}|${rev}"
       fi
       __pkgtools__at_function_exit
@@ -92,7 +91,7 @@ This file provides some function in relation with =subversion= management.
     {
         __pkgtools__at_function_exit svn_dirty_choose
         if [ $(in_svn) ]; then
-            local s=$(svn status|grep -E '^\s*[ACDIM!L]' 2>/dev/null)
+            s=$(svn status|grep -E '^\s*[ACDIM!L]' 2>/dev/null)
             if [ $s ]; then
                 echo $1
             else
