@@ -3,7 +3,7 @@
 #+DATE:   2013-02-08
 #+OPTIONS: toc:nil num:nil ^:nil
 
-This is part of the [[file:zsh-utilities.org][Zsh Utilities Kit]].
+This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
 
 * Zsh Utilities - Configuration
 This file sets different environment variables given the hostname of the
