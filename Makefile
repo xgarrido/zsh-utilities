@@ -9,20 +9,13 @@ FILES  = zsh-utilities.org              \
 	 zsh-utilities-work.org
 FILESO = $(FILES:.org=.zsh)
 
-THEMES  = zsh-utilities-themes.org
-THEMESO = $(THEMES:.org=)
-
 all: zsh
 
-zsh: $(FILESO) $(THEMESO)
+zsh: $(FILESO)
 
 %.zsh: %.org
 	@echo "Tangling $< file"
 	@sed -e '/:tangle\s\+no/d' $< | sed -n '/BEGIN_SRC/,/END_SRC/p' | sed -e '/END_SRC/d' -e '/BEGIN_SRC/d' > $@
-
-%: %.org
-	@echo "Tangling $< theme file $@"
-#	@sed -e '/:tangle\s\+no/d' $< | sed -n '/BEGIN_SRC/,/END_SRC/p' | sed -e '/END_SRC/d' -e '/BEGIN_SRC/d' > $@
 
 doc: doc/index.html
 
