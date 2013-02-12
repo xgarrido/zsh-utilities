@@ -1,0 +1,17 @@
+#+TITLE:  Zsh Utilities Settings
+#+AUTHOR: Xavier Garrido
+#+DATE:   2013-02-12
+#+OPTIONS: toc:nil num:nil ^:nil
+
+* Zsh Utilities - Settings
+This file provides some default settings for =zsh= (currently not so much).
+
+** Disable autocorrect
+#+BEGIN_SRC sh
+  unsetopt correct_all
+#+END_SRC
+
+** Binding keys
+#+BEGIN_SRC sh
+  bindkey '\C-z' undo
+#+END_SRC
