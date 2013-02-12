@@ -13,7 +13,7 @@ This file provides some function in relation with =subversion= management.
   function __in_svn ()
   {
       __pkgtools__at_function_enter __in_svn
-      if [[ -d .svn ]]; then
+      if [[ ! -d .svn ]]; then
           __pkgtools__at_function_exit
           return 1
       fi
@@ -48,7 +48,7 @@ This file provides some function in relation with =subversion= management.
   function svn_prompt_info ()
   {
       __pkgtools__at_function_enter svn_prompt_info
-      if [ $(in_svn) ]; then
+      if __in_svn; then
           echo "$ZSH_PROMPT_BASE_COLOR$ZSH_THEME_SVN_PROMPT_PREFIX$(svn_get_repo_name)$ZSH_THEME_SVN_PROMPT_SUFFIX$(svn_dirty)"
       fi
       __pkgtools__at_function_exit
@@ -60,7 +60,7 @@ This file provides some function in relation with =subversion= management.
   function svn_get_repo_name ()
   {
       __pkgtools__at_function_enter svn_get_repo_name
-      if [ $(in_svn) ]; then
+      if __in_svn; then
           # LC_MESSAGES=en_GB svn info | sed -n 's/Repository\ Root:\ .*\///p' | read SVN_ROOT
           # LC_MESSAGES=en_GB svn info | sed -n "s/URL:\ .*$SVN_ROOT\///p" | sed "s/\/.*$//"
           info=$(LC_MESSAGES=en_GB svn info)
@@ -78,7 +78,7 @@ This file provides some function in relation with =subversion= management.
   function svn_get_rev_nr ()
   {
       __pkgtools__at_function_enter svn_get_rev_nr
-      if [ $(in_svn) ]; then
+      if __in_svn; then
           svn info 2> /dev/null | sed -n s/Revision:\ //p
       fi
       __pkgtools__at_function_exit
@@ -90,7 +90,7 @@ This file provides some function in relation with =subversion= management.
     function svn_dirty_choose ()
     {
         __pkgtools__at_function_exit svn_dirty_choose
-        if [ $(in_svn) ]; then
+        if __in_svn; then
             s=$(svn status|grep -E '^\s*[ACDIM!L]' 2>/dev/null)
             if [ $s ]; then
                 echo $1
@@ -106,7 +106,7 @@ This file provides some function in relation with =subversion= management.
     {
         __pkgtools__at_function_enter svn_dirty
         svn_dirty_choose $ZSH_THEME_SVN_PROMPT_DIRTY $ZSH_THEME_SVN_PROMPT_CLEAN
-          __pkgtools__at_function_exit
+        __pkgtools__at_function_exit
         return 0
-  }
+    }
 #+END_SRC

@@ -777,6 +777,7 @@ variable.
   {
       pkgtools__unset_variable $1
       pkgtools__set_variable $1 $2
+      return 0
   }
 #+END_SRC
 *** Check binary presence
@@ -784,10 +785,6 @@ variable.
   function pkgtools__has_binary ()
   {
       which $1 > /dev/null 2>&1
-      if [ $? -eq 0 ]; then
-          return 1
-      else
-          return 0
-      fi
+      return $?
   }
 #+END_SRC

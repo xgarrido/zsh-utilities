@@ -26,9 +26,9 @@ This file defines some basic but nevertheless fundamental aliases.
 ** Greping stuff
 #+BEGIN_SRC sh
   alias grep='grep --color=auto'
-  if [ -x $(pkgtools__has_binary ack-grep) ]; then
+  if pkgtools__has_binary ack-grep; then
       alias ack='ack-grep'
-  elif [ -x $(pkgtools__has_binary /usr/bin/vendor_perl/ack) ]; then
+  elif pkgtools__has_binary /usr/bin/vendor_perl/ack; then
       alias ack='/usr/bin/vendor_perl/ack'
   fi
 #+END_SRC
