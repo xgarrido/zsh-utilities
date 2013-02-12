@@ -109,7 +109,7 @@ way it should be easy to add its own configuration.
       # Load Go Programming Language
       pkgtools__reset_variable GOROOT ${WORKDIR}/software/go
       pkgtools__add_path_to_PATH ${WORKDIR}/software/go/bin
-      pkgtools__reet_variable GOPATH ${WORKDIR}/development/go
+      pkgtools__reset_variable GOPATH ${WORKDIR}/development/go
       pkgtools__add_path_to_PATH $GOPATH/bin
 
       __pkgtools__at_function_exit
