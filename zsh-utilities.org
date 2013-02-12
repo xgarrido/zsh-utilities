@@ -91,7 +91,7 @@ The only "core" thing is to know where the files are.
 The following files contain specific settings for several plugins. *Keep this
 order* since there are some dependencies.
 
-- Message handling and function facilities in [[zsh-utilities-pkgtools.zsh][zsh-utilities-pkgtools]]
+- Message handling and function facilities in [[file:zsh-utilities-pkgtools.org][zsh-utilities-pkgtools]]
   #+BEGIN_SRC sh
     source ${zsh_utilities_dir}/zsh-utilities-pkgtools.zsh
   #+END_SRC
