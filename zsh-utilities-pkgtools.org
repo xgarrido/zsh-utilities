@@ -779,3 +779,15 @@ variable.
       pkgtools__set_variable $1 $2
   }
 #+END_SRC
+*** Check binary presence
+#+BEGIN_SRC sh
+  function pkgtools__has_binary ()
+  {
+      which $1 > /dev/null 2>&1
+      if [ $? -eq 0 ]; then
+          return 1
+      else
+          return 0
+      fi
+  }
+#+END_SRC
