@@ -98,7 +98,7 @@ order* since there are some dependencies.
 
 - Some =zsh= default and custom settings in [[file:zsh-utilities-settings.org][zsh-utilities-settings]]
   #+BEGIN_SRC sh
-    source ${zsh_utilities_dir}/zsh-utilities-settings.org
+    source ${zsh_utilities_dir}/zsh-utilities-settings.zsh
   #+END_SRC
 
 - Machine configuration in [[file:zsh-utilities-configure.org][zsh-utilities-configure]]
