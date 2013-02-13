@@ -51,6 +51,7 @@ way it should be easy to add its own configuration.
   function __configure_default ()
   {
       __pkgtools__at_function_enter __configure_default
+      umask 022
       __pkgtools__at_function_exit
       return 0
   }
