@@ -7,7 +7,8 @@
 # Requirements:
 # Status: not intended to be distributed yet
 
-# Test on time consumption show no significant time change when using Makefile command
+# Test on time consumption show no significant time change when using Makefile
+# command
 local_dir=$(dirname $0)
 make -C ${local_dir} > /dev/null
 
