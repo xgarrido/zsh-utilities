@@ -52,10 +52,6 @@ Add the following line into your =~/.zshrc= file:
 #+BEGIN_SRC sh :tangle no
   antigen-bundle xgarrido/zsh-utilities
 #+END_SRC
-If you want to use the =nemo= theme, then write :
-#+BEGIN_SRC sh :tangle no
-  antigen-theme xgarrido/zsh-utilities nemo
-#+END_SRC
 
 * Structure
 :PROPERTIES:
