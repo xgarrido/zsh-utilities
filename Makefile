@@ -22,7 +22,7 @@ zsh: $(FILESO)
 
 doc: doc/index.html
 
-doc/index.html:
+doc/index.html: $(FILESO) zsh-utilities-publish.org
 	mkdir -p doc
 	$(EMACS) --batch -Q --eval '(org-babel-load-file "zsh-utilities-publish.org")'
 	rm zsh-utilities-publish.el
