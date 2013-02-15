@@ -1,0 +1,49 @@
+#+TITLE:  Zsh Utilities Work
+#+AUTHOR: Xavier Garrido
+#+DATE:   2013-02-08
+#+OPTIONS: toc:nil num:nil ^:nil
+
+This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
+
+This file is used to publish the zsh Utilities documentation to =.html=
+in the =doc/= directory.
+
+#+BEGIN_SRC emacs-lisp :results silent
+  (unless (boundp 'org-publish-project-alist)
+    (setq org-publish-project-alist nil))
+
+  (let* ((this-dir (file-name-directory (or load-file-name buffer-file-name)))
+        (org-export-htmlize-output-type 'css)
+        (load-path (cons (expand-file-name "elpa" this-dir) load-path))
+        (package-archives '(("original" . "http://tromey.com/elpa/"))))
+    ;; load up htmlize
+    (package-initialize)
+    (let ((package 'htmlize))
+      (unless (or (member package package-activated-list)
+                  (functionp package))
+        (package-install package)))
+    (require 'htmlize)
+    (org-export-htmlize-generate-css)
+    ;; define the org-publish-project for the zsh utilities
+    (add-to-list
+     'org-publish-project-alist
+     `("zsh-utilities-documentation"
+       :base-directory ,this-dir
+       :base-extension "org"
+       :style "<link rel=\"stylesheet\" href=\"emacs.css\" type=\"text/css\"/>
+  <style type=\"text/css\">
+    pre{background:#232323; color:#E6E1DC;}
+    code{font-size:10pt; color:#353535;}
+    .outline-text-2{margin-left: 1em;}
+    .outline-text-3{margin-left: 2em;}
+    .outline-text-3{margin-left: 3em;}
+  </style>"
+       :publishing-directory ,(expand-file-name "doc" this-dir)
+       :index-filename "zsh-utilities.org"
+       :html-postamble nil))
+    ;; publish the zsh utilities
+    (org-publish-project "zsh-utilities-documentation" 'force)
+    ;; copy starter-zsh-utilities.html to index.html
+    (copy-file (expand-file-name "zsh-utilities.html" (expand-file-name "doc" this-dir))
+               (expand-file-name "index.html" (expand-file-name "doc" this-dir)) t))
+#+END_SRC

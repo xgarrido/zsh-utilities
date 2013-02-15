@@ -1,3 +1,6 @@
+# Name of your emacs binary
+EMACS=emacs
+
 FILES  = zsh-utilities.org              \
 	 zsh-utilities-alias.org	\
 	 zsh-utilities-configure.org    \
