@@ -1,0 +1,58 @@
+#+TITLE:  Zsh Utilities Modules
+#+AUTHOR: Xavier Garrido
+#+DATE:   2013-02-16
+#+OPTIONS: toc:nil num:nil ^:nil
+
+This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
+
+* Zsh Utilities - Modules
+This file adds some configuration to external resources. Each program
+configuration is done item per item
+
+** [[https://github.com/clvv/fasd][fasd]]
+Command-line productivity booster, offers quick access to files and directories,
+inspired by autojump, z and v.
+
+*** Return if command not found
+#+BEGIN_SRC sh
+  # Return if requirements are not found.
+  if (( ! $+commands[fasd] )); then
+    return 1
+  fi
+#+END_SRC
+
+*** Initialization
+#+BEGIN_SRC sh
+  cache_file="${HOME}/.config/zsh/tmp/fasd_cache.zsh"
+  if [[ "${commands[fasd]}" -nt "$cache_file" || ! -s "$cache_file" ]]; then
+    # Set the base init arguments.
+    init_args=(zsh-hook)
+
+    # Set fasd completion init arguments, if applicable.
+#    if zstyle -t ':prezto:module:completion' loaded; then
+      init_args+=(zsh-ccomp zsh-ccomp-install zsh-wcomp zsh-wcomp-install)
+#    fi
+
+    # Cache init code.
+    fasd --init "$init_args[@]" >! "$cache_file" 2> /dev/null
+  fi
+  source "$cache_file"
+  unset cache_file init_args
+#+END_SRC
+
+*** Additional function for fast =cd=
+#+BEGIN_SRC sh
+  function fasd_cd {
+    local fasd_ret="$(fasd -d "$@")"
+    if [[ -d "$fasd_ret" ]]; then
+      cd "$fasd_ret"
+    else
+      print "$fasd_ret"
+    fi
+  }
+#+END_SRC
+*** Aliases
+**** Change the current working directory interactively
+#+BEGIN_SRC sh
+  alias j='fasd_cd -i'
+#+END_SRC
