@@ -127,6 +127,13 @@ order* since there are some dependencies.
     source ${zsh_utilities_dir}/zsh-utilities-work.zsh
   #+END_SRC
 
+** Modules
+Modules are defined in [[file:zsh-utilities-modules.org][zsh-utilities-modules]] files. This file provides some
+configuration for external resources.
+#+BEGIN_SRC sh
+  source ${zsh_utilities_dir}/zsh-utilities-modules.zsh
+#+END_SRC
+
 ** Custom plugins
 If you want to add your plugins to the list you can =source= it here. This
 section my change latter if a =custom= directory is one day provided.

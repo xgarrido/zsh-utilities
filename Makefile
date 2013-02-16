@@ -6,6 +6,7 @@ FILES  = zsh-utilities.org              \
 	 zsh-utilities-configure.org    \
 	 zsh-utilities-functions.org	\
 	 zsh-utilities-emacs.org	\
+	 zsh-utilities-modules.org	\
 	 zsh-utilities-pkgtools.org	\
 	 zsh-utilities-svn.org		\
 	 zsh-utilities-settings.org     \
