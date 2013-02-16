@@ -11,7 +11,7 @@ configuration is done item per item
 
 ** [[https://github.com/clvv/fasd][fasd]]
 Command-line productivity booster, offers quick access to files and directories,
-inspired by autojump, z and v.
+inspired by autojump, z and v. Most of the following code is stolen from [[https://github.com/sorin-ionescu/prezto/tree/master/modules/fasd][prezto]].
 
 *** Return if command not found
 #+BEGIN_SRC sh
@@ -51,8 +51,29 @@ inspired by autojump, z and v.
     fi
   }
 #+END_SRC
+
 *** Aliases
 **** Change the current working directory interactively
 #+BEGIN_SRC sh
   alias j='fasd_cd -i'
+#+END_SRC
+
+** [[http://rsync.samba.org/][rsync]]
+*** Return if command not found
+#+BEGIN_SRC sh
+  if (( ! $+commands[rsync] )); then
+    return 1
+  fi
+#+END_SRC
+*** Aliases
+#+BEGIN_SRC sh
+  alias rsync='noglob rsync'
+  _rsync_cmd='rsync --verbose --progress --human-readable --compress --archive --hard-links --one-file-system'
+
+  alias rsync-copy="${_rsync_cmd}"
+  alias rsync-move="${_rsync_cmd} --remove-source-files"
+  alias rsync-update="${_rsync_cmd} --update"
+  alias rsync-synchronize="${_rsync_cmd} --update --delete"
+
+  unset _rsync_cmd
 #+END_SRC
