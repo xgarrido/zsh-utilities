@@ -13,5 +13,4 @@ local_dir=$(dirname $0)
 make -C ${local_dir} > /dev/null
 
 source ${local_dir}/zsh-utilities.zsh
-__configure_machine
 # end
