@@ -48,9 +48,12 @@ Options for =less= program are the following
 
 #+BEGIN_SRC sh
   export PAGER='less -M -N -X'
-  if [ -x $(pkgtools__has_binary /usr/local/bin/src-hilite-lesspipe.sh) ]; then
-      export LESSOPEN="| src-hilite-lesspipe.sh %s"
-      export LESS=' -R '
-      alias more='less -M -N -X'
+  alias more='less -M -N -X'
+  if pkgtools__has_binary /usr/local/bin/src-hilite-lesspipe.sh; then
+      pkgtools__set_variable LESSOPEN "| src-hilite-lesspipe.sh %s"
+      pkgtools__set_variable LESS " -R "
+  else
+      pkgtools__unset_variable LESSOPEN
+      pkgtools__unset_variable LESS
   fi
 #+END_SRC
