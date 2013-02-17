@@ -198,6 +198,8 @@ aborting execution.
 #+BEGIN_SRC sh
   alias ffab='fab --fabfile=/tmp/fabfile.py --skip-bad-hosts --warn-only'
   alias fup_antigen='fab_manager update_antigen'
+  alias fup_aggregator='fab_manager update_aggregator'
+  alias fup_snailware='fab_manager update_snailware'
 #+END_SRC
 
 *** Postamble
