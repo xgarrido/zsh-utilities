@@ -788,3 +788,12 @@ variable.
       return $?
   }
 #+END_SRC
+
+*** Check if laptop is @ LAL
+#+BEGIN_SRC sh
+  function pkgtools__at_LAL ()
+  {
+      ping -c 1 pc-nemo9 > /dev/null 2>&1
+      return $?
+  }
+#+END_SRC
