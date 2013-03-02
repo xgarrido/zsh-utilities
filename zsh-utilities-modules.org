@@ -9,7 +9,7 @@ This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
 This file adds some configuration to external resources. Each program
 configuration is done item per item. The preamble is just here to ensure the
 binary is present. Thus each item is embedded between a preamble and postamble
-which is a basic =if= command.
+block code which is a basic =if= command.
 
 ** dotfiles
 [[http://pypi.python.org/pypi/dotfiles/][dotfiles]] is a tool to make managing your dotfile symlinks in $HOME easy,
@@ -97,111 +97,6 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
 
   unset _rsync_cmd
 #+END_SRC
-*** Postamble
-#+BEGIN_SRC sh
-  fi
-#+END_SRC
-
-** Fabric
-[[http://docs.fabfile.org/en/1.5/][Fabric]] is a Python (2.5 or higher) library and command-line tool for
-streamlining the use of SSH for application deployment or systems administration
-tasks.
-
-It provides a basic suite of operations for executing local or remote shell
-commands (normally or via sudo) and uploading/downloading files, as well as
-auxiliary functionality such as prompting the running user for input, or
-aborting execution.
-
-*** Preamble
-#+BEGIN_SRC sh
-  if (( $+commands[fab] )); then
-#+END_SRC
-
-*** Fabric manager
-#+BEGIN_SRC sh
-  function fab_manager ()
-  {
-      __pkgtools__default_values
-      __pkgtools__at_function_enter fab_manager
-
-      local append_list_of_options_arg
-      local append_list_of_cmd_arg
-      while [ -n "$1" ]; do
-          local token="$1"
-          if [ "${token[0,1]}" = "-" ]; then
-              local opt=${token}
-              append_list_of_options_arg+="${opt} "
-              if [ "${opt}" = "-h" -o "${opt}" = "--help" ]; then
-                  return 0
-              elif [ "${opt}" = "-d" -o "${opt}" = "--debug" ]; then
-                  pkgtools__msg_using_debug
-              elif [ "${opt}" = "-D" -o "${opt}" = "--devel" ]; then
-                  pkgtools__msg_using_devel
-              elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
-                  pkgtools__msg_using_verbose
-              elif [ "${opt}" = "-W" -o "${opt}" = "--no-warning" ]; then
-                  pkgtools__msg_not_using_warning
-              elif [ "${opt}" = "-q" -o "${opt}" = "--quiet" ]; then
-                  pkgtools__msg_using_quiet
-                  export PKGTOOLS_MSG_QUIET=1
-              elif [ "${opt}" = "-i" -o "${opt}" = "--interactive" ]; then
-                  pkgtools__ui_interactive
-              elif [ "${opt}" = "-b" -o "${opt}" = "--batch" ]; then
-                  pkgtools__ui_batch
-              elif [ "${opt}" = "--gui" ]; then
-                  pkgtools__ui_using_gui
-              fi
-          else
-              if [ "x${token}" != "x" ]; then
-                  append_list_of_cmd_arg+="${token} "
-              fi
-          fi
-          shift
-      done
-
-      pkgtools__msg_notice "append_list_of_cmd_arg=${append_list_of_cmd_arg}"
-      pkgtools__msg_notice "append_list_of_options_arg=${append_list_of_options_arg}"
-
-      mkdir -p /tmp/${USER}
-      local zshfab_file=/tmp/${USER}/.zshfab.zsh
-      echo "source ~/.zshrc > /dev/null 2>&1 && \$@" > ${zshfab_file}
-
-      # Use this local function to do the evaluation on execution and not on 'compilation'
-      __fab () {
-          eval ffab "$@"
-      }
-
-      for icmd in ${=append_list_of_cmd_arg}; do
-          pkgtools__msg_notice "Running ${icmd} mode"
-          case $HOSTNAME in
-              garrido-laptop)
-                  user=garrido
-                  hosts="garrido@lx3.la.in2p3.fr"
-                  ;;
-              lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
-                  user=nemo
-                  hosts="pc-nemo4,pc-nemo6,pc-nemo8,garrido@pc-nemo9"
-                  ;;
-          esac
-          __fab --user=${user} --hosts=${hosts} ${icmd}
-      done
-      __pkgtools__at_function_exit
-      return 0
-  }
-
-  _fab_manager () {
-      compadd \
-          $(fab --fabfile=/tmp/fabfile.py --list | grep -v commands)
-  }
-  compdef _fab_manager fab_manager
-#+END_SRC
-
-*** Aliases
-#+BEGIN_SRC sh
-  alias ffab='fab --fabfile=/tmp/fabfile.py --parallel'
-  alias fup_antigen='fab_manager update_antigen'
-#+END_SRC
-
 *** Postamble
 #+BEGIN_SRC sh
   fi
