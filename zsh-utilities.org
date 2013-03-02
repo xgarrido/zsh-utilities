@@ -27,7 +27,7 @@ There are different way to install this plugin :
    #+END_SRC
 2) Source this script *at the end* of =~/.zshrc=:
    #+BEGIN_SRC sh :tangle no
-     source /path/to/zsh-utilities/zsh-utilities.plugin.zsh
+     source /path/to/zsh-utilities/init.zsh
    #+END_SRC
 3) Source =~/.zshrc= to take changes into account:
    #+BEGIN_SRC sh :tangle no
