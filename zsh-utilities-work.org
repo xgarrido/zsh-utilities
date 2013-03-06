@@ -43,3 +43,20 @@ This file contains some function/alias in relation with "work" topic.
 #+BEGIN_SRC sh
   alias root='root -l'
 #+END_SRC
+
+** SN@ilWare aliases
+*** =snemo_processing= shortcuts
+#+BEGIN_SRC sh
+  function do_snemo_full_chain ()
+  {
+      __pkgtools__at_function_enter do_snemo_full_chain
+      if pkgtools__has_binary snemo_processing; then
+          snemo_processing -m full_chain -c $SNAILWARE_SIMULATION_DIR/configuration/current/module_manager.conf \
+              -l sng4 -l snanalysis -l snanalysis_bio -l snreconstruction -M 100 -% 10
+      else
+          pkgtools__msg_error "SN@ilWare has not been set"
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
