@@ -220,7 +220,7 @@ Base function for notification
   function notify_error ()
   {
       if [ $? -ne 0 ]; then
-          notify -t 2000 -i stock_dialog-error "" "${PREEXEC_CMD:-Shell Command} $@"
+          notify -t 2000 -i stock_dialog-error " " "${PREEXEC_CMD:-Shell Command} $@"
           return 1
       fi
       return 0
@@ -230,7 +230,7 @@ Base function for notification
 #+BEGIN_SRC sh
   function notify_warning ()
   {
-      notify -t 3000 -i stock_dialog-warning "" "${PREEXEC_CMD:-Shell Command} $@"
+      notify -t 3000 -i stock_dialog-warning " " "${PREEXEC_CMD:-Shell Command} $@"
       return 0
   }
 #+END_SRC
