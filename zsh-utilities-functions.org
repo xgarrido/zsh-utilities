@@ -252,8 +252,6 @@ get warned when the command has finished or has failed.
       start=${PREEXEC_TIME:-$stop}
       let elapsed=$stop-$start
       max=${PREEXEC_MAX:-10}
-      echo "max=$max"
-      echo "elapsed=$elapsed"
 
       for i in ${PREEXEC_EXCLUDE_LIST:-}; do
           if [ "x$i" = "x$PREEXEC_CMD" ]; then
@@ -263,7 +261,6 @@ get warned when the command has finished or has failed.
       done
 
       if [ $elapsed -gt $max ]; then
-          echo "finished"
           notify_warning "finished ($elapsed secs)"
       fi
       # END notify long running cmds
