@@ -195,13 +195,11 @@ Base function for notification
 #+BEGIN_SRC sh
   function notify ()
   {
-      __pkgtools__at_function_enter notify
-      if [[ -x $(which notify-send) ]]; then
+      if pkgtools__has_binary notify-send; then
           if [ "$HOSTNAME" = "garrido-laptop" ]; then
               notify-send $@ > /dev/null 2>&1
           fi
       fi
-      __pkgtools__at_function_exit
       return 0
   }
 #+END_SRC
@@ -221,13 +219,10 @@ Base function for notification
 #+BEGIN_SRC sh
   function notify_error ()
   {
-      __pkgtools__at_function_enter notify_error
       if [ $? -ne 0 ]; then
           notify -t 2000 -i stock_dialog-error "Error" "${PREEXEC_CMD:-Shell Command} $@"
-          __pkgtools__at_function_exit
           return 1
       fi
-      __pkgtools__at_function_exit
       return 0
   }
 #+END_SRC
@@ -235,11 +230,7 @@ Base function for notification
 #+BEGIN_SRC sh
   function notify_warning ()
   {
-      __pkgtools__at_function_enter notify_warning
-      if [ $? -ne 0 ]; then
-          notify -t 2000 -i stock_dialog-warning "Warning" "${PREEXEC_CMD:-Shell Command} $@"
-      fi
-      __pkgtools__at_function_exit
+      notify -t 3000 -i stock_dialog-warning "Warning" "${PREEXEC_CMD:-Shell Command} $@"
       return 0
   }
 #+END_SRC
@@ -253,7 +244,6 @@ get warned when the command has finished or has failed.
 #+BEGIN_SRC sh
   function precmd ()
   {
-      __pkgtools__at_function_enter precmd
       # must be first
       notify_error
 
@@ -262,6 +252,8 @@ get warned when the command has finished or has failed.
       start=${PREEXEC_TIME:-$stop}
       let elapsed=$stop-$start
       max=${PREEXEC_MAX:-10}
+      echo "max=$max"
+      echo "elapsed=$elapsed"
 
       for i in ${PREEXEC_EXCLUDE_LIST:-}; do
           if [ "x$i" = "x$PREEXEC_CMD" ]; then
@@ -271,6 +263,7 @@ get warned when the command has finished or has failed.
       done
 
       if [ $elapsed -gt $max ]; then
+          echo "finished"
           notify_warning "finished ($elapsed secs)"
       fi
       # END notify long running cmds
@@ -280,13 +273,11 @@ get warned when the command has finished or has failed.
           __load_scheme
       fi
 
-      __pkgtools__at_function_exit
       return 0
   }
 
   function preexec ()
   {
-      __pkgtools__at_function_enter preexec
       if [[ "$TERM" == "screen" ]]; then
           local CMD=${1}
           echo -ne "\ek$CMD\e\\"
@@ -294,7 +285,6 @@ get warned when the command has finished or has failed.
       # for notifying of long running commands
       export PREEXEC_CMD=`echo $1 | awk '{ print $1; }'`
       export PREEXEC_TIME=$(date +'%s')
-      __pkgtools__at_function_exit
       return 0
   }
 #+END_SRC
