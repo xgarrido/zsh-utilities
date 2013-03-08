@@ -45,6 +45,12 @@ This file contains some function/alias in relation with "work" topic.
 #+END_SRC
 
 ** SN@ilWare aliases
+*** Setup
+#+BEGIN_SRC sh
+  alias do_nemo_setup='aggregator setup cadfael'
+  alias do_snailware_setup='do_nemo_setup && snailware setup all'
+#+END_SRC
+
 *** =snemo_processing= shortcuts
 #+BEGIN_SRC sh
   function do_snemo_full_chain ()
