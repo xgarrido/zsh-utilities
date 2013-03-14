@@ -66,3 +66,12 @@ This file contains some function/alias in relation with "work" topic.
       return 0
   }
 #+END_SRC
+
+** Lyon ccali aliases
+#+BEGIN_SRC sh
+  if [[ $HOSTNAME = ccage* ]]; then
+      alias qjob_nemo_user='echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| grep nemo | awk "{print \$5}" | sort | uniq -c'
+      alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | wc -l'
+      alias qjob_my_run='echo -ne "Number of running jobs: ";qstat | awk "{if (\$5 == \"r\") print 1}" | wc -l'
+  fi
+#+END_SRC
