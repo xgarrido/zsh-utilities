@@ -535,6 +535,27 @@ Remove all trailing whitespace in a given file
   }
 #+END_SRC
 
+*** Grab point with =dexter=
+[[http://sourceforge.net/projects/dexter/][Dexter]] is a little java program to interactively or semi-automatically extract
+data from scanned graphs. In its applet incarnation it is used by the
+Astrophysics Data System.
+
+#+BEGIN_SRC sh
+  function dexter ()
+  {
+      __pkgtools__at_function_enter dexter
+      if [[ "$1" == "" ]]; then
+          pkgtools__msg_error "Missing the name of image file !"
+          __pkgtools__at_function_exit
+          return 1
+      else
+          java -jar /home/garrido/Workdir/Development/java/dexter/Debuxter.jar $1
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
 ** Misc.
 *** Grabbing video from mms link
 #+BEGIN_SRC sh
