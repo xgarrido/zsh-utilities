@@ -545,7 +545,8 @@ Astrophysics Data System.
   {
       __pkgtools__at_function_enter dexter
       if [[ "$1" == "" ]]; then
-          pkgtools__msg_error "Missing the name of image file !"
+          echo "Usage: dexter [image files ...]"
+          echo
           __pkgtools__at_function_exit
           return 1
       else
