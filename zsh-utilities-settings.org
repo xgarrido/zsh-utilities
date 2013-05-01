@@ -15,3 +15,12 @@ This file provides some default settings for =zsh= (currently not so much).
 #+BEGIN_SRC sh
   bindkey '\C-z' undo
 #+END_SRC
+
+#+BEGIN_SRC sh
+  # bind up and down arrow keys
+  for keycode in '[' '0'; do
+      bindkey "^[${keycode}A" history-substring-search-up
+      bindkey "^[${keycode}B" history-substring-search-down
+  done
+  unset keycode
+#+END_SRC
