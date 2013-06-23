@@ -35,82 +35,90 @@ generic function name given the linux system installed : "debian-like" system or
 #+END_SRC
 *** Implement generic function
 #+BEGIN_SRC sh
-    alias pkg-notify='notify -t 2000 -i stock_dialog-info "${__pkg_mgr}"'
-    if __is_debian; then
+      alias pkg-notify='notify -t 2000 -i stock_dialog-info "${__pkg_mgr}"'
+      if __is_debian; then
 
-      function install ()
-      {
-          __pkgtools__at_function_enter install
-          sudo ${__pkg_mgr} install -y $* && pkg-notify "Installed $@"
-          __pkgtools__at_function_exit
-          return 0
-      }
-      compdef "_deb_packages uninstalled" install
+        function install ()
+        {
+            __pkgtools__at_function_enter install
+            sudo ${__pkg_mgr} install -y $* && pkg-notify "Installed $@"
+            __pkgtools__at_function_exit
+            return 0
+        }
+        compdef "_deb_packages uninstalled" install
 
-      function remove ()
-      {
-          __pkgtools__at_function_enter remove
-          sudo ${__pkg_mgr} remove -y $* && pkg-notify "Removed $@"
-          __pkgtools__at_function_exit
-          return 0
-      }
-      compdef "_deb_packages installed" remove
+        function remove ()
+        {
+            __pkgtools__at_function_enter remove
+            sudo ${__pkg_mgr} remove -y $* && pkg-notify "Removed $@"
+            __pkgtools__at_function_exit
+            return 0
+        }
+        compdef "_deb_packages installed" remove
 
-      function upgrade ()
-      {
-          __pkgtools__at_function_enter upgrade
-          sudo ${__pkg_mgr} update && sudo ${__pkg_mgr} upgrade && pkg-notify "Upgrade done"
-          __pkgtools__at_function_exit
-          return 0
-      }
+        function upgrade ()
+        {
+            __pkgtools__at_function_enter upgrade
+            sudo ${__pkg_mgr} update && sudo ${__pkg_mgr} upgrade && pkg-notify "Upgrade done"
+            __pkgtools__at_function_exit
+            return 0
+        }
 
-      function search ()
-      {
-          __pkgtools__at_function_enter search
-          apt-cache search $@
-          __pkgtools__at_function_exit
-          return 0
-      }
+        function search ()
+        {
+            __pkgtools__at_function_enter search
+            apt-cache search $@
+            __pkgtools__at_function_exit
+            return 0
+        }
 
-      function purge ()
-      {
-          __pkgtools__at_function_enter purge
-          sudo ${__pkg_mgr} purge && pkg-notify "Purge done"
-          __pkgtools__at_function_exit
-          return 0
-      }
+        function purge ()
+        {
+            __pkgtools__at_function_enter purge
+            sudo ${__pkg_mgr} purge && pkg-notify "Purge done"
+            __pkgtools__at_function_exit
+            return 0
+        }
 
-      function distupgrade ()
-      {
-          __pkgtools__at_function_enter distupgrade
-          sudo ${__pkg_mgr} update && sudo ${__pkg_mgr} dist-upgrade && pkg-notify "Distribution upgrade done"
-          __pkgtools__at_function_exit
-          return 0
-      }
+        function distupgrade ()
+        {
+            __pkgtools__at_function_enter distupgrade
+            sudo ${__pkg_mgr} update && sudo ${__pkg_mgr} dist-upgrade && pkg-notify "Distribution upgrade done"
+            __pkgtools__at_function_exit
+            return 0
+        }
 
-      function autoremove ()
-      {
-          __pkgtools__at_function_enter autoremove
-          sudo ${__pkg_mgr} autoremove && pkg-notify "Autoremove done"
-          __pkgtools__at_function_exit
-          return 0
-      }
-  else
-      function upgrade ()
-      {
-          __pkgtools__at_function_enter upgrade
-          ${__pkg_mgr} -Suy && pkg-notify "Upgrade done"
-          __pkgtools__at_function_exit
-          return 0
-      }
+        function autoremove ()
+        {
+            __pkgtools__at_function_enter autoremove
+            sudo ${__pkg_mgr} autoremove && pkg-notify "Autoremove done"
+            __pkgtools__at_function_exit
+            return 0
+        }
+    else
+        function upgrade ()
+        {
+            __pkgtools__at_function_enter upgrade
+            ${__pkg_mgr} -Suy && pkg-notify "Upgrade done"
+            __pkgtools__at_function_exit
+            return 0
+        }
 
-      function search ()
-      {
-          __pkgtools__at_function_enter search
-          ${__pkg_mgr} -Ss $@
-          __pkgtools__at_function_exit
-          return 0
-      }
+        function search ()
+        {
+            __pkgtools__at_function_enter search
+            ${__pkg_mgr} -Ss $@
+            __pkgtools__at_function_exit
+            return 0
+        }
+
+        function purge ()
+        {
+            __pkgtools__at_function_enter purge
+            ${__pkg_mgr} -Qdt && pkg-notify "Purge done"
+            __pkgtools__at_function_exit
+            return 0
+        }
   fi
 #+END_SRC
 
