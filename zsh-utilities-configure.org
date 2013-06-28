@@ -24,7 +24,7 @@ way it should be easy to add its own configuration.
           garrido-laptop|pc-91089)
               __configure_laptop
               ;;
-          lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
+          *.lal.in2p3.fr)
               __configure_lal_machines
               ;;
           ccige*|ccage*)

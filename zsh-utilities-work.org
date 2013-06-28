@@ -59,8 +59,8 @@ list of Bayeux components.
 #+BEGIN_SRC sh
     alias build_snailware_legacy='do_nemo_setup && snailware setup channel && snailware git-branch --branch legacy bayeux falaise && \
   snrebuild datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield falaise'
-    alias build_snailware_master='do_nemo_setup && snailware git-branch --branch master bayeux sngeometry && \
-  snrebuild bayeux sngeometry sncore'
+    alias build_snailware_master='do_nemo_setup && snailware git-branch --branch master bayeux sngeometry sncore snvisualization && \
+  snrebuild bayeux sngeometry sncore snvisualization'
 #+END_SRC
 
 *** =snemo_processing= shortcuts
