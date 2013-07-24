@@ -112,7 +112,8 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
   cmd='colout "\[notice.*$|\[information.*$" 4 \ |
        colout "\[error.*$|\[fatal.*$" 1 \ |
        colout "\[warning.*$" 5 \ |
-       colout "\[debug.*$" 2 normal'
+       colout "\[debug.*$" 2 normal |
+       colout "\[trace.*$" 28 normal'
   alias pcolout=${cmd}
 #+END_SRC
 *** Postamble
