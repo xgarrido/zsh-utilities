@@ -12,10 +12,11 @@ This file provides some default settings for =zsh= (currently not so much).
 #+END_SRC
 
 ** Binding keys
+*** Undo
 #+BEGIN_SRC sh
   bindkey '\C-z' undo
 #+END_SRC
-
+*** Move history search
 #+BEGIN_SRC sh
   # bind up and down arrow keys
   for keycode in '[' '0'; do
@@ -23,4 +24,9 @@ This file provides some default settings for =zsh= (currently not so much).
       bindkey "^[${keycode}B" history-substring-search-down
   done
   unset keycode
+#+END_SRC
+*** For/backward word
+#+BEGIN_SRC sh
+  bindkey "^[[1;3C" forward-word
+  bindkey "^[[1;3D" backward-word
 #+END_SRC
