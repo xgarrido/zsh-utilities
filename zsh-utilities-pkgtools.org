@@ -788,7 +788,14 @@ variable.
       return $?
   }
 #+END_SRC
-
+*** Get binary path
+#+BEGIN_SRC sh
+  function pkgtools__get_binary_path ()
+  {
+      echo $(whereis $1 | cut -d' ' -f2)
+      return 0
+  }
+#+END_SRC
 *** Check if laptop is @ LAL
 #+BEGIN_SRC sh
   function pkgtools__at_LAL ()

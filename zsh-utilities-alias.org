@@ -40,6 +40,19 @@ This file defines some basic but nevertheless fundamental aliases.
   alias ve='emacsclient -nw'
 #+END_SRC
 
+*** Cask function to use it everywhere
+#+BEGIN_SRC sh
+  function cask ()
+  {
+      if pkgtools__has_binary cask; then
+           (
+               cd ~/.emacs.d
+               $(pkgtools__get_binary_path cask) $@
+           )
+      fi
+  }
+#+END_SRC
+
 ** Terminal pager program
 Options for =less= program are the following
 + =-M= : shows more detailed prompt, including file position
