@@ -23,6 +23,14 @@ This file defines some basic but nevertheless fundamental aliases.
   alias lsd='ls -l | grep ^d'
 #+END_SRC
 
+** Alias =cp= to =gcp=
+[[http://wiki.goffi.org/wiki/Gcp][=gcp= ]] is a python script to provide a user friendly frontend to =cp= unix
+command.
+#+BEGIN_SRC sh
+  alias cp='/usr/bin/gcp -f'
+  compdef _files gcp
+#+END_SRC
+
 ** Greping stuff
 #+BEGIN_SRC sh
   alias grep='grep --color=auto'
