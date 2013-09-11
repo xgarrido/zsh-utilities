@@ -60,19 +60,28 @@ list of Bayeux components.
     alias build_snailware_legacy='do_nemo_setup && snailware setup channel && snailware git-branch --branch legacy bayeux falaise && \
   snrebuild datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield falaise'
     alias build_snailware_master='do_nemo_setup && snailware git-branch --branch master bayeux sngeometry sncore snvisualization && \
-  snrebuild bayeux sngeometry sncore snvisualization'
+  snrebuild bayeux sngeometry sncore snvisualization snreconstruction'
 #+END_SRC
 
-*** =snemo_processing= shortcuts
+*** =dpp_processing= shortcuts
 #+BEGIN_SRC sh
-  function do_snemo_full_chain ()
+  function do_snemo_chain ()
   {
-      __pkgtools__at_function_enter do_snemo_full_chain
-      if pkgtools__has_binary snemo_processing; then
-          snemo_processing -m full_chain -c $SNAILWARE_SIMULATION_DIR/configuration/current/module_manager.conf \
-              -l sng4 -l snanalysis -l snanalysis_bio -l snreconstruction -M 100 -% 10
+      __pkgtools__at_function_enter do_snemo_chain
+      if [ -z $1 ]; then
+          pkgtools__msg_error "Missing module name !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      if pkgtools__has_binary dpp_processing; then
+          dpp_processing -m $1 -c $SNAILWARE_SIMULATION_DIR/configuration/current/module_manager.conf \
+              -l mctoools_g4 -l mctools_bio \
+              -l sngeometry -l sncore -l sncore_bio -l snanalysis -l snanalysis_bio -l snreconstruction \
+              -M 100 -% 10
       else
           pkgtools__msg_error "SN@ilWare has not been set"
+          __pkgtools__at_function_exit
+          return 1
       fi
       __pkgtools__at_function_exit
       return 0
@@ -87,4 +96,22 @@ list of Bayeux components.
       alias qjob_my_run='echo -ne "Number of running jobs: ";qstat | awk "{if (\$5 == \"r\") print 1}" | wc -l'
       alias qjob_summary='qjob_my_total; qjob_my_run; qjob_nemo_user'
   fi
+#+END_SRC
+
+** Activate g++ warnings
+#+BEGIN_SRC sh
+  function activate_cxxflags ()
+  {
+      __pkgtools__at_function_enter activate_cxxflags
+      export CXXFLAGS="-Waddress -Warray-bounds -Wc++11-compat -Wchar-subscripts      \
+    -Wenum-compare -Wcomment -Wformat -Wmain -Wmaybe-uninitialized -Wmissing-braces \
+    -Wnonnull -Wparentheses -Wreorder -Wreturn-type -Wsequence-point -Wsign-compare \
+    -Wstrict-aliasing -Wstrict-overflow=1 -Wswitch -Wtrigraphs -Wuninitialized      \
+    -Wunknown-pragmas -Wunused-function -Wunused-label -Wunused-value               \
+    -Wunused-variable -Wvolatile-register-var -Wclobbered -Wempty-body              \
+    -Wignored-qualifiers -Wmissing-field-initializers -Wsign-compare -Wtype-limits  \
+    -Wuninitialized -Wunused-parameter -Wunused-but-set-parameter"
+      __pkgtools__at_function_exit
+      return 0
+  }
 #+END_SRC

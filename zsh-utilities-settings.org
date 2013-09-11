@@ -6,6 +6,10 @@
 * Zsh Utilities - Settings
 This file provides some default settings for =zsh= (currently not so much).
 
+** Set extended globbing
+#+BEGIN_SRC sh
+  setopt extended_glob
+#+END_SRC
 ** Disable autocorrect
 #+BEGIN_SRC sh
   unsetopt correct_all

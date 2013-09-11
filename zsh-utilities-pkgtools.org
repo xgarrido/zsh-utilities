@@ -752,7 +752,7 @@ relevant path.
 #+BEGIN_SRC sh
   function pkgtools__set_variable ()
   {
-      if env | grep -q ^$1=
+      if env | grep -q "^$1="
       then
           pkgtools__msg_warning "$1 is already set and exported"
       else
