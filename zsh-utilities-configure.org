@@ -69,6 +69,7 @@ way it should be easy to add its own configuration.
 
       # Homemade latex style
       pkgtools__reset_variable TEXMFHOME ${HOME}/.config/texmf
+      pkgtools__reset_variable TEXMFOUTPUT /tmp
 
       # Load Go Programming Language
       pkgtools__reset_variable GOPATH ${HOME}/Development/go

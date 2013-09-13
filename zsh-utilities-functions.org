@@ -550,7 +550,7 @@ Remove all trailing whitespace in a given file
               __pkgtools__at_function_exit
               return 1
           fi
-          pstoedit -f xfig ${i} > ${fig_file} 2> /dev/null
+          pstoedit -f xfig "${i}" > ${fig_file} 2> /dev/null
 
           if [[ ! -x $(which fig2tikz) ]]; then
               pkgtools__msg_error "Missing fig2tikz' binary !"
