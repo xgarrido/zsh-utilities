@@ -115,3 +115,137 @@ list of Bayeux components.
       return 0
   }
 #+END_SRC
+** Generate talk skeleton
+
+#+BEGIN_SRC sh
+    function make_new_talk ()
+    {
+        __pkgtools__default_values
+        __pkgtools__at_function_enter make_new_talk
+
+        # Internal functions
+        --mnt::usage () {
+        }
+
+        local append_list_of_options
+        local append_list_of_arguments
+
+        local title
+        local author="Xavier Garrido"
+        local latex_class="beamer"
+        local latex_class_options="supernemo,nologo"
+        while [ -n "$1" ]; do
+            local token=$1
+            if [ "${token[0,1]}" = "-" ]; then
+                local opt=${token}
+                append_list_of_options+="${opt} "
+                if [ "${opt}" = "-h" -o "${opt}" = "--help" ]; then
+                    --mnt::usage
+                    return 0
+                elif [ "${opt}" = "-d" -o "${opt}" = "--debug" ]; then
+                    pkgtools__msg_using_debug
+                elif [ "${opt}" = "-D" -o "${opt}" = "--devel" ]; then
+                    pkgtools__msg_using_devel
+                elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
+                    pkgtools__msg_using_verbose
+                elif [ "${opt}" = "-W" -o "${opt}" = "--no-warning" ]; then
+                    pkgtools__msg_not_using_warning
+                elif [ "${opt}" = "-q" -o "${opt}" = "--quiet" ]; then
+                    pkgtools__msg_using_quiet
+                    export PKGTOOLS_MSG_QUIET=1
+                elif [ "${opt}" = "-i" -o "${opt}" = "--interactive" ]; then
+                    pkgtools__ui_interactive
+                elif [ "${opt}" = "-b" -o "${opt}" = "--batch" ]; then
+                    pkgtools__ui_batch
+                elif [ "${opt}" = "--gui" ]; then
+                    pkgtools__ui_using_gui
+                elif [ "${opt}" = "--title" ]; then
+                    shift 1; title="$1"
+                elif [ "${opt}" = "--author" ]; then
+                    shift 1; author="$1"
+                elif [ "${opt}" = "--latex-class" ]; then
+                    shift 1; latex_class="$1"
+                elif [ "${opt}" = "--latex-class-options" ]; then
+                    shift 1; latex_class_options="$1"
+                fi
+            else
+                arg=${token}
+                if [ "x${arg}" != "x" ]; then
+                    append_list_of_arguments+="${arg} "
+                fi
+            fi
+            shift 1
+        done
+
+        # Remove last space
+        append_list_of_arguments=${append_list_of_arguments%?}
+        append_list_of_options=${append_list_of_options%?}
+        pkgtools__msg_devel "append_list_of_arguments=${append_list_of_arguments}"
+        pkgtools__msg_devel "append_list_of_options=${append_list_of_options}"
+
+        # Local functions
+        local base=~/Workdir/Talk
+        local dirname="$(echo ${append_list_of_arguments} | awk '{print $1}')"
+        local directory=${base}/${dirname}
+        --mnt::create_directories () {
+            mkdir -p ${directory}/{pdf,plot}
+        }
+
+        --mnt::generate_org_skeleton () {
+            local org_file=${directory}/talk.org
+            echo "#+TITLE:  ${title}"                               > ${org_file}
+            echo "#+AUTHOR: ${author}"                             >> ${org_file}
+            echo "#+DATE:   $(date +%d/%m/%Y)"                     >> ${org_file}
+            echo "#+OPTIONS: toc:nil ^:{}"                         >> ${org_file}
+            echo "#+STARTUP: beamer"                               >> ${org_file}
+            echo "#+LATEX_CLASS: ${latex_class}"                   >> ${org_file}
+            echo "#+LATEX_CLASS_OPTIONS: [${latex_class_options}]" >> ${org_file}
+        }
+
+        --mnt::generate_makefile () {
+            local make_file=${directory}/Makefile
+            echo "# -*- mode: makefile; -*-"                                         > ${make_file}
+            echo "EMACS=emacs"                                                      >> ${make_file}
+            echo "BATCH=\$(EMACS) --batch --no-init-file --eval \"(require 'org)\"" >> ${make_file}
+            echo "files_org = \$(wildcard *.org)"                                   >> ${make_file}
+            echo "files_pdf = \$(files_org:.org=.pdf)"                              >> ${make_file}
+            echo                                                                    >> ${make_file}
+            echo "all: \$(files_pdf)"                                               >> ${make_file}
+            echo                                                                    >> ${make_file}
+            echo "%.pdf: %.org"                                                     >> ${make_file}
+            echo "\t@echo \"NOTICE: Exporting \$< to pdf...\";"                     >> ${make_file}
+            echo "\t@\$(BATCH) --visit \"\$<\" --funcall org-beamer-export-to-pdf"  >> ${make_file}
+            echo "\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"                         >> ${make_file}
+            echo                                                                    >> ${make_file}
+            echo "clean:"                                                           >> ${make_file}
+            echo "\t@rm -rf latex.d *.tex *.pdf *.fdb* *~"                          >> ${make_file}
+        }
+
+        --mnt::import_talk () {
+            (
+                svn mkdir https://svn.lal.in2p3.fr/users/garrido/Talk/${dirname} -m "create ${dirname} directory"
+                svn import ${directory} https://svn.lal.in2p3.fr/users/garrido/Talk/${dirname} -m "import trunk directory"
+                rm -rf ${base}/${dirname}
+                mkdir -p ${base}/${dirname}
+                cd ${base}/${dirname}
+                git svn init --prefix=svn/ --trunk=. https://svn.lal.in2p3.fr/users/garrido/Talk/${dirname}
+                git svn fetch
+            )
+        }
+
+        --mnt::create_directories
+        --mnt::generate_org_skeleton
+        --mnt::generate_makefile
+        --mnt::import_talk
+
+        unset title author latex_class latex_class_options
+        unset dirname directory base
+        unset append_list_of_arguments append_list_of_options
+        unfunction -- --mnt::usage
+        unfunction -- --mnt::generate_org_skeleton
+        unfunction -- --mnt::create_directories
+        unfunction -- --mnt::import_talk
+        __pkgtools__at_function_exit
+        return 0
+    }
+#+END_SRC

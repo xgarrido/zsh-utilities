@@ -409,24 +409,24 @@ db.
 
   function _connect ()
   {
-        local -a _machines
-        _machines=(
-            ccage:'CC Lyon job machines'
-            ccige:'CC Lyon interactive machines'
-            laptop:'Laptop machine'
-            pc:'PC server machine @ LAL'
-            mac:'iMac machine'
-            syno:'Synology server @ home'
-            debian:'Debian server @ home'
-            lx3:'lxplus machine @ LAL'
-            nemo3:'nemo3 machine @ LAL'
-            nemo4:'nemo4 machine @ LAL'
-            pc-nemo4:'V. Treytak machine'
-            pc-nemo5:'H. Gomez machine'
-            pc-nemo6:'Student machine'
-            pc-nemo8:'G. Eurin machine'
-        )
-        _describe -t _machines 'SSH machines' _machines && ret=0
+      local -a _machines
+      _machines=(
+          ccage:'CC Lyon job machines'
+          ccige:'CC Lyon interactive machines'
+          laptop:'Laptop machine'
+          pc:'PC server machine @ LAL'
+          mac:'iMac machine'
+          syno:'Synology server @ home'
+          debian:'Debian server @ home'
+          lx3:'lxplus machine @ LAL'
+          nemo3:'nemo3 machine @ LAL'
+          nemo4:'nemo4 machine @ LAL'
+          pc-nemo4:'V. Treytak machine'
+          pc-nemo5:'H. Gomez machine'
+          pc-nemo6:'Student machine'
+          pc-nemo8:'G. Eurin machine'
+      )
+      _describe -t _machines 'SSH machines' _machines && ret=0
   }
 #+END_SRC
 
