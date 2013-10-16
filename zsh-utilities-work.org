@@ -225,13 +225,13 @@ list of Bayeux components.
 
       --mnt::generate_gitignore () {
           local gitignore=${directory}/.gitignore
-          echo "*.pdf"         >> ${gitignore}
-          echo "*.tex"         >> ${gitignore}
-          echo "*.auxlock"     >> ${gitignore}
-          echo "*.vrb"         >> ${gitignore}
-          echo "*.fdb_latexmk" >> ${gitignore}
-          echo "*.fls"         >> ${gitignore}
-          echo "*.aux"         >> ${gitignore}
+          echo "/talk*.pdf"         >> ${gitignore}
+          echo "/talk*.tex"         >> ${gitignore}
+          echo "/talk*.auxlock"     >> ${gitignore}
+          echo "/talk*.vrb"         >> ${gitignore}
+          echo "/talk*.fdb_latexmk" >> ${gitignore}
+          echo "/talk*.fls"         >> ${gitignore}
+          echo "/talk*.aux"         >> ${gitignore}
           echo "*~"            >> ${gitignore}
           echo "latex.d/"      >> ${gitignore}
         }
