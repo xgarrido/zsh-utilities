@@ -101,23 +101,23 @@ way it should be easy to add its own configuration.
 
       umask 022
       pkgtools__reset_variable WORKDIR /exp/nemo/garrido
-      pkgtools__add_path_to_PATH /exp/nemo/install/bin
-      pkgtools__add_path_to_PATH ${WORKDIR}/software/bin
-      pkgtools__add_path_to_LD_LIBRARY_PATH ${WORKDIR}/software/lib
-      pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/install/lib
+      # pkgtools__add_path_to_PATH /exp/nemo/install/bin
+      # pkgtools__add_path_to_PATH ${WORKDIR}/software/bin
+      # pkgtools__add_path_to_LD_LIBRARY_PATH ${WORKDIR}/software/lib
+      # pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/install/lib
 
       # Add TeXLive 2012
       pkgtools__add_path_to_PATH ${WORKDIR}/software/texlive/2012/bin/x86_64-linux
       pkgtools__unset_variable TEXMFCNF
       pkgtools__unset_variable TETEXDIR
 
-      # Add python path
-      pkgtools__add_path_to_env_variable PYTHONPATH ${WORKDIR}/software/lib/python2.6/site-packages
+      # # Add python path
+      # pkgtools__add_path_to_env_variable PYTHONPATH ${WORKDIR}/software/lib/python2.6/site-packages
 
-      # Load Go Programming Language
-      pkgtools__reset_variable GOROOT ${WORKDIR}/software/go
-      pkgtools__add_path_to_PATH ${WORKDIR}/software/go/bin
-      pkgtools__reset_variable GOPATH ${WORKDIR}/development/go
+      # # Load Go Programming Language
+      # pkgtools__reset_variable GOROOT ${WORKDIR}/software/go
+      # pkgtools__add_path_to_PATH ${WORKDIR}/software/go/bin
+      # pkgtools__reset_variable GOPATH ${WORKDIR}/development/go
 
       __pkgtools__at_function_exit
       return 0
