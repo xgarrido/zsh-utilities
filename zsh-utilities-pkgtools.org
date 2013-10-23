@@ -27,6 +27,8 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
       __pkgtools__msg_funcname_deps=""
       __pkgtools__ui_interactive=1
       __pkgtools__ui_gui=0
+      __pkgtools__os=$(uname -s)
+      __pkgtools__arch=$(uname -m | sed 's/ //g')
       return 0
   }
   __pkgtools__default_values
@@ -802,5 +804,25 @@ variable.
   {
       ping -c 1 pc-nemo9 > /dev/null 2>&1
       return $?
+  }
+#+END_SRC
+
+*** Get system environment
+#+BEGIN_SRC sh
+  function pkgtools__get_os ()
+  {
+      echo "${__pkgtools__os}"
+      return 0
+  }
+
+  function pkgtools__get_arch ()
+  {
+      echo "${__pkgtools__arch}"
+      return 0
+  }
+  function pkgtools__get_sys ()
+  {
+      echo "$(pkgtools__get_os)-$(pkgtools__get_arch)"
+      return 0
   }
 #+END_SRC
