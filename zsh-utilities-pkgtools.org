@@ -790,6 +790,25 @@ variable.
       return $?
   }
 #+END_SRC
+*** Check last command status
+#+BEGIN_SRC sh
+  function pkgtools__last_command_succeeds ()
+  {
+      if [ $? -ne 0 ]; then
+          return 1
+      else
+          return 0
+      fi
+  }
+  function pkgtools__last_command_fails ()
+  {
+      if [ $? -ne 0 ]; then
+          return 0
+      else
+          return 1
+      fi
+  }
+#+END_SRC
 *** Get binary path
 #+BEGIN_SRC sh
   function pkgtools__get_binary_path ()
