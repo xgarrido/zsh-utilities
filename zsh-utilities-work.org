@@ -54,13 +54,19 @@ This file contains some function/alias in relation with "work" topic.
 *** Working configuration
 Legacy configuration load the =legacy= svn branch to work with a full software
 installation. Bayeux components are ordered by dependency and since there is a
-change wrt to =geomtools= vs. =materials= dependency, one has to set the full
-list of Bayeux components.
+change wrt to =geomtools= vs. =materials= dependency as well as =genbb_help=
+depending on =dpp= for programs, we have to set the full list of Bayeux
+components.
 #+BEGIN_SRC sh
-    alias build_snailware_legacy='do_nemo_setup && snailware setup channel && snailware git-branch --branch legacy bayeux falaise && \
-  snrebuild datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield falaise'
-    alias build_snailware_master='do_nemo_setup && snailware git-branch --branch master bayeux sngeometry sncore snvisualization && \
-  snrebuild bayeux sngeometry sncore snvisualization snreconstruction'
+  alias build_snailware_legacy='do_nemo_setup && snailware setup channel && \
+  snailware git-branch --branch legacy datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
+  snailware git-branch --branch legacy sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis && \
+  snrebuild datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
+  snrebuild sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis'
+  alias build_snailware_master='do_nemo_setup && snailware setup channel && \
+  snailware git-branch --branch master bayeux sngeometry sncore snreconstruction snvisualization && \
+  snailware git-branch --branch xg_devel snanalysis && \
+  snrebuild bayeux falaise'
 #+END_SRC
 
 *** =dpp_processing= shortcuts
