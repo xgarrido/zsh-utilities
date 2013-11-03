@@ -45,9 +45,9 @@ command.
 
 ** Emacs shortcuts
 #+BEGIN_SRC sh
-  alias emacs='emacsclient -c -n'
-  alias iemacs='emacsclient -n'
-  alias ve='emacsclient -nw'
+  alias emacs='emacsclient -c -n -a "" -e "(sk-desktop)"'
+  alias iemacs='emacsclient -n -a "" -e "(sk-desktop)"'
+  alias ve='emacsclient -nw -a "" -e "(sk-desktop)"'
 #+END_SRC
 
 *** Cask function to use it everywhere
