@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Zsh Utilities Functions</title>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Xavier Garrido" />
+<link rel="stylesheet" href="stylesheets/styles.css">
+                <link rel="stylesheet" href="stylesheets/org-pygments.css">
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Zsh Utilities Functions</h1>
+<p>
+This is part of the <a href="zsh-utilities.html">Zsh Utilities</a>.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Zsh Utilities - Functions</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This file provides several functions for very different use. See the description
+to understand the aim of each of them.
+</p>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1">Package manager</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+This part defines some function in relation with package management. It defines
+generic function name given the linux system installed : "debian-like" system or
+<a href="https://www.archlinux.org/">archlinux</a>.
+</p>
+</div>
+
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1">Check linux system</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__is_debian</span> ()
+{
+    <span class="org-keyword">if</span> pkgtools__has_binary apt-fast; <span class="org-keyword">then</span>
+        <span class="org-variable-name">__pkg_mgr</span>=<span class="org-string">"apt-fast"</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">elif</span> pkgtools__has_binary apt-get; <span class="org-keyword">then</span>
+        <span class="org-variable-name">__pkg_mgr</span>=<span class="org-string">"apt-get"</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">elif</span> pkgtools__has_binary yaourt; <span class="org-keyword">then</span>
+        <span class="org-variable-name">__pkg_mgr</span>=<span class="org-string">"yaourt"</span>
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">elif</span> pkgtools__has_binary pacman; <span class="org-keyword">then</span>
+        <span class="org-variable-name">__pkg_mgr</span>=<span class="org-string">"pacman"</span>
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2">Implement generic function</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<div class="org-src-container">
+
+<pre class="src src-sh">    <span class="org-builtin">alias</span> pkg-notify=<span class="org-string">'notify -t 2000 -i stock_dialog-info "${__pkg_mgr}"'</span>
+    <span class="org-keyword">if</span> __is_debian; <span class="org-keyword">then</span>
+
+      <span class="org-keyword">function</span> <span class="org-function-name">install</span> ()
+      {
+          __pkgtools__at_function_enter install
+          sudo ${<span class="org-variable-name">__pkg_mgr</span>} install -y $<span class="org-variable-name">*</span> &amp;&amp; pkg-notify <span class="org-string">"Installed $@"</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+      compdef <span class="org-string">"_deb_packages uninstalled"</span> install
+
+      <span class="org-keyword">function</span> <span class="org-function-name">remove</span> ()
+      {
+          __pkgtools__at_function_enter remove
+          sudo ${<span class="org-variable-name">__pkg_mgr</span>} remove -y $<span class="org-variable-name">*</span> &amp;&amp; pkg-notify <span class="org-string">"Removed $@"</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+      compdef <span class="org-string">"_deb_packages installed"</span> remove
+
+      <span class="org-keyword">function</span> <span class="org-function-name">upgrade</span> ()
+      {
+          __pkgtools__at_function_enter upgrade
+          sudo ${<span class="org-variable-name">__pkg_mgr</span>} update &amp;&amp; sudo ${<span class="org-variable-name">__pkg_mgr</span>} upgrade &amp;&amp; pkg-notify <span class="org-string">"Upgrade done"</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+
+      <span class="org-keyword">function</span> <span class="org-function-name">search</span> ()
+      {
+          __pkgtools__at_function_enter search
+          apt-cache search $<span class="org-variable-name">@</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+
+      <span class="org-keyword">function</span> <span class="org-function-name">purge</span> ()
+      {
+          __pkgtools__at_function_enter purge
+          sudo ${<span class="org-variable-name">__pkg_mgr</span>} purge &amp;&amp; pkg-notify <span class="org-string">"Purge done"</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+
+      <span class="org-keyword">function</span> <span class="org-function-name">distupgrade</span> ()
+      {
+          __pkgtools__at_function_enter distupgrade
+          sudo ${<span class="org-variable-name">__pkg_mgr</span>} update &amp;&amp; sudo ${<span class="org-variable-name">__pkg_mgr</span>} dist-upgrade &amp;&amp; pkg-notify <span class="org-string">"Distribution upgrade done"</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+
+      <span class="org-keyword">function</span> <span class="org-function-name">autoremove</span> ()
+      {
+          __pkgtools__at_function_enter autoremove
+          sudo ${<span class="org-variable-name">__pkg_mgr</span>} autoremove &amp;&amp; pkg-notify <span class="org-string">"Autoremove done"</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+  <span class="org-keyword">else</span>
+      <span class="org-keyword">function</span> <span class="org-function-name">upgrade</span> ()
+      {
+          __pkgtools__at_function_enter upgrade
+          ${<span class="org-variable-name">__pkg_mgr</span>} -Suy &amp;&amp; pkg-notify <span class="org-string">"Upgrade done"</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+
+      <span class="org-keyword">function</span> <span class="org-function-name">search</span> ()
+      {
+          __pkgtools__at_function_enter search
+          ${<span class="org-variable-name">__pkg_mgr</span>} -Ss $<span class="org-variable-name">@</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+
+      <span class="org-keyword">function</span> <span class="org-function-name">purge</span> ()
+      {
+          __pkgtools__at_function_enter purge
+          ${<span class="org-variable-name">__pkg_mgr</span>} -Qdt &amp;&amp; pkg-notify <span class="org-string">"Purge done"</span>
+          __pkgtools__at_function_exit
+          <span class="org-keyword">return</span> 0
+      }
+<span class="org-keyword">fi</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2">Extract archive</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">extract</span> ()
+{
+    __pkgtools__at_function_enter extract
+    <span class="org-builtin">local</span> remove_archive
+    <span class="org-builtin">local</span> success
+    <span class="org-builtin">local</span> file_name
+    <span class="org-builtin">local</span> extract_dir
+
+    <span class="org-keyword">if</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">""</span> ]]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"Usage: extract [-option] [file ...]"</span>
+        <span class="org-builtin">echo</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"Options:"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"    -r, --remove : Remove archive."</span>
+        <span class="org-builtin">echo</span>
+    <span class="org-keyword">fi</span>
+
+    <span class="org-variable-name">remove_archive</span>=1
+    <span class="org-keyword">if</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"-r"</span> ]] || [[ <span class="org-string">"$1"</span> == <span class="org-string">"--remove"</span> ]]; <span class="org-keyword">then</span>
+        <span class="org-variable-name">remove_archive</span>=0
+        <span class="org-builtin">shift</span>
+    <span class="org-keyword">fi</span>
+
+    <span class="org-keyword">while</span> [ -n <span class="org-string">"$1"</span> ]; <span class="org-keyword">do</span>
+        <span class="org-keyword">if</span> [[ <span class="org-negation-char">!</span> -f <span class="org-string">"$1"</span> ]]; <span class="org-keyword">then</span>
+            pkgtools__msg_warning <span class="org-string">"'$1' is not a valid file"</span>
+            <span class="org-builtin">shift</span>
+            <span class="org-keyword">continue</span>
+        <span class="org-keyword">fi</span>
+
+        <span class="org-variable-name">success</span>=0
+        <span class="org-variable-name">file_name</span>=<span class="org-string">"$( basename "$1" )"</span>
+        <span class="org-variable-name">extract_dir</span>=<span class="org-string">"$( echo "$file_name" | sed "s/\.${1##*.}//g" )"</span>
+        <span class="org-keyword">case</span> <span class="org-string">"$1"</span><span class="org-keyword"> in</span>
+            (*.tar.gz|*.tgz) tar xvzf <span class="org-string">"$1"</span> ;;
+            (*.tar.bz2|*.tbz|*.tbz2) tar xvjf <span class="org-string">"$1"</span> ;;
+            (*.tar.xz|*.txz) tar --xz --help &amp;&gt; /dev/null <span class="org-sh-escaped-newline">\</span>
+                &amp;&amp; tar --xz -xvf <span class="org-string">"$1"</span> <span class="org-sh-escaped-newline">\</span>
+                || xzcat <span class="org-string">"$1"</span> | tar xvf - ;;
+            (*.tar.zma|*.tlz) tar --lzma --help &amp;&gt; /dev/null <span class="org-sh-escaped-newline">\</span>
+                &amp;&amp; tar --lzma -xvf <span class="org-string">"$1"</span> <span class="org-sh-escaped-newline">\</span>
+                || lzcat <span class="org-string">"$1"</span> | tar xvf - ;;
+            (*.tar) tar xvf <span class="org-string">"$1"</span> ;;
+            (*.gz) gunzip <span class="org-string">"$1"</span> ;;
+            (*.bz2) bunzip2 <span class="org-string">"$1"</span> ;;
+            (*.xz) unxz <span class="org-string">"$1"</span> ;;
+            (*.lzma) unlzma <span class="org-string">"$1"</span> ;;
+            (*.Z) uncompress <span class="org-string">"$1"</span> ;;
+            (*.zip) unzip <span class="org-string">"$1"</span> -d $<span class="org-variable-name">extract_dir</span> ;;
+            (*.rar) unrar e -ad <span class="org-string">"$1"</span> ;;
+            (*.7z) 7za x <span class="org-string">"$1"</span> ;;
+            (*.deb)
+                mkdir -p <span class="org-string">"$extract_dir/control"</span>
+                mkdir -p <span class="org-string">"$extract_dir/data"</span>
+                <span class="org-builtin">cd</span> <span class="org-string">"$extract_dir"</span>; ar vx <span class="org-string">"../${1}"</span> &gt; /dev/null
+                <span class="org-builtin">cd</span> control; tar xzvf ../control.tar.gz
+                <span class="org-builtin">cd</span> ../data; tar xzvf ../data.tar.gz
+                <span class="org-builtin">cd</span> ..; rm *.tar.gz debian-binary
+                <span class="org-builtin">cd</span> ..
+                ;;
+            (*)
+                pkgtools__msg_error <span class="org-string">"'$1' cannot be extracted"</span> 1&gt;&amp;2
+                <span class="org-variable-name">success</span>=1
+                ;;
+        <span class="org-keyword">esac</span>
+
+        (( <span class="org-variable-name">success</span> = $<span class="org-variable-name">success</span> &gt; 0 ? $<span class="org-variable-name">success</span> : $<span class="org-variable-name">?</span> ))
+        (( $<span class="org-variable-name">success</span> == 0 )) &amp;&amp; (( $<span class="org-variable-name">remove_archive</span> == 0 )) &amp;&amp; rm <span class="org-string">"$1"</span>
+        <span class="org-builtin">shift</span>
+    <span class="org-keyword">done</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3">Notification</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+Base function for notification
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">notify</span> ()
+{
+    <span class="org-keyword">if</span> pkgtools__has_binary notify-send; <span class="org-keyword">then</span>
+        <span class="org-keyword">if</span> [ <span class="org-string">"$HOSTNAME"</span> = <span class="org-string">"garrido-laptop"</span> ]; <span class="org-keyword">then</span>
+            notify-send $<span class="org-variable-name">@</span> &gt; /dev/null 2&gt;&amp;1
+        <span class="org-keyword">fi</span>
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+<div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1">Success</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">notify_success</span> ()
+{
+    __pkgtools__at_function_enter notify_success
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+        notify -t 2000 -i stock_dialog-info <span class="org-string">"Notice"</span> <span class="org-string">"${PREEXEC_CMD:-Shell Command}"</span>
+    <span class="org-keyword">fi</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2">Error</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">notify_error</span> ()
+{
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+        notify -t 2000 -i stock_dialog-error <span class="org-string">" "</span> <span class="org-string">"${PREEXEC_CMD:-Shell Command} $@"</span>
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3">Warning</h4>
+<div class="outline-text-4" id="text-1-3-3">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">notify_warning</span> ()
+{
+    notify -t 3000 -i stock_dialog-warning <span class="org-string">" "</span> <span class="org-string">"${PREEXEC_CMD:-Shell Command} $@"</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4">Zsh <code>precmd</code> and <code>preexec</code></h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+These two functions are only available for <code>zsh</code> shell. There are run at every
+shell command and trigger notification events in case of long time command or
+failling ones. This is pretty useful when long command such as compilation
+command are running : user can go to another desktop do whatever he wants but
+get warned when the command has finished or has failed.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">precmd</span> ()
+{
+    <span class="org-comment-delimiter"># </span><span class="org-comment">must be first</span>
+    notify_error
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">BEGIN notify long running cmds</span>
+    <span class="org-variable-name">stop</span>=$(date +<span class="org-string">'%s'</span>)
+    <span class="org-variable-name">start</span>=${<span class="org-variable-name">PREEXEC_TIME</span>:-$<span class="org-variable-name">stop</span>}
+    <span class="org-builtin">let</span> <span class="org-variable-name">elapsed</span>=$<span class="org-variable-name">stop</span>-$<span class="org-variable-name">start</span>
+    <span class="org-variable-name">max</span>=${<span class="org-variable-name">PREEXEC_MAX</span>:-10}
+
+    <span class="org-keyword">for</span> i<span class="org-keyword"> in</span> ${<span class="org-variable-name">PREEXEC_EXCLUDE_LIST</span>:-}; <span class="org-keyword">do</span>
+        <span class="org-keyword">if</span> [ <span class="org-string">"x$i"</span> = <span class="org-string">"x$PREEXEC_CMD"</span> ]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">max</span>=999999;
+            <span class="org-keyword">break</span>;
+        <span class="org-keyword">fi</span>
+    <span class="org-keyword">done</span>
+
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">elapsed</span> -gt $<span class="org-variable-name">max</span> ]; <span class="org-keyword">then</span>
+        notify_warning <span class="org-string">"finished ($elapsed secs)"</span>
+    <span class="org-keyword">fi</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">END notify long running cmds</span>
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Update scheme color</span>
+    <span class="org-keyword">if</span> (( $+functions[__load_scheme] )); <span class="org-keyword">then</span>
+        __load_scheme
+    <span class="org-keyword">fi</span>
+
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">preexec</span> ()
+{
+    <span class="org-keyword">if</span> [[ <span class="org-string">"$TERM"</span> == <span class="org-string">"screen"</span> ]]; <span class="org-keyword">then</span>
+        <span class="org-builtin">local</span> <span class="org-variable-name">CMD</span>=${<span class="org-variable-name">1</span>}
+        <span class="org-builtin">echo</span> -ne <span class="org-string">"\ek$CMD\e\\"</span>
+    <span class="org-keyword">fi</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">for notifying of long running commands</span>
+    <span class="org-builtin">export</span> <span class="org-variable-name">PREEXEC_CMD</span>=<span class="org-sh-quoted-exec">`echo $1 | awk '{ print $1; }'`</span>
+    <span class="org-builtin">export</span> <span class="org-variable-name">PREEXEC_TIME</span>=$(date +<span class="org-string">'%s'</span>)
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5">SSH connection</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+This should be improved by doing something as wakeonlan did with a small machine
+db.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">connect</span> ()
+{
+    __pkgtools__at_function_enter connect
+    <span class="org-builtin">local</span> <span class="org-variable-name">use_screen</span>=0
+    <span class="org-builtin">local</span> <span class="org-variable-name">server_name</span>=
+    <span class="org-builtin">local</span> <span class="org-variable-name">ssh_option</span>=
+    <span class="org-builtin">local</span> <span class="org-variable-name">append_command</span>=
+
+    <span class="org-keyword">if</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">""</span> ]]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"Missing the name of machine to connect !"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">""</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"Machines can be :"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"         fzk : FZK machines (deprecated)"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"        cern : CERN machines"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">" ccage|ccige : CC Lyon "</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"         ovh : OVH server (thanks to J&#233;r&#233;mie )"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"          pc : PC @ LAL"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"      laptop : Laptop @ LAL"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"         mac : Mac @ home"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"        syno : Synology @ home"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"      debian : Debian @ home"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">""</span>
+        <span class="org-builtin">echo</span> <span class="org-string">" Nemo computers :"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"     nemo* : nemo machines"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"  daq-nemo : DAQ pc-nemo12 (salle blanche)"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"   daq-lsm : DAQ lsmlx5 (interface computer @ Modane)"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">""</span>
+        <span class="org-builtin">echo</span> <span class="org-string">" LAL/Auger computers :"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">" lx*, auger* ... : connect to LAL machine"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">""</span>
+        __pkgtools__at_function_exit
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+
+    <span class="org-keyword">while</span> [ -n <span class="org-string">"$1"</span> ]; <span class="org-keyword">do</span>
+        <span class="org-keyword">if</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"-s"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">use_screen</span>=1
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"fzk"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">ssh_option</span>=<span class="org-string">"-p 24"</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"augerlogin.fzk.de"</span>
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"cern"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"xgarrido@lxplus.cern.ch"</span>
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"lyon"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@ccage.in2p3.fr"</span>
+        <span class="org-keyword">elif</span> [[ $<span class="org-variable-name">1</span> == ccige* ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@$1.in2p3.fr"</span>
+        <span class="org-keyword">elif</span> [[ $<span class="org-variable-name">1</span> == ccage* ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@$1.in2p3.fr"</span>
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"ovh"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">ssh_option</span>=<span class="org-string">"-p 1234"</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@r17187.ovh.net"</span>
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"laptop"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@nb-76121.lal.in2p3.fr"</span>
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"mac"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">ssh_option</span>=<span class="org-string">"-p 24"</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@xgarrido.dyndns.org"</span>
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"syno"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"Connecting via telnet ..."</span>
+            telnet -l garrido xgarrido.dyndns.org
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"debian"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"debian@xgarrido.dyndns.org"</span>
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"lx3"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@lx3.lal.in2p3.fr"</span>
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"daq-nemo"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"bipolal@pc-nemo12.lal.in2p3.fr"</span>
+        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"daq-lsm"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"nemoacq@lsmlx5.in2p3.fr"</span>
+        <span class="org-keyword">elif</span> [[ $<span class="org-variable-name">1</span> == pc-nemo* ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"nemo@$1"</span>
+        <span class="org-keyword">else</span>
+            <span class="org-keyword">if</span> [ <span class="org-string">"${HOSTNAME}"</span> = <span class="org-string">"garrido-laptop"</span> ]; <span class="org-keyword">then</span>
+                <span class="org-keyword">if</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"nemo3"</span> ]]; <span class="org-keyword">then</span>
+                    <span class="org-variable-name">ssh_option</span>=<span class="org-string">"-p 6261"</span>
+                    <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@localhost"</span>
+                <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"nemo4"</span> ]]; <span class="org-keyword">then</span>
+                    <span class="org-variable-name">ssh_option</span>=<span class="org-string">"-p 6262"</span>
+                    <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@localhost"</span>
+                <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"pc"</span> ]]; <span class="org-keyword">then</span>
+                    <span class="org-variable-name">ssh_option</span>=<span class="org-string">"-p 6263"</span>
+                    <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@localhost"</span>
+                <span class="org-keyword">else</span>
+                    <span class="org-variable-name">append_command</span>+=<span class="org-string">"$1 "</span>
+                <span class="org-keyword">fi</span>
+            <span class="org-keyword">else</span>
+                <span class="org-keyword">if</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"pc"</span> ]]; <span class="org-keyword">then</span>
+                    <span class="org-variable-name">server_name</span>=<span class="org-string">"pc-91089.lal.in2p3.fr"</span>
+                <span class="org-keyword">else</span>
+                    <span class="org-variable-name">server_name</span>=<span class="org-string">"$1.lal.in2p3.fr"</span>
+                <span class="org-keyword">fi</span>
+            <span class="org-keyword">fi</span>
+        <span class="org-keyword">fi</span>
+        <span class="org-builtin">shift</span> 1
+    <span class="org-keyword">done</span>
+
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">use_screen</span>} -eq 0 ]; <span class="org-keyword">then</span>
+        pkgtools__msg_notice <span class="org-string">"Connecting to ${server_name}..."</span>
+        ssh -Y ${<span class="org-variable-name">ssh_option</span>} ${<span class="org-variable-name">server_name</span>} <span class="org-string">"${append_command}"</span>
+    <span class="org-keyword">else</span>
+        pkgtools__msg_notice <span class="org-string">"Connecting to ${server_name} with screen support..."</span>
+        screen ssh -Y ${<span class="org-variable-name">ssh_option</span>} ${<span class="org-variable-name">server_name</span>}
+    <span class="org-keyword">fi</span>
+
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+<span class="org-comment-delimiter"># </span><span class="org-comment">Connect completion system</span>
+compdef _connect connect
+
+<span class="org-keyword">function</span> <span class="org-function-name">_connect</span> ()
+{
+    <span class="org-builtin">local</span> -a _machines
+    <span class="org-variable-name">_machines</span>=(
+        ccage:<span class="org-string">'CC Lyon job machines'</span>
+        ccige:<span class="org-string">'CC Lyon interactive machines'</span>
+        laptop:<span class="org-string">'Laptop machine'</span>
+        pc:<span class="org-string">'PC server machine @ LAL'</span>
+        mac:<span class="org-string">'iMac machine'</span>
+        syno:<span class="org-string">'Synology server @ home'</span>
+        debian:<span class="org-string">'Debian server @ home'</span>
+        lx3:<span class="org-string">'lxplus machine @ LAL'</span>
+        nemo3:<span class="org-string">'nemo3 machine @ LAL'</span>
+        nemo4:<span class="org-string">'nemo4 machine @ LAL'</span>
+        pc-nemo4:<span class="org-string">'V. Treytak machine'</span>
+        pc-nemo5:<span class="org-string">'H. Gomez machine'</span>
+        pc-nemo6:<span class="org-string">'Student machine'</span>
+        pc-nemo8:<span class="org-string">'G. Eurin machine'</span>
+    )
+    _describe -t _machines <span class="org-string">'SSH machines'</span> _machines &amp;&amp; <span class="org-variable-name">ret</span>=0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6">Grepping information</h3>
+<div class="outline-text-3" id="text-1-6">
+</div><div id="outline-container-sec-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1">Find a running job</h4>
+<div class="outline-text-4" id="text-1-6-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">psgrep</span> ()
+{
+    __pkgtools__at_function_enter psgrep
+    <span class="org-keyword">if</span> [[ <span class="org-negation-char">!</span> -z $<span class="org-variable-name">1</span> ]] ; <span class="org-keyword">then</span>
+        pkgtools__msg_notice <span class="org-string">"Grepping for processes matching $1..."</span>
+        ps aux | grep $<span class="org-variable-name">1</span> | grep -v grep
+    <span class="org-keyword">else</span>
+        pkgtools__msg_error <span class="org-string">"Need name to grep for !"</span>
+        __pkgtools__at_function_exit
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2">Find a command within history</h4>
+<div class="outline-text-4" id="text-1-6-2">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">hgrep</span> ()
+{
+    __pkgtools__at_function_enter hgrep
+    <span class="org-keyword">if</span> [[ <span class="org-negation-char">!</span> -z $<span class="org-variable-name">1</span> ]] ; <span class="org-keyword">then</span>
+        pkgtools__msg_notice <span class="org-string">"Grepping for command matching $1..."</span>
+        <span class="org-builtin">history</span> | grep $<span class="org-variable-name">1</span>
+    <span class="org-keyword">else</span>
+        pkgtools__msg_error <span class="org-string">"Need name to grep for !"</span>
+        __pkgtools__at_function_exit
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7">Text edition</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+Remove all trailing whitespace in a given file
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">remove_trailing_whitespace</span> ()
+{
+    __pkgtools__at_function_enter remove_trailing_whitespace
+    <span class="org-keyword">if</span> [[ <span class="org-negation-char">!</span> -z $<span class="org-variable-name">1</span> ]] ; <span class="org-keyword">then</span>
+        pkgtools__msg_notice <span class="org-string">"Removing trailing whitespace in file $1..."</span>
+        find $<span class="org-variable-name">1</span> -type f -exec sed -i <span class="org-string">'s/ *$//'</span> <span class="org-string">'{}'</span> <span class="org-string">';'</span>
+    <span class="org-keyword">else</span>
+        pkgtools__msg_error <span class="org-string">"Missing filename !"</span>
+        __pkgtools__at_function_exit
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8">Image edition</h3>
+<div class="outline-text-3" id="text-1-8">
+</div><div id="outline-container-sec-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1">Convert an EPS figure into tikz</h4>
+<div class="outline-text-4" id="text-1-8-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">eps2tikz</span> ()
+{
+    __pkgtools__at_function_enter eps2tikz
+    <span class="org-builtin">local</span> <span class="org-variable-name">use_helvetica</span>=0
+    <span class="org-builtin">local</span> <span class="org-variable-name">keep_xfig</span>=0
+    <span class="org-builtin">local</span> <span class="org-variable-name">eps_file</span>=
+    <span class="org-builtin">local</span> <span class="org-variable-name">parse_switch</span>=1
+
+    <span class="org-keyword">if</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">""</span> ]]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"Usage: eps2tikz [-option] [eps files ...]"</span>
+        <span class="org-builtin">echo</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"Options:"</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"    -k, --keep-xfig : Keep the intermediate xfig file."</span>
+        <span class="org-builtin">echo</span>
+    <span class="org-keyword">fi</span>
+
+    <span class="org-keyword">while</span> [ -n <span class="org-string">"$1"</span> ]; <span class="org-keyword">do</span>
+        <span class="org-variable-name">token</span>=<span class="org-string">"$1"</span>
+        <span class="org-keyword">if</span> [[ <span class="org-string">"${token[1]}"</span> = <span class="org-string">"-"</span> ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">opt</span>=${<span class="org-variable-name">token</span>}
+            <span class="org-keyword">if</span> [[ ${<span class="org-variable-name">parse_switch</span>} -eq 0 ]]; <span class="org-keyword">then</span>
+                <span class="org-keyword">break</span>
+            <span class="org-keyword">fi</span>
+            <span class="org-keyword">if</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"--keep-xfig"</span> ]; <span class="org-keyword">then</span>
+                <span class="org-variable-name">keep_xfig</span>=1
+            <span class="org-keyword">else</span>
+                pkgtools__msg_warning <span class="org-string">"Ignoring option '${opt}' !"</span>
+            <span class="org-keyword">fi</span>
+        <span class="org-keyword">else</span>
+            <span class="org-variable-name">arg</span>=${<span class="org-variable-name">token</span>}
+            <span class="org-variable-name">parse_switch</span>=0
+            <span class="org-keyword">if</span> [ <span class="org-string">"${arg##*.}"</span> = <span class="org-string">"eps"</span> ]; <span class="org-keyword">then</span>
+                <span class="org-variable-name">eps_file</span>=<span class="org-string">"${eps_file} ${arg}"</span>
+            <span class="org-keyword">else</span>
+                pkgtools_msg_warning <span class="org-string">"'${eps_file}' is not an Encapsulated PostScript"</span>
+            <span class="org-keyword">fi</span>
+        <span class="org-keyword">fi</span>
+        <span class="org-builtin">shift</span>
+    <span class="org-keyword">done</span>
+
+    <span class="org-keyword">if</span> [[ -z <span class="org-string">"${eps_file}"</span> ]]; <span class="org-keyword">then</span>
+        pkgtools__msg_error <span class="org-string">"Missing EPS file !"</span>
+        __pkgtools__at_function_exit
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+
+    <span class="org-keyword">for</span> i<span class="org-keyword"> in</span> $(<span class="org-builtin">echo</span> ${<span class="org-variable-name">eps_file</span>}); <span class="org-keyword">do</span>
+        <span class="org-keyword">if</span> [ <span class="org-negation-char">!</span> -f <span class="org-string">"${i}"</span> ]; <span class="org-keyword">then</span>
+            pkgtools__msg_warning <span class="org-string">"File ${i} does not exist! Skip it"</span>
+            <span class="org-keyword">continue</span>
+        <span class="org-keyword">fi</span>
+
+        <span class="org-builtin">local</span> <span class="org-variable-name">fig_file</span>=${<span class="org-variable-name">i</span>/.eps/.fig}
+        <span class="org-builtin">local</span> <span class="org-variable-name">tikz_file</span>=${<span class="org-variable-name">i</span>/.eps/.tikz}
+
+        pkgtools__msg_notice <span class="org-string">"Converting ${i} file to ${tikz_file}..."</span>
+
+        <span class="org-keyword">if</span> [[ <span class="org-negation-char">!</span> -x $(<span class="org-builtin">which</span> pstoedit) ]]; <span class="org-keyword">then</span>
+            pkgtools__msg_error <span class="org-string">"Missing 'pstoedit' binary !"</span>
+            __pkgtools__at_function_exit
+            <span class="org-keyword">return</span> 1
+        <span class="org-keyword">fi</span>
+        pstoedit -f xfig <span class="org-string">"${i}"</span> &gt; ${<span class="org-variable-name">fig_file</span>} 2&gt; /dev/null
+
+        <span class="org-keyword">if</span> [[ <span class="org-negation-char">!</span> -x $(<span class="org-builtin">which</span> fig2tikz) ]]; <span class="org-keyword">then</span>
+            pkgtools__msg_error <span class="org-string">"Missing fig2tikz' binary !"</span>
+            __pkgtools__at_function_exit
+            <span class="org-keyword">return</span> 1
+        <span class="org-keyword">fi</span>
+        fig2tikz ${<span class="org-variable-name">fig_file</span>} &gt; ${<span class="org-variable-name">tikz_file</span>}
+
+        <span class="org-keyword">if</span> [[ ${<span class="org-variable-name">keep_xfig</span>} -eq 0 ]]; <span class="org-keyword">then</span>
+            rm -f ${<span class="org-variable-name">fig_file</span>}
+        <span class="org-keyword">fi</span>
+
+    <span class="org-keyword">done</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-8-2" class="outline-4">
+<h4 id="sec-1-8-2">Grab point with <code>dexter</code></h4>
+<div class="outline-text-4" id="text-1-8-2">
+<p>
+<a href="http://sourceforge.net/projects/dexter/">Dexter</a> is a little java program to interactively or semi-automatically extract
+data from scanned graphs. In its applet incarnation it is used by the
+Astrophysics Data System.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">dexter</span> ()
+{
+    __pkgtools__at_function_enter dexter
+    <span class="org-keyword">if</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">""</span> ]]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> <span class="org-string">"Usage: dexter [image files ...]"</span>
+        <span class="org-builtin">echo</span>
+        __pkgtools__at_function_exit
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">else</span>
+        java -jar /home/garrido/Workdir/Development/java/dexter/Debuxter.jar $<span class="org-variable-name">1</span>
+    <span class="org-keyword">fi</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-9" class="outline-3">
+<h3 id="sec-1-9">Misc.</h3>
+<div class="outline-text-3" id="text-1-9">
+</div><div id="outline-container-sec-1-9-1" class="outline-4">
+<h4 id="sec-1-9-1">Grabbing video from mms link</h4>
+<div class="outline-text-4" id="text-1-9-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">grab_video</span> ()
+{
+    __pkgtools__at_function_enter grab_video
+    <span class="org-keyword">if</span> [[ <span class="org-negation-char">!</span> -z $<span class="org-variable-name">1</span> ]] ; <span class="org-keyword">then</span>
+        pkgtools__msg_notice <span class="org-string">"Grabing video from $1 link and saving it to /tmp/dump_video.avi..."</span>
+        mplayer -dumpstream <span class="org-string">"$1"</span> -dumpfile /tmp/dump_video.avi
+    <span class="org-keyword">else</span>
+        pkgtools__msg_error <span class="org-string">"Missing mms link !"</span>
+        __pkgtools__at_function_exit
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+File under git version control - commit e8b7f82 - 2013-10-30
+</div>
+</body>
+</html>

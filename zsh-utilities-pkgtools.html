@@ -1,0 +1,1201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Zsh Utilities Pkgtools</title>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Xavier Garrido" />
+<link rel="stylesheet" href="stylesheets/styles.css">
+                <link rel="stylesheet" href="stylesheets/org-pygments.css">
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Zsh Utilities Pkgtools</h1>
+<p>
+This is part of the <a href="zsh-utilities.html">Zsh Utilities</a>.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Zsh Utilities - Pkgtools</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This file provides a set of <code>pkgtools</code> functions to ease definition and use of
+zsh functions, to handle message log and to have some function facilities. Thus,
+it is a quite central place since most of the function of <a href="zsh-utilities.html">Zsh Utilities</a> relies
+to this file. The original idea was by F. Mauger and can be found at <a href="https://nemo.lpc-caen.in2p3.fr/wiki/pkgtools">LPC Wiki website</a>.
+</p>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1">Default values</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__pkgtools__default_values</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_use_color</span>=1
+    <span class="org-variable-name">__pkgtools__msg_use_date</span>=0
+    <span class="org-variable-name">__pkgtools__msg_split_lines</span>=0
+    <span class="org-variable-name">__pkgtools__msg_quiet</span>=0
+    <span class="org-variable-name">__pkgtools__msg_verbose</span>=0
+    <span class="org-variable-name">__pkgtools__msg_warning</span>=1
+    <span class="org-variable-name">__pkgtools__msg_debug</span>=0
+    <span class="org-variable-name">__pkgtools__msg_devel</span>=0
+    <span class="org-variable-name">__pkgtools__msg_funcname</span>=<span class="org-string">""</span>
+    <span class="org-variable-name">__pkgtools__msg_funcname_deps</span>=<span class="org-string">""</span>
+    <span class="org-variable-name">__pkgtools__ui_interactive</span>=1
+    <span class="org-variable-name">__pkgtools__ui_gui</span>=0
+    <span class="org-variable-name">__pkgtools__os</span>=$(uname -s)
+    <span class="org-variable-name">__pkgtools__arch</span>=$(uname -m | sed <span class="org-string">'s/ //g'</span>)
+    <span class="org-keyword">return</span> 0
+}
+__pkgtools__default_values
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2">User Interface utilities</h3>
+<div class="outline-text-3" id="text-1-2">
+</div><div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1">Setting batch or interactive session</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__ui_interactive</span> ()
+{
+    <span class="org-variable-name">__pkgtools__ui_interactive</span>=1
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__ui_batch</span> ()
+{
+    <span class="org-variable-name">__pkgtools__ui_interactive</span>=0
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__ui_is_interactive</span> ()
+{
+    <span class="org-keyword">if</span> [ <span class="org-string">"x${PKGTOOLS_BATCH}"</span> != <span class="org-string">"x"</span> ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">if</span>  [ <span class="org-string">"x${PKGTOOLS_BATCH}"</span> != <span class="org-string">"x0"</span> ]; <span class="org-keyword">then</span>
+            <span class="org-keyword">return</span> 1 <span class="org-comment-delimiter"># </span><span class="org-comment">false;</span>
+        <span class="org-keyword">fi</span>
+    <span class="org-keyword">fi</span>
+
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__ui_interactive</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0 <span class="org-comment-delimiter"># </span><span class="org-comment">true</span>
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 1 <span class="org-comment-delimiter"># </span><span class="org-comment">false</span>
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__ui_is_batch</span> ()
+{
+    pkgtools__ui_is_interactive
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0 <span class="org-comment-delimiter"># </span><span class="org-comment">true</span>
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2">Using GUI</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__ui_is_gui</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__ui_gui</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0 <span class="org-comment-delimiter"># </span><span class="org-comment">true</span>
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 1 <span class="org-comment-delimiter"># </span><span class="org-comment">false</span>
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__ui_using_gui</span> ()
+{
+    __pkgtools__at_function_enter pkgtools__ui_using_gui
+    pkgtools__ui_is_batch
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+        pkgtools__msg_warning <span class="org-string">"Forcing interactive mode !"</span>
+        pkgtools__ui_interactive
+    <span class="org-keyword">fi</span>
+    <span class="org-variable-name">__pkgtools__ui_gui</span>=1
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__ui_not_using_gui</span> ()
+{
+    <span class="org-variable-name">__pkgtools__ui_gui</span>=0
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3">Function facilities</h3>
+<div class="outline-text-3" id="text-1-3">
+</div><div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1">Setting function name</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__set_funcname</span> ()
+{
+    <span class="org-builtin">local</span> <span class="org-variable-name">fname</span>=$<span class="org-variable-name">1</span>
+    <span class="org-keyword">if</span> [ <span class="org-string">"x${fname}"</span> != <span class="org-string">"x"</span> ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">if</span> [ <span class="org-string">"x${__pkgtools__msg_funcname_deps}"</span> != <span class="org-string">"x"</span> ]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">__pkgtools__msg_funcname_deps</span>=<span class="org-string">"${__pkgtools__msg_funcname_deps}@${fname}"</span>
+        <span class="org-keyword">else</span>
+            <span class="org-variable-name">__pkgtools__msg_funcname_deps</span>=${<span class="org-variable-name">fname</span>}
+        <span class="org-keyword">fi</span>
+    <span class="org-keyword">fi</span>
+    <span class="org-variable-name">__pkgtools__msg_funcname</span>=${<span class="org-variable-name">fname</span>}
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__unset_funcname</span> ()
+{
+    <span class="org-builtin">local</span> <span class="org-variable-name">fname</span>=$(<span class="org-builtin">echo</span> ${<span class="org-variable-name">__pkgtools__msg_funcname_deps</span>} | tr <span class="org-string">"@"</span> <span class="org-string">"\n"</span> | tail -1)
+    <span class="org-keyword">if</span> [ <span class="org-string">"x${__pkgtools__msg_funcname_deps}"</span> != <span class="org-string">"x"</span> ]; <span class="org-keyword">then</span>
+        <span class="org-variable-name">nfuncs</span>=$(<span class="org-builtin">echo</span> ${<span class="org-variable-name">__pkgtools__msg_funcname_deps</span>} | tr <span class="org-string">'@'</span> <span class="org-string">'\n'</span> | wc -l)
+        <span class="org-builtin">let</span> <span class="org-variable-name">ncut</span>=nfuncs-1
+        <span class="org-variable-name">tmp</span>=$(<span class="org-builtin">echo</span> -n ${<span class="org-variable-name">__pkgtools__msg_funcname_deps</span>} | tr <span class="org-string">"@"</span> <span class="org-string">"\n"</span> | head -${<span class="org-variable-name">ncut</span>} | tr <span class="org-string">'\n'</span> <span class="org-string">'@'</span> | sed <span class="org-string">'s/@$//g'</span>)
+        <span class="org-keyword">if</span> [ ${<span class="org-variable-name">ncut</span>} -eq 0 ]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">tmp</span>=
+        <span class="org-keyword">fi</span>
+        <span class="org-variable-name">__pkgtools__msg_funcname_deps</span>=${<span class="org-variable-name">tmp</span>}
+    <span class="org-keyword">fi</span>
+    <span class="org-builtin">local</span> <span class="org-variable-name">previous_fname</span>=$(<span class="org-builtin">echo</span> ${<span class="org-variable-name">__pkgtools__msg_funcname_deps</span>} | tr <span class="org-string">"@"</span> <span class="org-string">"\n"</span> | tail -1)
+    <span class="org-variable-name">__pkgtools__msg_funcname</span>=${<span class="org-variable-name">previous_fname</span>}
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2">Registering functions</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<p>
+These functions must be used with interactive function for debug purpose as well
+as getting well prefixed message using the function name.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__pkgtools__at_function_enter</span> ()
+{
+    pkgtools__set_funcname $<span class="org-variable-name">1</span>
+    pkgtools__msg_devel <span class="org-string">"Entering..."</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">__pkgtools__at_function_exit</span> ()
+{
+    pkgtools__msg_devel <span class="org-string">"Exiting."</span>
+    pkgtools__unset_funcname
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4">Colorized message utilities</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+The following functions provides some facilities to print colorized messages
+given the importance level of such message. Given the number of functions, each
+one is itemized to make navigation easier
+</p>
+</div>
+
+<div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1">Default color message</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_normal</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[0;39m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2">Colorized message</h4>
+<div class="outline-text-4" id="text-1-4-2">
+</div><ul class="org-ul"><li>Red message<br  /><div class="outline-text-5" id="text-1-4-2-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_red</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[0;31m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_bright_red</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[0;31m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</li>
+
+<li>Green message<br  /><div class="outline-text-5" id="text-1-4-2-2">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_green</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[0;32m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</li>
+
+<li>Brown message<br  /><div class="outline-text-5" id="text-1-4-2-3">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_brown</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[0;33m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</li>
+
+<li>Blue message<br  /><div class="outline-text-5" id="text-1-4-2-4">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_blue</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[0;34m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</li>
+
+<li>Violet message<br  /><div class="outline-text-5" id="text-1-4-2-5">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_violet</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[0;35m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</li>
+
+<li>Grey message<br  /><div class="outline-text-5" id="text-1-4-2-6">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_grey</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[0;37m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</li>
+
+<li>White message<br  /><div class="outline-text-5" id="text-1-4-2-7">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_white</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[1;37m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</li>
+
+<li>Black message<br  /><div class="outline-text-5" id="text-1-4-2-8">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_black</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[1;39m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</li></ul>
+</div>
+
+<div id="outline-container-sec-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3">Reverse color</h4>
+<div class="outline-text-4" id="text-1-4-3">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_reverse</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[1;7m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_no_reverse</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[1;27m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-4" class="outline-4">
+<h4 id="sec-1-4-4">Cancel color</h4>
+<div class="outline-text-4" id="text-1-4-4">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color__cancel</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[1;m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-5" class="outline-4">
+<h4 id="sec-1-4-5">Underline message</h4>
+<div class="outline-text-4" id="text-1-4-5">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_underline</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[0;38m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-6" class="outline-4">
+<h4 id="sec-1-4-6">Bold message</h4>
+<div class="outline-text-4" id="text-1-4-6">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_bold</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">"\\033[1;1m"</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-7" class="outline-4">
+<h4 id="sec-1-4-7">Blinking message</h4>
+<div class="outline-text-4" id="text-1-4-7">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_blink</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">""</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_color_no_blink</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_color</span>} = 1 ]; <span class="org-keyword">then</span>
+        <span class="org-builtin">echo</span> -en <span class="org-string">""</span> 1&gt;&amp;2
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-8" class="outline-4">
+<h4 id="sec-1-4-8">Hightlight message</h4>
+<div class="outline-text-4" id="text-1-4-8">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__highlight</span> ()
+{
+    pkgtools__msg_color_bright_red
+    <span class="org-builtin">echo</span> -en <span class="org-string">"$@"</span> 1&gt;&amp;2
+    pkgtools__msg_color_normal
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5">Message log utilities</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+Use to print message requiring different level of attention.
+</p>
+</div>
+
+<div id="outline-container-sec-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1">Notice message</h4>
+<div class="outline-text-4" id="text-1-5-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_notice</span> ()
+{
+    pkgtools__msg_is_quiet
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+
+    pkgtools__msg_color_blue
+    __pkgtools__base_msg_prefix <span class="org-string">"NOTICE"</span>
+    __pkgtools__base_msg <span class="org-string">"$@"</span>
+    pkgtools__msg_color_normal
+
+    pkgtools__ui_is_interactive
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    pkgtools__ui_is_gui
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-variable-name">message</span>=<span class="org-string">"$@"</span>
+        <span class="org-variable-name">term_nl</span>=$(stty size | cut -d<span class="org-string">' '</span> -f1)
+        <span class="org-variable-name">term_nc</span>=$(stty size | cut -d<span class="org-string">' '</span> -f2)
+        <span class="org-builtin">let</span> <span class="org-variable-name">max_nlines</span>=term_nl-3
+        <span class="org-builtin">let</span> <span class="org-variable-name">max_ncols</span>=term_nc-4
+        <span class="org-variable-name">nl</span>=$(<span class="org-builtin">echo</span> -e <span class="org-string">"${message}"</span> | wc -l)
+        <span class="org-builtin">let</span> <span class="org-variable-name">nlines</span>=nl+4
+        <span class="org-keyword">if</span> [ ${<span class="org-variable-name">nlines</span>} -gt ${<span class="org-variable-name">max_nlines</span>} ]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">nlines</span>=${<span class="org-variable-name">max_nlines</span>}
+        <span class="org-keyword">fi</span>
+        <span class="org-keyword">if</span> [ ${<span class="org-variable-name">nlines</span>} -lt 6 ]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">nlines</span>=6
+        <span class="org-keyword">fi</span>
+        ${<span class="org-variable-name">__pkgtools__ui_dialog_bin</span>} --title <span class="org-string">"pkgtools GUI"</span> <span class="org-sh-escaped-newline">\</span>
+            --colors --msgbox <span class="org-string">"\Z4NOTICE:\n\Zn ${message}"</span> ${<span class="org-variable-name">nlines</span>} ${<span class="org-variable-name">max_ncols</span>}
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_highlight_notice</span> ()
+{
+    pkgtools__msg_color_green
+    __pkgtools__base_msg_prefix <span class="org-string">"NOTICE"</span>
+    __pkgtools__base_msg $<span class="org-variable-name">@</span>
+    pkgtools__msg_color_normal
+
+    pkgtools__ui_is_interactive
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    pkgtools__ui_is_gui
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-variable-name">message</span>=<span class="org-string">"$@"</span>
+        ${<span class="org-variable-name">__pkgtools__ui_dialog_bin</span>} --title <span class="org-string">"pkgtools GUI"</span> <span class="org-sh-escaped-newline">\</span>
+            --colors --msgbox <span class="org-string">"\Z4\ZbNOTICE:\n\Zn ${message}"</span> 10 40
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2">Info message</h4>
+<div class="outline-text-4" id="text-1-5-2">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_info</span> ()
+{
+    pkgtools__msg_is_quiet
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_verbose</span>} -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+
+    pkgtools__msg_color_blue
+    __pkgtools__base_msg_prefix <span class="org-string">"INFO"</span>
+    __pkgtools__base_msg  $<span class="org-variable-name">@</span>
+    pkgtools__msg_color_normal
+
+    pkgtools__ui_is_interactive
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    pkgtools__ui_is_gui
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-variable-name">message</span>=<span class="org-string">"$@"</span>
+        ${<span class="org-variable-name">__pkgtools__ui_dialog_bin</span>} --title <span class="org-string">"pkgtools GUI"</span> <span class="org-sh-escaped-newline">\</span>
+            --colors --msgbox <span class="org-string">"\Z4\ZbINFO:\n\Zn ${message}"</span> 10 40
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3">Verbose message</h4>
+<div class="outline-text-4" id="text-1-5-3">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_using_verbose</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_verbose</span>=1
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_not_using_verbose</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_verbose</span>=0
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_verbose</span> ()
+{
+    pkgtools__msg_info $<span class="org-variable-name">@</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-4" class="outline-4">
+<h4 id="sec-1-5-4">Debug message</h4>
+<div class="outline-text-4" id="text-1-5-4">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_using_debug</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_debug</span>=1
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_not_using_debug</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_debug</span>=0
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_debug</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_debug</span>} -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    <span class="org-variable-name">ok</span>=1
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">ok</span>} -eq 1 ]; <span class="org-keyword">then</span>
+        pkgtools__msg_color_brown
+        __pkgtools__base_msg_prefix <span class="org-string">"DEBUG"</span>
+        __pkgtools__base_msg  $<span class="org-variable-name">@</span>
+        pkgtools__msg_color_normal
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-5" class="outline-4">
+<h4 id="sec-1-5-5">Warning message</h4>
+<div class="outline-text-4" id="text-1-5-5">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_using_warning</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_warning</span>=1
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_not_using_warning</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_warning</span>=0
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_warning</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_warning</span>} -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    pkgtools__msg_color_violet
+    __pkgtools__base_msg_prefix <span class="org-string">"WARNING"</span>
+    __pkgtools__base_msg  $<span class="org-variable-name">@</span>
+    pkgtools__msg_color_normal
+
+    pkgtools__ui_is_interactive
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    pkgtools__ui_is_gui
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-variable-name">message</span>=<span class="org-string">"$@"</span>
+        ${<span class="org-variable-name">__pkgtools__ui_dialog_bin</span>} --title <span class="org-string">"pkgtools GUI"</span> <span class="org-sh-escaped-newline">\</span>
+            --colors --msgbox <span class="org-string">"\Z5WARNING:\n\Zn ${message}"</span> 10 40
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-6" class="outline-4">
+<h4 id="sec-1-5-6">Error message</h4>
+<div class="outline-text-4" id="text-1-5-6">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_err</span> ()
+{
+    pkgtools__msg_color_red
+    __pkgtools__base_msg_prefix <span class="org-string">"ERROR"</span>
+    __pkgtools__base_msg $<span class="org-variable-name">@</span>
+    pkgtools__msg_color_normal
+
+    pkgtools__ui_is_interactive
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    pkgtools__ui_is_gui
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-variable-name">message</span>=<span class="org-string">"$@"</span>
+        ${<span class="org-variable-name">__pkgtools__ui_dialog_bin</span>} --title <span class="org-string">"pkgtools GUI"</span> <span class="org-sh-escaped-newline">\</span>
+            --colors --msgbox <span class="org-string">"\Z1ERROR:\n\Zn ${message}"</span> 10 40
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_error</span> ()
+{
+    pkgtools__msg_err $<span class="org-variable-name">@</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-7" class="outline-4">
+<h4 id="sec-1-5-7">Devel message</h4>
+<div class="outline-text-4" id="text-1-5-7">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_using_devel</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_devel</span>=1
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_not_using_devel</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_devel</span>=0
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_devel</span> ()
+{
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_devel</span>} -eq 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+    <span class="org-variable-name">ok</span>=1
+    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">ok</span>} -eq 1 ]; <span class="org-keyword">then</span>
+        pkgtools__msg_color_reverse
+        __pkgtools__base_msg_prefix <span class="org-string">"DEVEL"</span>
+        __pkgtools__base_msg $<span class="org-variable-name">@</span>
+        pkgtools__msg_color_no_reverse
+    <span class="org-keyword">fi</span>
+    pkgtools__msg_color_normal
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-8" class="outline-4">
+<h4 id="sec-1-5-8">Be quiet</h4>
+<div class="outline-text-4" id="text-1-5-8">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_using_quiet</span> ()
+{
+    pkgtools__msg_using_verbose
+    <span class="org-variable-name">__pkgtools__msg_quiet</span>=1
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_not_using_quiet</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_quiet</span>=0
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_is_quiet</span> ()
+{
+    <span class="org-builtin">local</span> <span class="org-variable-name">quiet_ret</span>=1 <span class="org-comment-delimiter"># </span><span class="org-comment">false</span>
+    <span class="org-keyword">if</span> [ <span class="org-string">"x${PKGTOOLS_MSG_QUIET}"</span> != <span class="org-string">"x"</span> ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">if</span> [ <span class="org-string">"x${PKGTOOLS_MSG_QUIET}"</span> != <span class="org-string">"x0"</span> ]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">quiet_ret</span>=0 <span class="org-comment-delimiter"># </span><span class="org-comment">false</span>
+        <span class="org-keyword">fi</span>
+    <span class="org-keyword">else</span>
+        <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_quiet</span>} -eq 1  ]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">quiet_ret</span>=0 <span class="org-comment-delimiter"># </span><span class="org-comment">true</span>
+        <span class="org-keyword">fi</span>
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> ${<span class="org-variable-name">quiet_ret</span>}
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-9" class="outline-4">
+<h4 id="sec-1-5-9">Print date</h4>
+<div class="outline-text-4" id="text-1-5-9">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_using_date</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_use_date</span>=1
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_not_using_date</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_use_date</span>=0
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-10" class="outline-4">
+<h4 id="sec-1-5-10">Make use of color</h4>
+<div class="outline-text-4" id="text-1-5-10">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_using_color</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_use_color</span>=1
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__msg_not_using_color</span> ()
+{
+    <span class="org-variable-name">__pkgtools__msg_use_color</span>=0
+    pkgtools__msg_color_normal
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-11" class="outline-4">
+<h4 id="sec-1-5-11">Misc.</h4>
+<div class="outline-text-4" id="text-1-5-11">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__pkgtools__base_msg_prefix</span> ()
+{
+    <span class="org-builtin">local</span> <span class="org-variable-name">log_file</span>=
+    <span class="org-keyword">if</span> [ <span class="org-string">"x${PKGTOOLS_LOG_FILE}"</span> != <span class="org-string">"x"</span> ]; <span class="org-keyword">then</span>
+        <span class="org-variable-name">log_file</span>=${<span class="org-variable-name">PKGTOOLS_LOG_FILE</span>}
+    <span class="org-keyword">else</span>
+        <span class="org-variable-name">log_file</span>=/dev/null
+    <span class="org-keyword">fi</span>
+    <span class="org-builtin">local</span> <span class="org-variable-name">msg_prefix</span>=<span class="org-string">"$1"</span>
+    (
+        (
+            <span class="org-builtin">echo</span> -n <span class="org-string">"${msg_prefix}: "</span>
+        ) | tee -a ${<span class="org-variable-name">log_file</span>}
+    ) 1&gt;&amp;2
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">__pkgtools__base_msg</span> ()
+{
+    <span class="org-builtin">local</span> <span class="org-variable-name">log_file</span>=
+    <span class="org-keyword">if</span> [ <span class="org-string">"x${PKGTOOLS_LOG_FILE}"</span> != <span class="org-string">"x"</span> ]; <span class="org-keyword">then</span>
+        <span class="org-variable-name">log_file</span>=${<span class="org-variable-name">PKGTOOLS_LOG_FILE</span>}
+    <span class="org-keyword">else</span>
+        <span class="org-variable-name">log_file</span>=/dev/null
+    <span class="org-keyword">fi</span>
+    (
+        (
+            <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_use_date</span>} -eq 1 ]; <span class="org-keyword">then</span>
+                date +%F-%T | tr -d <span class="org-string">'\n'</span>
+                <span class="org-builtin">echo</span> -n <span class="org-string">" @ "</span>
+            <span class="org-keyword">fi</span>
+            <span class="org-keyword">if</span> [ <span class="org-string">"x${appname}"</span> != <span class="org-string">"x"</span> ]; <span class="org-keyword">then</span>
+                <span class="org-builtin">echo</span> -n <span class="org-string">"${appname}: "</span>
+            <span class="org-keyword">fi</span>
+            <span class="org-keyword">if</span> [ <span class="org-string">"x${__pkgtools__msg_funcname}"</span> != <span class="org-string">"x"</span> ]; <span class="org-keyword">then</span>
+                <span class="org-builtin">echo</span> -n <span class="org-string">"${__pkgtools__msg_funcname}: "</span>
+            <span class="org-keyword">fi</span>
+            <span class="org-keyword">if</span> [ ${<span class="org-variable-name">__pkgtools__msg_split_lines</span>} -eq 1 ]; <span class="org-keyword">then</span>
+                <span class="org-builtin">echo</span> <span class="org-string">""</span>
+                <span class="org-builtin">echo</span> -n <span class="org-string">"  "</span>
+            <span class="org-keyword">fi</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"$@"</span>
+        ) | tee -a ${<span class="org-variable-name">log_file</span>}
+    ) 1&gt;&amp;2
+    <span class="org-keyword">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6">Shell utilities</h3>
+<div class="outline-text-3" id="text-1-6">
+</div><div id="outline-container-sec-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1">Add path to environment variable</h4>
+<div class="outline-text-4" id="text-1-6-1">
+<p>
+This function add a directory to an environment variable such as <code>PATH</code> or
+<code>LD_LIBRARY_PATH</code>. It does it gently since it does not add the path if it is
+already present. In such way, it prevents cumbersome of environment variables.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__add_path_to_env_variable</span> ()
+{
+    <span class="org-keyword">if</span> [ <span class="org-negation-char">!</span> -d <span class="org-string">"$2"</span> ]; <span class="org-keyword">then</span>
+        pkgtools__msg_error <span class="org-string">"Directory '$2' does not exist!"</span>
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+    <span class="org-builtin">local</span> <span class="org-variable-name">_path</span>=${(P)$(<span class="org-builtin">echo</span> $<span class="org-variable-name">1</span>)}
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Export it if empty</span>
+    [[ <span class="org-negation-char">!</span> -n ${<span class="org-variable-name">_path</span>} ]] &amp;&amp; <span class="org-builtin">export</span> $<span class="org-variable-name">1</span>
+    <span class="org-keyword">case</span> <span class="org-string">":$_path:"</span><span class="org-keyword"> in</span>
+        *<span class="org-string">":$2:"</span>*) :;; <span class="org-comment-delimiter"># </span><span class="org-comment">already there</span>
+        *) <span class="org-builtin">eval</span> $(<span class="org-builtin">echo</span> $<span class="org-variable-name">1</span>=<span class="org-string">"$2${_path:+"</span>:$<span class="org-variable-name">_path</span><span class="org-string">"}"</span>);;
+    <span class="org-keyword">esac</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__add_path_to_PATH</span> ()
+{
+    pkgtools__add_path_to_env_variable PATH <span class="org-string">"$1"</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__add_path_to_LD_LIBRARY_PATH</span> ()
+{
+    pkgtools__add_path_to_env_variable LD_LIBRARY_PATH <span class="org-string">"$1"</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2">Remove path to environment variable</h4>
+<div class="outline-text-4" id="text-1-6-2">
+<p>
+The same as before: it keeps safe the environment variable by only removing the
+relevant path.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__remove_path_to_env_variable</span> ()
+{
+    <span class="org-builtin">local</span> <span class="org-variable-name">_path</span>=${(P)$(<span class="org-builtin">echo</span> $<span class="org-variable-name">1</span>)}
+    <span class="org-builtin">eval</span> $(<span class="org-builtin">echo</span> $<span class="org-variable-name">1</span>=$(<span class="org-builtin">echo</span> ${<span class="org-variable-name">_path</span>} | sed -e <span class="org-string">'s;\(^'</span>$<span class="org-variable-name">2</span><span class="org-string">':\|:'</span>$<span class="org-variable-name">2</span><span class="org-string">'$\|:'</span>$<span class="org-variable-name">2</span><span class="org-string">'\(:\)\)\|'</span>$<span class="org-variable-name">2</span><span class="org-string">';\2;g'</span>))
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Unset it if empty</span>
+    [[ <span class="org-negation-char">!</span> -n ${(P)$(<span class="org-builtin">echo</span> $<span class="org-variable-name">1</span>)} ]] &amp;&amp; <span class="org-builtin">unset</span> $<span class="org-variable-name">1</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__remove_path_to_PATH</span> ()
+{
+    pkgtools__remove_path_to_env_variable PATH <span class="org-string">"$1"</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__remove_path_to_LD_LIBRARY_PATH</span> ()
+{
+    pkgtools__remove_path_to_env_variable LD_LIBRARY_PATH <span class="org-string">"$1"</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3">Set variable if not already exported</h4>
+<div class="outline-text-4" id="text-1-6-3">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__set_variable</span> ()
+{
+    <span class="org-keyword">if</span> env | grep -q <span class="org-string">"^$1="</span>
+    <span class="org-keyword">then</span>
+        pkgtools__msg_warning <span class="org-string">"$1 is already set and exported"</span>
+    <span class="org-keyword">else</span>
+        <span class="org-builtin">export</span> $<span class="org-variable-name">1</span>=$<span class="org-variable-name">2</span>
+    <span class="org-keyword">fi</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6-4" class="outline-4">
+<h4 id="sec-1-6-4">Unset variable</h4>
+<div class="outline-text-4" id="text-1-6-4">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__unset_variable</span> ()
+{
+    <span class="org-builtin">unset</span> $<span class="org-variable-name">1</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6-5" class="outline-4">
+<h4 id="sec-1-6-5">Reset variable</h4>
+<div class="outline-text-4" id="text-1-6-5">
+<p>
+This is just a combination of the two previous functions to force the export a
+variable.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__reset_variable</span> ()
+{
+    pkgtools__unset_variable $<span class="org-variable-name">1</span>
+    pkgtools__set_variable $<span class="org-variable-name">1</span> $<span class="org-variable-name">2</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6-6" class="outline-4">
+<h4 id="sec-1-6-6">Check binary presence</h4>
+<div class="outline-text-4" id="text-1-6-6">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__has_binary</span> ()
+{
+    <span class="org-builtin">which</span> $<span class="org-variable-name">1</span> &gt; /dev/null 2&gt;&amp;1
+    <span class="org-keyword">return</span> $<span class="org-variable-name">?</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6-7" class="outline-4">
+<h4 id="sec-1-6-7">Check last command status</h4>
+<div class="outline-text-4" id="text-1-6-7">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__last_command_succeeds</span> ()
+{
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">else</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">fi</span>
+}
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__last_command_fails</span> ()
+{
+    <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+        <span class="org-keyword">return</span> 0
+    <span class="org-keyword">else</span>
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6-8" class="outline-4">
+<h4 id="sec-1-6-8">Get binary path</h4>
+<div class="outline-text-4" id="text-1-6-8">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__get_binary_path</span> ()
+{
+    <span class="org-builtin">echo</span> $(whereis $<span class="org-variable-name">1</span> | cut -d<span class="org-string">' '</span> -f2)
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6-9" class="outline-4">
+<h4 id="sec-1-6-9">Check if laptop is @ LAL</h4>
+<div class="outline-text-4" id="text-1-6-9">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__at_LAL</span> ()
+{
+    ping -c 1 pc-nemo9 &gt; /dev/null 2&gt;&amp;1
+    <span class="org-keyword">return</span> $<span class="org-variable-name">?</span>
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-6-10" class="outline-4">
+<h4 id="sec-1-6-10">Get system environment</h4>
+<div class="outline-text-4" id="text-1-6-10">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">pkgtools__get_os</span> ()
+{
+    <span class="org-builtin">echo</span> <span class="org-string">"${__pkgtools__os}"</span>
+    <span class="org-keyword">return</span> 0
+}
+
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__get_arch</span> ()
+{
+    <span class="org-builtin">echo</span> <span class="org-string">"${__pkgtools__arch}"</span>
+    <span class="org-keyword">return</span> 0
+}
+<span class="org-keyword">function</span> <span class="org-function-name">pkgtools__get_sys</span> ()
+{
+    <span class="org-builtin">echo</span> <span class="org-string">"$(pkgtools__get_os)-$(pkgtools__get_arch)"</span>
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+File under git version control - commit e8b7f82 - 2013-10-30
+</div>
+</body>
+</html>

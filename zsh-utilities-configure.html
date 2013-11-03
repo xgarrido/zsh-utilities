@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Zsh Utilities Configuration</title>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Xavier Garrido" />
+<link rel="stylesheet" href="stylesheets/styles.css">
+                <link rel="stylesheet" href="stylesheets/org-pygments.css">
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Zsh Utilities Configuration</h1>
+<p>
+This is part of the <a href="zsh-utilities.html">Zsh Utilities</a>.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1">Zsh Utilities - Configuration</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This file sets different environment variables given the hostname of the
+machine. Using org-mode's folding, each item contains the configuration for a
+given hostname. The function name must be <code>__configure_$(hostname)</code> in such a
+way it should be easy to add its own configuration.
+</p>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1">Main configuration function</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__configure_machine</span> ()
+{
+    __pkgtools__at_function_enter __configure_machine
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">This must be done by default</span>
+    <span class="org-builtin">export</span> <span class="org-variable-name">HOSTNAME</span>=$(hostname)
+
+    <span class="org-keyword">case</span> <span class="org-string">"$HOSTNAME"</span><span class="org-keyword"> in</span>
+        garrido-laptop|pc-91089)
+            __configure_laptop
+            ;;
+        lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
+            __configure_lal_machines
+            ;;
+        ccige*|ccage*)
+            __configure_lyon_machines
+            ;;
+        *)
+            <span class="org-builtin">type</span> __configure_$(hostname) | grep -q <span class="org-string">"shell function"</span> &gt; /dev/null 2&gt;&amp;1
+            <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -eq 0 ]; <span class="org-keyword">then</span>
+                __configure_$(hostname)
+            <span class="org-keyword">else</span>
+                pkgtools__msg_warning <span class="org-string">"No configuration for machine '$(hostname)' has been found ! Use default one"</span>
+                __configure_default
+            <span class="org-keyword">fi</span>
+            ;;
+    <span class="org-keyword">esac</span>
+
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2">Default configuration</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__configure_default</span> ()
+{
+    __pkgtools__at_function_enter __configure_default
+    <span class="org-builtin">umask</span> 022
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3">Laptop/server configuration</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__configure_laptop</span> ()
+{
+    __pkgtools__at_function_enter __configure_laptop
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Load RVM function (Ruby manager)</span>
+    <span class="org-comment-delimiter">#</span><span class="org-comment">[[ -s "$HOME/.rvm/scripts/rvm" ]] &amp;&amp; . "$HOME/.rvm/scripts/rvm"</span>
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Use 256 colors terminal</span>
+    pkgtools__reset_variable TERM xterm-256color
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Homemade latex style</span>
+    pkgtools__reset_variable TEXMFHOME ${<span class="org-variable-name">HOME</span>}/.config/texmf
+    pkgtools__reset_variable TEXMFOUTPUT /tmp
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Load Go Programming Language</span>
+    pkgtools__reset_variable GOPATH ${<span class="org-variable-name">HOME</span>}/Development/go
+    pkgtools__add_path_to_PATH ${<span class="org-variable-name">GOPATH</span>}/bin
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Adding also /usr/local/lib to LD_LIBRARY_PATH</span>
+    pkgtools__add_path_to_LD_LIBRARY_PATH /usr/local/lib
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Adding utilities path</span>
+    pkgtools__add_path_to_PATH ${<span class="org-variable-name">HOME</span>}/.bin
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Set HOST</span>
+    pkgtools__reset_variable HOST ${<span class="org-variable-name">HOSTNAME</span>}
+    pkgtools__reset_variable WORKDIR ${<span class="org-variable-name">HOME</span>}/Workdir
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Set EDITOR</span>
+    pkgtools__reset_variable EDITOR <span class="org-string">"emacsclient"</span>
+
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4">LAL machines configuration</h3>
+<div class="outline-text-3" id="text-1-4">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__configure_lal_machines</span> ()
+{
+    __pkgtools__at_function_enter __configure_lal_machines
+
+    <span class="org-builtin">umask</span> 022
+    pkgtools__reset_variable WORKDIR /exp/nemo/garrido
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Add TeXLive 2012</span>
+    pkgtools__add_path_to_PATH ${<span class="org-variable-name">WORKDIR</span>}/software/texlive/2012/bin/x86_64-linux
+    pkgtools__unset_variable TEXMFCNF
+    pkgtools__unset_variable TETEXDIR
+
+    <span class="org-builtin">alias</span> <span class="org-variable-name">cmake</span>=cmake28
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment"># Add python path</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_env_variable PYTHONPATH ${WORKDIR}/software/lib/python2.6/site-packages</span>
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment"># Load Go Programming Language</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__reset_variable GOROOT ${WORKDIR}/software/go</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_PATH ${WORKDIR}/software/go/bin</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__reset_variable GOPATH ${WORKDIR}/development/go</span>
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_PATH /exp/nemo/install/bin</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_PATH ${WORKDIR}/software/bin</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_LD_LIBRARY_PATH ${WORKDIR}/software/lib</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/install/lib</span>
+
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5">Lyon machines configuration</h3>
+<div class="outline-text-3" id="text-1-5">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__configure_lyon_machines</span> ()
+{
+    __pkgtools__at_function_enter __configure_lyon_machines
+    pkgtools__reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
+    <span class="org-builtin">source</span> ${<span class="org-variable-name">THRONG_DIR</span>}/sw/config/SL6.4/nemo_basic_sw_setup-1.0.bash &gt; /dev/null 2&gt;1 <span class="org-sh-escaped-newline">\</span>
+        do_nemo_basics_sw_setup_1 &gt; /dev/null 2&gt;&amp;1
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+File under git version control - commit e8b7f82 - 2013-10-30
+</div>
+</body>
+</html>
