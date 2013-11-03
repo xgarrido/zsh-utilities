@@ -45,7 +45,7 @@ command.
 
 ** Emacs shortcuts
 #+BEGIN_SRC sh
-  alias emacs='emacsclient -c -n -a "" -e "(sk-desktop)"'
+  alias emacs='emacsclient -c -n -a "" -e "(sk-desktop)" > /dev/null 2>&1 && notify -i emacs "Emacs" "New frame opened"'
   alias iemacs='emacsclient -n -a "" -e "(sk-desktop)"'
   alias ve='emacsclient -nw -a "" -e "(sk-desktop)"'
 #+END_SRC
