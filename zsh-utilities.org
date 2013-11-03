@@ -4,9 +4,6 @@
 #+OPTIONS: toc:nil num:nil ^:nil
 
 * Introduction
-:PROPERTIES:
-:CUSTOM_ID: introduction
-:END:
 This sould provides a saner set of default functions and/or aliases for =zsh=
 shell. It includes
 - many useful libraries and configurations
@@ -15,10 +12,6 @@ shell. It includes
 The latest version is at http://github.com/xgarrido/zsh-utilities
 
 * Installation
-:PROPERTIES:
-:CUSTOM_ID: installation
-:END:
-
 There are different way to install this plugin :
 ** In your =~/.zshrc=
 1) Download the script or clone this repository:
@@ -55,20 +48,12 @@ Add the following line into your =~/.zshrc= file:
 
 
 * Structure
-:PROPERTIES:
-:CUSTOM_ID: structure
-:END:
-
 This =zsh-utilities.org= file is where everything begins. It is loaded
-automatically on =zsh= startup if you have well followed the [[#installation][installation]]
+automatically on =zsh= startup if you have well followed the [[Installation][installation]]
 process. The sole purpose of this file is to load the shell code embedded in
 it and goes on to load plugin files.
 
 * Implementation
-:PROPERTIES:
-:CUSTOM_ID: implementation
-:END:
-
 Besides the fact that [[http://orgmode.org/][org-mode]] is used, this plugin does not use the org-babel
 tangling features and thus, does not assume that emacs is properly installed and
 set. All the tangling stuff is done through a simple [[file:Makefile][Makefile]] and some [[http://www.gnu.org/software/sed/][sed]]
@@ -111,11 +96,6 @@ order* since there are some dependencies.
 - Definition of some =shell= aliases in [[file:zsh-utilities-alias.org][zsh-utilities-alias]]
   #+BEGIN_SRC sh
     source ${zsh_utilities_dir}/zsh-utilities-alias.zsh
-  #+END_SRC
-
-- Emacs related functions in [[file:zsh-utilities-emacs.org][zsh-utilities-emacs]]
-  #+BEGIN_SRC sh
-    source ${zsh_utilities_dir}/zsh-utilities-emacs.zsh
   #+END_SRC
 
 - SVN related functions in [[file:zsh-utilities-svn.org][zsh-utilities-svn]]

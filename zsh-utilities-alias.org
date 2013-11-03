@@ -45,9 +45,21 @@ command.
 
 ** Emacs shortcuts
 #+BEGIN_SRC sh
-  alias emacs='emacsclient -c -n -a "" -e "(sk-desktop)" > /dev/null 2>&1 && notify -i emacs "Emacs" "New frame opened"'
-  alias iemacs='emacsclient -n -a "" -e "(sk-desktop)"'
-  alias ve='emacsclient -nw -a "" -e "(sk-desktop)"'
+  function --check-emacs ()
+  {
+      local pid=$(ps -edf | grep ${USER} | grep emacs | grep daemon | awk '{print $2}')
+      if [[ "${pid}" == "" ]]; then
+          notify -i emacs "Emacs" "New emacs daemon"
+          emacs --daemon  > /dev/null 2>&1
+          emacsclient -e "(sk-desktop)" "$@"
+      else
+          emacsclient "$@"
+      fi
+  }
+  alias emacs='--check-emacs -n -c $@'
+  alias iemacs='--check-emacs -n $@'
+  alias ve='--check-emacs -nw $@'
+  alias relaunch_emacs='killall emacs; sleep 1; --check-emacs -n -c $@'
 #+END_SRC
 
 *** Cask function to use it everywhere
