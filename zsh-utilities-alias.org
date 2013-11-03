@@ -27,8 +27,10 @@ This file defines some basic but nevertheless fundamental aliases.
 [[http://wiki.goffi.org/wiki/Gcp][=gcp= ]] is a python script to provide a user friendly frontend to =cp= unix
 command.
 #+BEGIN_SRC sh
-  alias cp='/usr/bin/gcp -f'
-  compdef _files gcp
+  if (( $+commands[rsync] )); then
+      alias cp='/usr/bin/gcp -f'
+      compdef _files gcp
+  fi
 #+END_SRC
 
 ** Greping stuff
