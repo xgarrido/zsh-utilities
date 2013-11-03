@@ -105,8 +105,10 @@ command.
 </p>
 <div class="org-src-container">
 
-<pre class="src src-sh"><span class="org-builtin">alias</span> <span class="org-variable-name">cp</span>=<span class="org-string">'/usr/bin/gcp -f'</span>
-compdef _files gcp
+<pre class="src src-sh"><span class="org-keyword">if</span> (( $+commands[gcp] )); <span class="org-keyword">then</span>
+    <span class="org-builtin">alias</span> <span class="org-variable-name">cp</span>=<span class="org-string">'/usr/bin/gcp -f'</span>
+    compdef _files gcp
+<span class="org-keyword">fi</span>
 </pre>
 </div>
 </div>
@@ -131,9 +133,21 @@ compdef _files gcp
 <div class="outline-text-3" id="text-1-5">
 <div class="org-src-container">
 
-<pre class="src src-sh"><span class="org-builtin">alias</span> <span class="org-variable-name">emacs</span>=<span class="org-string">'emacsclient -c -n'</span>
-<span class="org-builtin">alias</span> <span class="org-variable-name">iemacs</span>=<span class="org-string">'emacsclient -n'</span>
-<span class="org-builtin">alias</span> <span class="org-variable-name">ve</span>=<span class="org-string">'emacsclient -nw'</span>
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">--check-emacs</span> ()
+{
+    <span class="org-builtin">local</span> <span class="org-variable-name">pid</span>=$(ps -edf | grep ${<span class="org-variable-name">USER</span>} | grep emacs | grep daemon | awk <span class="org-string">'{print $2}'</span>)
+    <span class="org-keyword">if</span> [[ <span class="org-string">"${pid}"</span> == <span class="org-string">""</span> ]]; <span class="org-keyword">then</span>
+        notify -i emacs <span class="org-string">"Emacs"</span> <span class="org-string">"New emacs daemon"</span>
+        emacs --daemon  &gt; /dev/null 2&gt;&amp;1
+        emacsclient -e <span class="org-string">"(sk-desktop)"</span> <span class="org-string">"$@"</span>
+    <span class="org-keyword">else</span>
+        emacsclient <span class="org-string">"$@"</span>
+    <span class="org-keyword">fi</span>
+}
+<span class="org-builtin">alias</span> <span class="org-variable-name">emacs</span>=<span class="org-string">'--check-emacs -n -c $@'</span>
+<span class="org-builtin">alias</span> <span class="org-variable-name">iemacs</span>=<span class="org-string">'--check-emacs -n $@'</span>
+<span class="org-builtin">alias</span> <span class="org-variable-name">ve</span>=<span class="org-string">'--check-emacs -nw $@'</span>
+<span class="org-builtin">alias</span> <span class="org-variable-name">relaunch_emacs</span>=<span class="org-string">'killall emacs; sleep 1; --check-emacs -n -c $@'</span>
 </pre>
 </div>
 </div>
@@ -190,7 +204,7 @@ Options for <code>less</code> program are the following
 </div>
 </div>
 <div id="postamble" class="status">
-File under git version control - commit 0202bf5 - 2013-11-03
+File under git version control - commit 9d6686b - 2013-11-03
 </div>
 </body>
 </html>
