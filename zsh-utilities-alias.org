@@ -20,7 +20,7 @@ This file defines some basic but nevertheless fundamental aliases.
   alias ll='ls -ltrh'
   alias la='ls -rtha'
   alias lla='ls -rthal'
-  alias lsd='ls -l | grep ^d'
+  alias lsd='ls -l | grep "^d"'
 #+END_SRC
 
 ** Alias =cp= to =gcp=
