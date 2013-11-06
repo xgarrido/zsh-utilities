@@ -132,8 +132,8 @@ way it should be easy to add its own configuration.
   {
       __pkgtools__at_function_enter __configure_lyon_machines
       pkgtools__reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
-      source ${THRONG_DIR}/sw/config/SL6.4/nemo_basic_sw_setup-1.0.bash > /dev/null 2>1 \
-          do_nemo_basics_sw_setup_1 > /dev/null 2>&1
+      source ${THRONG_DIR}/sw/config/SL6.4/nemo_basic_sw_setup-1.0.bash > /dev/null 2>1
+      do_nemo_basics_sw_setup_1 > /dev/null 2>&1
       __pkgtools__at_function_exit
       return 0
   }
