@@ -107,8 +107,6 @@ way it should be easy to add its own configuration.
       pkgtools__unset_variable TEXMFCNF
       pkgtools__unset_variable TETEXDIR
 
-      alias cmake=cmake28
-
       # # Add python path
       # pkgtools__add_path_to_env_variable PYTHONPATH ${WORKDIR}/software/lib/python2.6/site-packages
 
