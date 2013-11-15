@@ -112,7 +112,7 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
     function cm ()
     {
         cmd='\
-           colout "\[(?i)notice.*$|\[information.*$" 4 \ |
+           colout "\[(?i)notice.*$|\[information.*$|\[INFO.*$" 4 \ |
            colout "\[(?i)error.*$|\[fatal.*$" 1 \ |
            colout "\[(?i)warning.*$" 5 \ |
            colout "\[(?i)debug.*$i" 2 normal |
