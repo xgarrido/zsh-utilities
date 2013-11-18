@@ -115,7 +115,7 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
            colout "\[(?i)notice.*$|\[information.*$|\[INFO.*$" 4 \ |
            colout "\[(?i)error.*$|\[fatal.*$" 1 \ |
            colout "\[(?i)warning.*$" 5 \ |
-           colout "\[(?i)debug.*$i" 2 normal |
+           colout "\[(?i)debug.*$" 2 normal |
            colout "\[(?i)trace.*$" 28 normal'
         $@ 2>&1 | eval ${cmd}
     }
