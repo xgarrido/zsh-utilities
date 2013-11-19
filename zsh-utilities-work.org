@@ -226,7 +226,8 @@ components.
           echo "\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"                         >> ${make_file}
           echo                                                                    >> ${make_file}
           echo "clean:"                                                           >> ${make_file}
-          echo "\t@rm -rf latex.d *.tex *.pdf *.fdb* *~"                          >> ${make_file}
+          echo "\t@rm -rf latex.d *.tex *.pdf *.fdb* *~ "                         >> ${make_file}
+          echo "\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"              >> ${make_file}
       }
 
       --mnt::generate_gitignore () {
