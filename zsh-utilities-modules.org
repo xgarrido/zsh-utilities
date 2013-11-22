@@ -109,16 +109,14 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
 #+END_SRC
 *** Function
 #+BEGIN_SRC sh
-    function cm ()
-    {
-        cmd='\
-           colout "\[(?i)notice.*$|\[information.*$|\[INFO.*$" 4 \ |
-           colout "\[(?i)error.*$|\[fatal.*$" 1 \ |
-           colout "\[(?i)warning.*$" 5 \ |
-           colout "\[(?i)debug.*$" 2 normal |
-           colout "\[(?i)trace.*$" 28 normal'
-        $@ 2>&1 | eval ${cmd}
-    }
+  function cm ()
+  {
+      $@ 2>&1 | colout "\[(?i)notice.*$|\[information.*$|\[INFO.*$" 4 \ |
+         colout "\[(?i)error.*$|\[fatal.*$" 1 \ |
+         colout "\[(?i)warning.*$" 5 \ |
+         colout "\[(?i)debug.*$" 2 normal |
+         colout "\[(?i)trace.*$" 28 normal
+  }
 #+END_SRC
 *** Postamble
 #+BEGIN_SRC sh
