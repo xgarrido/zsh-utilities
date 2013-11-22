@@ -299,111 +299,111 @@ This should be improved by doing something as wakeonlan did with a small machine
 db.
 
 #+BEGIN_SRC sh
-    function connect ()
-    {
-        __pkgtools__at_function_enter connect
-        local use_screen=0
-        local server_name=
-        local ssh_option=
-        local append_command=
+  function connect ()
+  {
+      __pkgtools__at_function_enter connect
+      local use_screen=0
+      local server_name=
+      local ssh_option=
+      local append_command=
 
-        if [[ "$1" == "" ]]; then
-            echo "Missing the name of machine to connect !"
-            echo ""
-            __pkgtools__at_function_exit
-            return 1
-        fi
+      if [[ "$1" == "" ]]; then
+          echo "Missing the name of machine to connect !"
+          echo ""
+          __pkgtools__at_function_exit
+          return 1
+      fi
 
-        while [ -n "$1" ]; do
-            if [[ "$1" == "-s" ]]; then
-                use_screen=1
-            elif [[ "$1" == "fzk" ]]; then
-                ssh_option="-p 24"
-                server_name="augerlogin.fzk.de"
-            elif [[ "$1" == "cern" ]]; then
-                server_name="xgarrido@lxplus.cern.ch"
-            elif [[ "$1" == "lyon" ]]; then
-                server_name="garrido@ccage.in2p3.fr"
-            elif [[ $1 == ccige* ]]; then
-                server_name="garrido@$1.in2p3.fr"
-            elif [[ $1 == ccage* ]]; then
-                server_name="garrido@$1.in2p3.fr"
-            elif [[ "$1" == "ovh" ]]; then
-                ssh_option="-p 1234"
-                server_name="garrido@r17187.ovh.net"
-            elif [[ "$1" == "laptop" ]]; then
-                server_name="garrido@nb-76121.lal.in2p3.fr"
-            elif [[ "$1" == "mac" ]]; then
-                ssh_option="-p 24"
-                server_name="garrido@xgarrido.dyndns.org"
-            elif [[ "$1" == "syno" ]]; then
-                echo "Connecting via telnet ..."
-                telnet -l garrido xgarrido.dyndns.org
-            elif [[ "$1" == "debian" ]]; then
-                server_name="debian@xgarrido.dyndns.org"
-            elif [[ "$1" == "lx3" ]]; then
-                server_name="garrido@lx3.lal.in2p3.fr"
-            elif [[ "$1" == "daq-nemo" ]]; then
-                server_name="bipolal@pc-nemo12.lal.in2p3.fr"
-            elif [[ "$1" == "daq-lsm" ]]; then
-                server_name="nemoacq@lsmlx5.in2p3.fr"
-            elif [[ $1 == pc-nemo* ]]; then
-                server_name="nemo@$1"
-            else
-                if [ "${HOSTNAME}" = "garrido-laptop" ]; then
-                    server_name="garrido@localhost"
-                    if [ -f /tmp/npu.d/ports ]; then
-                        ssh_port=$(cat /tmp/npu.d/ports | grep $1 | cut -d' ' -f2)
-                        ssh_option="-p ${ssh_port}"
-                    else
-                        append_command+="$1 "
-                    fi
-                else
-                    if [[ "$1" == "pc" ]]; then
-                        server_name="pc-91089.lal.in2p3.fr"
-                    else
-                        server_name="$1.lal.in2p3.fr"
-                    fi
-                fi
-            fi
-            shift 1
-        done
+      while [ -n "$1" ]; do
+          if [[ "$1" == "-s" ]]; then
+              use_screen=1
+          elif [[ "$1" == "fzk" ]]; then
+              ssh_option="-p 24"
+              server_name="augerlogin.fzk.de"
+          elif [[ "$1" == "cern" ]]; then
+              server_name="xgarrido@lxplus.cern.ch"
+          elif [[ "$1" == "lyon" ]]; then
+              server_name="garrido@ccage.in2p3.fr"
+          elif [[ $1 == ccige* ]]; then
+              server_name="garrido@$1.in2p3.fr"
+          elif [[ $1 == ccage* ]]; then
+              server_name="garrido@$1.in2p3.fr"
+          elif [[ "$1" == "ovh" ]]; then
+              ssh_option="-p 1234"
+              server_name="garrido@r17187.ovh.net"
+          elif [[ "$1" == "laptop" ]]; then
+              server_name="garrido@nb-76121.lal.in2p3.fr"
+          elif [[ "$1" == "mac" ]]; then
+              ssh_option="-p 24"
+              server_name="garrido@xgarrido.dyndns.org"
+          elif [[ "$1" == "syno" ]]; then
+              echo "Connecting via telnet ..."
+              telnet -l garrido xgarrido.dyndns.org
+          elif [[ "$1" == "debian" ]]; then
+              server_name="debian@xgarrido.dyndns.org"
+          elif [[ "$1" == "lx3" ]]; then
+              server_name="garrido@lx3.lal.in2p3.fr"
+          elif [[ "$1" == "daq-nemo" ]]; then
+              server_name="bipolal@pc-nemo12.lal.in2p3.fr"
+          elif [[ "$1" == "daq-lsm" ]]; then
+              server_name="nemoacq@lsmlx5.in2p3.fr"
+          elif [[ $1 == pc-nemo* ]]; then
+              server_name="nemo@$1"
+          else
+              if [ "${HOSTNAME}" = "garrido-laptop" ]; then
+                  server_name="garrido@localhost"
+                  if [ -f /tmp/npu.d/ports ]; then
+                      ssh_port=$(cat /tmp/npu.d/ports | grep $1 | cut -d' ' -f2)
+                      ssh_option="-p ${ssh_port}"
+                  else
+                      append_command+="$1 "
+                  fi
+              else
+                  if [[ "$1" == "pc" ]]; then
+                      server_name="pc-91089.lal.in2p3.fr"
+                  else
+                      server_name="$1.lal.in2p3.fr"
+                  fi
+              fi
+          fi
+          shift 1
+      done
 
-        if [ ${use_screen} -eq 0 ]; then
-            pkgtools__msg_notice "Connecting to ${server_name}..."
-            ssh -Y ${ssh_option} ${server_name} "${append_command}"
-        else
-            pkgtools__msg_notice "Connecting to ${server_name} with screen support..."
-            screen ssh -Y ${ssh_option} ${server_name}
-        fi
+      if [ ${use_screen} -eq 0 ]; then
+          pkgtools__msg_notice "Connecting to ${server_name}..."
+          ssh -Y ${ssh_option} ${server_name} "${append_command}"
+      else
+          pkgtools__msg_notice "Connecting to ${server_name} with screen support..."
+          screen ssh -Y ${ssh_option} ${server_name}
+      fi
 
-        __pkgtools__at_function_exit
-        return 0
-    }
-    # Connect completion system
-    compdef _connect connect
+      __pkgtools__at_function_exit
+      return 0
+  }
+  # Connect completion system
+  compdef _connect connect
 
-    function _connect ()
-    {
-        local -a _machines
-        _machines=(
-            ccage:'CC Lyon job machines'
-            ccige:'CC Lyon interactive machines'
-            laptop:'Laptop machine'
-            pc:'PC server machine @ LAL'
-            mac:'iMac machine'
-            syno:'Synology server @ home'
-            debian:'Debian server @ home'
-            lx3:'lxplus machine @ LAL'
-            nemo3:'nemo3 machine @ LAL'
-            nemo4:'nemo4 machine @ LAL'
-            pc-nemo4:'V. Treytak machine'
-            pc-nemo5:'H. Gomez machine'
-            pc-nemo6:'Student machine'
-            pc-nemo8:'G. Eurin machine'
-        )
-        _describe -t _machines 'SSH machines' _machines && ret=0
-    }
+  function _connect ()
+  {
+      local -a _machines
+      _machines=(
+          ccage:'CC Lyon job machines'
+          ccige:'CC Lyon interactive machines'
+          laptop:'Laptop machine'
+          mac:'iMac machine'
+          syno:'Synology server @ home'
+          debian:'Debian server @ home'
+          lx3:'lxplus machine @ LAL'
+          nemo3:'nemo3 machine @ LAL'
+          nemo4:'nemo4 machine @ LAL'
+          pc-91089:'PC server machine @ LAL'
+          pc-nemo4:'V. Treytak machine'
+          pc-nemo5:'H. Gomez machine'
+          pc-nemo6:'Student machine'
+          pc-nemo8:'G. Eurin machine'
+      )
+      _describe -t _machines 'SSH machines' _machines && ret=0
+  }
 #+END_SRC
 
 ** Grepping information
