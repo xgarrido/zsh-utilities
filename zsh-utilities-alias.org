@@ -92,3 +92,7 @@ Options for =less= program are the following
       pkgtools__unset_variable LESS
   fi
 #+END_SRC
+** Kill -9
+#+BEGIN_SRC sh
+  alias k9='kill -9'
+#+END_SRC
