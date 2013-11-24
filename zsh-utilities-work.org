@@ -97,9 +97,9 @@ components.
 ** Lyon ccali aliases
 #+BEGIN_SRC sh
   if [[ $HOSTNAME = ccage* ]]; then
-      alias qjob_nemo_user='echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| grep nemo | awk "{print \$5}" | sort | uniq -c'
-      alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | wc -l'
-      alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | wc -l'
+      alias qjob_nemo_user='echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| tail -n+3 | grep nemo | awk "{print \$5}" | sort | uniq -c'
+      alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
+      alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
       alias qjob_summary='qjob_my_total; qjob_my_run; qjob_nemo_user'
   fi
 #+END_SRC
