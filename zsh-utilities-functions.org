@@ -567,6 +567,29 @@ Astrophysics Data System.
   }
 #+END_SRC
 
+** Subversion functions
+*** Better SVN status
+#+BEGIN_SRC sh
+  function svnstatus ()
+  {
+      __pkgtools__at_function_enter svnstatus
+      templist=$(svn status $*)
+      echo "$(echo $templist | grep '^?' | wc -l) unversioned files/directories"
+      echo $templist | grep -v '^?'
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+*** Better SVN diff (needs code2color)
+#+BEGIN_SRC sh
+  function svndiff ()
+  {
+      __pkgtools__at_function_enter svndiff
+      svn diff $* | code2color -l patch -
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
 ** Misc.
 *** Grabbing video from mms link
 #+BEGIN_SRC sh
