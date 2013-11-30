@@ -98,11 +98,6 @@ order* since there are some dependencies.
     source ${zsh_utilities_dir}/zsh-utilities-alias.zsh
   #+END_SRC
 
-- SVN related functions in [[file:zsh-utilities-svn.org][zsh-utilities-svn]]
-  #+BEGIN_SRC sh
-    source ${zsh_utilities_dir}/zsh-utilities-svn.zsh
-  #+END_SRC
-
 - Work (mainly SuperNEMO software) related functions in [[file:zsh-utilities-work.org][zsh-utilities-work]]
   #+BEGIN_SRC sh
     source ${zsh_utilities_dir}/zsh-utilities-work.zsh
