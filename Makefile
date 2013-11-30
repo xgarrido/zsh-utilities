@@ -13,7 +13,6 @@ FILES  = zsh-utilities.org              \
 	 zsh-utilities-functions.org	\
 	 zsh-utilities-modules.org	\
 	 zsh-utilities-pkgtools.org	\
-	 zsh-utilities-svn.org		\
 	 zsh-utilities-settings.org     \
 	 zsh-utilities-work.org
 FILESO = $(FILES:.org=.zsh)
