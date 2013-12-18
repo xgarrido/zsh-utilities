@@ -213,7 +213,6 @@ components.
           test ! -n "$base_directory" && base_directory=~/Workdir/Talk
           test ! -n "$latex_class" && latex_class="beamer"
           test ! -n "$latex_class_options" && latex_class_options="snemo,nologo"
-          svn_directory=https://svn.lal.in2p3.fr/users/garrido/Talk
           ;;
       (note)
           ;;
@@ -221,7 +220,6 @@ components.
           test ! -n "$base_directory" && base_directory=~/Workdir/Papers/pub/nemo-note
           test ! -n "$latex_class" && latex_class="snemo-article"
           test ! -n "$latex_class_options" && latex_class_options="classic"
-          svn_directory=https://svn.lal.in2p3.fr/users/garrido/Publications/nemo-note
           ;;
   esac
 
@@ -264,10 +262,40 @@ components.
               ;;
           (article)
               echo "#+OPTIONS: toc:nil author:nil ^:{}"      >> ${org_file}
+              echo "#+STARTUP: hideblocks entitiespretty"    >> ${org_file}
               ;;
       esac
       echo "#+LATEX_CLASS: ${latex_class}"                   >> ${org_file}
       echo "#+LATEX_CLASS_OPTIONS: [${latex_class_options}]" >> ${org_file}
+      echo ""                                                >> ${org_file}
+      # Special setup for article
+      case $type in
+          (article)
+              beginsrc="#+BEGIN"
+              endsrc="#+END"
+              echo "* VC status :ignoreheading:" >> ${org_file}
+              echo "#+NAME: vc-status"  >> ${org_file}
+              echo "${beginsrc}_SRC sh :results output :exports none" >> ${org_file}
+              echo "  if [ -d .svn ]; then" >> ${org_file}
+              echo "    status=\$(LC_MESSAGES=en svn info)" >> ${org_file}
+              echo "    rev=\$(echo -e \$status | sed -n 's/.*Revision: *\([^ ]*\).*/\1/p')" >> ${org_file}
+              echo "    date=\$(echo -e \$status | sed -n 's/.*Last Changed Date: *\([^ ]*\).*/\1/p')" >> ${org_file}
+              echo "    log=\"\\\texttt{svn} revision \${rev} \\\$-\\\$ \${date}\"" >> ${org_file}
+              echo "  fi" >> ${org_file}
+              echo "  if [ -d .git ]; then" >> ${org_file}
+              echo "    log=\$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:\"\\\texttt{git} commit \\\texttt{%h} -- %ad\")" >> ${org_file}
+              echo "  fi" >> ${org_file}
+              echo "  echo \"\\\renewcommand*{\\\PrelimText}{\\\small\\\textnormal{\\\color{gray}\${log}}}\"" >> ${org_file}
+              echo "${endsrc}_SRC" >> ${org_file}
+              echo "${beginsrc}_SRC latex :noweb yes" >> ${org_file}
+              echo "<<vc-status()>>" >> ${org_file}
+              echo "${endsrc}_SRC" >> ${org_file}
+              echo "* Authors :ignoreheading:" >> ${org_file}
+              echo "* Abstract :ignoreheading:" >> ${org_file}
+              echo "#+BEGIN_ABSTRACT" >> ${org_file}
+              echo "#+END_ABSTRACT" >> ${org_file}
+              ;;
+      esac
   }
 #+END_SRC
 #+BEGIN_SRC sh
@@ -316,41 +344,51 @@ components.
 #+BEGIN_SRC sh
   --mod::import_doc () {
       (
+          local svn_directory
+          case $type in
+              (talk)
+                  svn_directory=https://svn.lal.in2p3.fr/users/garrido/Talk
+                  ;;
+              (article)
+                  svn_directory=https://svn.lal.in2p3.fr/users/garrido/Publications/nemo-note
+                  ;;
+          esac
           if [ -d ${directory}/.git ]; then
               pkgtools__msg_warning "Directory '${directory}' is already under git-svn !"
               return 0
           fi
-          svn mkdir ${svn_directory}/${dirname} -m "create ${dirname} directory"
-          svn import ${directory} ${svn_directory}/${dirname} -m "import trunk directory"
-          rm -rf ${base_directory}/${dirname}
-          mkdir -p ${base_directory}/${dirname}
-          cd ${base_directory}/${dirname}
-          git svn init --prefix=svn/ --trunk=. ${svn_directory}/${dirname}
-          git svn fetch
+          # svn mkdir ${svn_directory}/${dirname} -m "create ${dirname} directory"
+          # svn import ${directory} ${svn_directory}/${dirname} -m "import trunk directory"
+          # rm -rf ${base_directory}/${dirname}
+          # mkdir -p ${base_directory}/${dirname}
+          # cd ${base_directory}/${dirname}
+          # git svn init --prefix=svn/ --trunk=. ${svn_directory}/${dirname}
+          # git svn fetch
       )
   }
 #+END_SRC
 **** Calling functions
 #+BEGIN_SRC sh
+  --mod::create_directories
+  --mod::generate_org_skeleton
+  --mod::generate_makefile
+  --mod::generate_gitignore
+  --mod::import_doc
 
-      --mod::create_directories
-      --mod::generate_org_skeleton
-      --mod::generate_makefile
-      --mod::generate_gitignore
-      --mod::import_doc
+  # Finally goto the directory
+  cd ${base_directory}/${dirname}
 
-      # Finally goto the directory
-      cd ${base_directory}/${dirname}
-
-      unset title author email latex_class latex_class_options
-      unset dirname directory base svn_directory org_file
-      unset append_list_of_arguments append_list_of_options
-      unfunction -- --mod::usage
-      unfunction -- --mod::generate_org_skeleton
-      unfunction -- --mod::create_directories
-      unfunction -- --mod::import_doc
-      __pkgtools__at_function_exit
-      return 0
+  unset title author email latex_class latex_class_options
+  unset dirname directory base svn_directory org_file
+  unset append_list_of_arguments append_list_of_options
+  unfunction -- --mod::usage
+  unfunction -- --mod::import_doc
+  unfunction -- --mod::generate_gitignore
+  unfunction -- --mod::generate_makefile
+  unfunction -- --mod::generate_org_skeleton
+  unfunction -- --mod::create_directories
+  __pkgtools__at_function_exit
+  return 0
   }
 #+END_SRC
 
@@ -364,13 +402,13 @@ components.
           '(-v --verbose)'{-v,--verbose}'[produce verbose logging]'                      \
           '(-d --debug)'{-d,--debug}'[produce debug logging]'                            \
           '(-D --devel)'{-D,--devel}'[produce devel logging]'                            \
-          --doc-type'[set document type]:type:->type'                                        \
+          --doc-type'[set document type]:type:->type'                                    \
           --title'[set talk title]'                                                      \
           --author'[set author name]'                                                    \
-          --email'[set email]'                                                    \
+          --email'[set email]'                                                           \
           --latex-class'[set LaTeX class name]:class:->class'                            \
           --latex-class-options'[set LaTeX class options]:class-options:->class-options' \
-          --base-directory'[directory to put document]' \
+          --base-directory'[directory to put document]'                                  \
           '*: :->args' && ret=0
       case $state in
           (type)
