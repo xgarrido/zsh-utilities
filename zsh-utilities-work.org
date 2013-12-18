@@ -248,7 +248,7 @@ components.
               org_file=${directory}/talk.org
               ;;
           (article)
-              org_file=${directory}/article.org
+              org_file=${directory}/note-$(date +%Y%m%d).org
               ;;
       esac
       echo "#+TITLE:  ${title}"                               > ${org_file}
