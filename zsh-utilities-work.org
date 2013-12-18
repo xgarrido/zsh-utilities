@@ -121,32 +121,36 @@ components.
       return 0
   }
 #+END_SRC
-** Generate talk skeleton
+** Generate org doc skeletons
 *** Main function
+**** Parsing options
 #+BEGIN_SRC sh
-  function make_new_talk ()
+  function make_org_doc ()
   {
       __pkgtools__default_values
-      __pkgtools__at_function_enter make_new_talk
+      __pkgtools__at_function_enter make_org_doc
 
       # Internal functions
-      --mnt::usage () {
+      --mod::usage () {
       }
 
       local append_list_of_options
       local append_list_of_arguments
 
+      local type
       local title
       local author="Xavier Garrido"
-      local latex_class="beamer"
-      local latex_class_options="snemo,nologo"
+      local email="xavier.garrido@lal.in2p3.fr"
+      local latex_class
+      local latex_class_options
+      local base_directory
       while [ -n "$1" ]; do
           local token=$1
           if [ "${token[0,1]}" = "-" ]; then
               local opt=${token}
               append_list_of_options+="${opt} "
               if [ "${opt}" = "-h" -o "${opt}" = "--help" ]; then
-                  --mnt::usage
+                  --mod::usage
                   return 0
               elif [ "${opt}" = "-d" -o "${opt}" = "--debug" ]; then
                   pkgtools__msg_using_debug
@@ -165,14 +169,20 @@ components.
                   pkgtools__ui_batch
               elif [ "${opt}" = "--gui" ]; then
                   pkgtools__ui_using_gui
+              elif [ "${opt}" = "--doc-type" ]; then
+                  shift 1; type="$1"
               elif [ "${opt}" = "--title" ]; then
                   shift 1; title="$1"
               elif [ "${opt}" = "--author" ]; then
                   shift 1; author="$1"
+              elif [ "${opt}" = "--email" ]; then
+                  shift 1; email="$1"
               elif [ "${opt}" = "--latex-class" ]; then
                   shift 1; latex_class="$1"
               elif [ "${opt}" = "--latex-class-options" ]; then
                   shift 1; latex_class_options="$1"
+              elif [ "${opt}" = "--base-directory" ]; then
+                  shift 1; base_directory="$1"
               fi
           else
               arg=${token}
@@ -182,105 +192,163 @@ components.
           fi
           shift 1
       done
+#+END_SRC
+**** Parsing options
+#+BEGIN_SRC sh
+  local dirname="$(echo ${append_list_of_arguments} | awk '{print $1}')"
+  if [ "${dirname}" = "" ]; then
+      pkgtools__msg_error "You must give a repository name !"
+      __pkgtools__at_function_exit
+      return 1
+  fi
 
-      # Remove last space
-      append_list_of_arguments=${append_list_of_arguments%?}
-      append_list_of_options=${append_list_of_options%?}
-      pkgtools__msg_devel "append_list_of_arguments=${append_list_of_arguments}"
-      pkgtools__msg_devel "append_list_of_options=${append_list_of_options}"
+  if [ ! -n "$type" ]; then
+      pkgtools__msg_error "Missing type of documents !"
+      __pkgtools__at_function_exit
+      return 1
+  fi
 
-      # Local functions
-      local base=~/Workdir/Talk
-      local dirname="$(echo ${append_list_of_arguments} | awk '{print $1}')"
-      local directory=${base}/${dirname}
+  case $type in
+      (talk)
+          test ! -n "$base_directory" && base_directory=~/Workdir/Talk
+          test ! -n "$latex_class" && latex_class="beamer"
+          test ! -n "$latex_class_options" && latex_class_options="snemo,nologo"
+          svn_directory=https://svn.lal.in2p3.fr/users/garrido/Talk
+          ;;
+      (note)
+          ;;
+      (article)
+          test ! -n "$base_directory" && base_directory=~/Workdir/Papers/pub/nemo-note
+          test ! -n "$latex_class" && latex_class="snemo-article"
+          test ! -n "$latex_class_options" && latex_class_options="classic"
+          svn_directory=https://svn.lal.in2p3.fr/users/garrido/Publications/nemo-note
+          ;;
+  esac
 
-      --mnt::create_directories () {
-          mkdir -p ${directory}/{pdf,plot}
-      }
+  pkgtools__msg_devel "base_directory=${base_directory}"
+  pkgtools__msg_devel "latex_class=${latex_class}"
+  pkgtools__msg_devel "latex_class_options=${latex_class_options}"
 
-      --mnt::generate_org_skeleton () {
-          local org_file=${directory}/talk.org
-          echo "#+TITLE:  ${title}"                               > ${org_file}
-          echo "#+AUTHOR: ${author}"                             >> ${org_file}
-          echo "#+DATE:   $(date +%d/%m/%Y)"                     >> ${org_file}
-          echo "#+OPTIONS: toc:nil ^:{}"                         >> ${org_file}
-          echo "#+STARTUP: beamer"                               >> ${org_file}
-          echo "#+LATEX_CLASS: ${latex_class}"                   >> ${org_file}
-          echo "#+LATEX_CLASS_OPTIONS: [${latex_class_options}]" >> ${org_file}
-      }
-
-      --mnt::generate_makefile () {
-          local make_file=${directory}/Makefile
-          echo "# -*- mode: makefile; -*-"                                         > ${make_file}
-          echo "EMACS=emacs"                                                      >> ${make_file}
-          echo "BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \
-                                        --load '~/.emacs.d/starter-kit-org.el'"   >> ${make_file}
-          echo "files_org = \$(wildcard *.org)"                                   >> ${make_file}
-          echo "files_pdf = \$(files_org:.org=.pdf)"                              >> ${make_file}
-          echo                                                                    >> ${make_file}
-          echo "all: \$(files_pdf)"                                               >> ${make_file}
-          echo                                                                    >> ${make_file}
-          echo "%.pdf: %.org"                                                     >> ${make_file}
-          echo "\t@echo \"NOTICE: Exporting \$< to pdf...\";"                     >> ${make_file}
-          echo "\t@\$(BATCH) --visit \"\$<\" --funcall org-beamer-export-to-pdf"  >> ${make_file}
-          echo "\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"                         >> ${make_file}
-          echo                                                                    >> ${make_file}
-          echo "clean:"                                                           >> ${make_file}
-          echo "\t@rm -rf latex.d *.tex *.pdf *.fdb* *~ "                         >> ${make_file}
-          echo "\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"              >> ${make_file}
-      }
-
-      --mnt::generate_gitignore () {
+  # Remove last space
+  append_list_of_arguments=${append_list_of_arguments%?}
+  append_list_of_options=${append_list_of_options%?}
+  pkgtools__msg_devel "append_list_of_arguments=${append_list_of_arguments}"
+  pkgtools__msg_devel "append_list_of_options=${append_list_of_options}"
+#+END_SRC
+**** Internal functions
+#+BEGIN_SRC sh
+  local directory=${base_directory}/${dirname}
+  --mod::create_directories () {
+      mkdir -p ${directory}/{pdf,plot}
+  }
+#+END_SRC
+#+BEGIN_SRC sh
+  --mod::generate_org_skeleton () {
+      local org_file
+      case $type in
+          (talk)
+              org_file=${directory}/talk.org
+              ;;
+          (article)
+              org_file=${directory}/article.org
+              ;;
+      esac
+      echo "#+TITLE:  ${title}"                               > ${org_file}
+      echo "#+AUTHOR: ${author}"                             >> ${org_file}
+      echo "#+EMAIL:  ${email}"                              >> ${org_file}
+      echo "#+DATE:   $(date +%d/%m/%Y)"                     >> ${org_file}
+      case $type in
+          (talk)
+              echo "#+OPTIONS: toc:nil ^:{}"                 >> ${org_file}
+              echo "#+STARTUP: beamer"                       >> ${org_file}
+              ;;
+          (article)
+              echo "#+OPTIONS: toc:nil author:nil ^:{}"      >> ${org_file}
+              ;;
+      esac
+      echo "#+LATEX_CLASS: ${latex_class}"                   >> ${org_file}
+      echo "#+LATEX_CLASS_OPTIONS: [${latex_class_options}]" >> ${org_file}
+  }
+#+END_SRC
+#+BEGIN_SRC sh
+  --mod::generate_makefile () {
+      local make_file=${directory}/Makefile
+      echo "# -*- mode: makefile; -*-"                                         > ${make_file}
+      echo "EMACS=emacs"                                                      >> ${make_file}
+      echo "BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \
+                                    --load '~/.emacs.d/starter-kit-org.el'"   >> ${make_file}
+      echo "files_org = \$(wildcard *.org)"                                   >> ${make_file}
+      echo "files_pdf = \$(files_org:.org=.pdf)"                              >> ${make_file}
+      echo                                                                    >> ${make_file}
+      echo "all: \$(files_pdf)"                                               >> ${make_file}
+      echo                                                                    >> ${make_file}
+      echo "%.pdf: %.org"                                                     >> ${make_file}
+      echo "\t@echo \"NOTICE: Exporting \$< to pdf...\";"                     >> ${make_file}
+      case $type in
+          (talk)
+              echo "\t@\$(BATCH) --visit \"\$<\" --funcall org-beamer-export-to-pdf" >> ${make_file}
+              ;;
+          (article)
+              echo "\t@\$(BATCH) --visit \"\$<\" --funcall org-latex-export-to-pdf"  >> ${make_file}
+              ;;
+      esac
+      echo "\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"                         >> ${make_file}
+      echo                                                                    >> ${make_file}
+      echo "clean:"                                                           >> ${make_file}
+      echo "\t@rm -rf latex.d *.tex *.pdf *.fdb* *~ "                         >> ${make_file}
+      echo "\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"              >> ${make_file}
+  }
+#+END_SRC
+#+BEGIN_SRC sh
+      --mod::generate_gitignore () {
           local gitignore=${directory}/.gitignore
-          echo "/talk*.pdf"         >> ${gitignore}
-          echo "/talk*.tex"         >> ${gitignore}
-          echo "/talk*.auxlock"     >> ${gitignore}
-          echo "/talk*.vrb"         >> ${gitignore}
-          echo "/talk*.fdb_latexmk" >> ${gitignore}
-          echo "/talk*.fls"         >> ${gitignore}
-          echo "/talk*.aux"         >> ${gitignore}
-          echo "*~"            >> ${gitignore}
-          echo "latex.d/"      >> ${gitignore}
+          echo "/*.pdf"         >> ${gitignore}
+          echo "/*.tex"         >> ${gitignore}
+          echo "/*.auxlock"     >> ${gitignore}
+          echo "/*.vrb"         >> ${gitignore}
+          echo "/*.fdb_latexmk" >> ${gitignore}
+          echo "/*.fls"         >> ${gitignore}
+          echo "/*.aux"         >> ${gitignore}
+          echo "*~"             >> ${gitignore}
+          echo "latex.d/"       >> ${gitignore}
         }
+#+END_SRC
+#+BEGIN_SRC sh
+  --mod::import_doc () {
+      (
+          if [ -d ${directory}/.git ]; then
+              pkgtools__msg_warning "Directory '${directory}' is already under git-svn !"
+              return 0
+          fi
+          svn mkdir ${svn_directory}/${dirname} -m "create ${dirname} directory"
+          svn import ${directory} ${svn_directory}/${dirname} -m "import trunk directory"
+          rm -rf ${base_directory}/${dirname}
+          mkdir -p ${base_directory}/${dirname}
+          cd ${base_directory}/${dirname}
+          git svn init --prefix=svn/ --trunk=. ${svn_directory}/${dirname}
+          git svn fetch
+      )
+  }
+#+END_SRC
+**** Calling functions
+#+BEGIN_SRC sh
 
-      --mnt::import_talk () {
-          (
-              if [ -d ${directory}/.git ]; then
-                  pkgtools__msg_warning "Directory '${directory}' is already under git-svn !"
-                  return 0
-              fi
-              svn mkdir https://svn.lal.in2p3.fr/users/garrido/Talk/${dirname} -m "create ${dirname} directory"
-              svn import ${directory} https://svn.lal.in2p3.fr/users/garrido/Talk/${dirname} -m "import trunk directory"
-              rm -rf ${base}/${dirname}
-              mkdir -p ${base}/${dirname}
-              cd ${base}/${dirname}
-              git svn init --prefix=svn/ --trunk=. https://svn.lal.in2p3.fr/users/garrido/Talk/${dirname}
-              git svn fetch
-          )
-      }
-
-      if [ "${dirname}" = "" ]; then
-          pkgtools__msg_error "You must give a repository name !"
-          __pkgtools__at_function_exit
-          return 1
-      fi
-
-      --mnt::create_directories
-      --mnt::generate_org_skeleton
-      --mnt::generate_makefile
-      --mnt::generate_gitignore
-      --mnt::import_talk
+      --mod::create_directories
+      --mod::generate_org_skeleton
+      --mod::generate_makefile
+      --mod::generate_gitignore
+      --mod::import_doc
 
       # Finally goto the directory
-      cd ${base}/${dirname}
+      cd ${base_directory}/${dirname}
 
-      unset title author latex_class latex_class_options
-      unset dirname directory base
+      unset title author email latex_class latex_class_options
+      unset dirname directory base svn_directory org_file
       unset append_list_of_arguments append_list_of_options
-      unfunction -- --mnt::usage
-      unfunction -- --mnt::generate_org_skeleton
-      unfunction -- --mnt::create_directories
-      unfunction -- --mnt::import_talk
+      unfunction -- --mod::usage
+      unfunction -- --mod::generate_org_skeleton
+      unfunction -- --mod::create_directories
+      unfunction -- --mod::import_doc
       __pkgtools__at_function_exit
       return 0
   }
@@ -289,19 +357,26 @@ components.
 *** Completion function
 #+BEGIN_SRC sh
   # Connect completion system
-  compdef _make_new_talk make_new_talk
-  _make_new_talk () {
+  compdef _make_org_doc make_org_doc
+  _make_org_doc () {
       _arguments -C                                                                      \
           '(-h --help)'{-h,--help}'[print help message]'                                 \
           '(-v --verbose)'{-v,--verbose}'[produce verbose logging]'                      \
           '(-d --debug)'{-d,--debug}'[produce debug logging]'                            \
           '(-D --devel)'{-D,--devel}'[produce devel logging]'                            \
+          --doc-type'[set document type]:type:->type'                                        \
           --title'[set talk title]'                                                      \
           --author'[set author name]'                                                    \
+          --email'[set email]'                                                    \
           --latex-class'[set LaTeX class name]:class:->class'                            \
           --latex-class-options'[set LaTeX class options]:class-options:->class-options' \
+          --base-directory'[directory to put document]' \
           '*: :->args' && ret=0
       case $state in
+          (type)
+              local types; types=('talk' 'article' 'note')
+              _describe -t 'types' 'type' types && ret=0
+              ;;
           (class)
               local classes; classes=('beamer')
               _describe -t 'classes' 'class' classes && ret=0
