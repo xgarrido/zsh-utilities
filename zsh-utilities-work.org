@@ -219,7 +219,7 @@ components.
       (article)
           test ! -n "$base_directory" && base_directory=~/Workdir/Papers/pub/nemo-note
           test ! -n "$latex_class" && latex_class="snemo-article"
-          test ! -n "$latex_class_options" && latex_class_options="classic"
+          test ! -n "$latex_class_options" && latex_class_options=""
           ;;
   esac
 
@@ -250,7 +250,7 @@ components.
               org_file=${directory}/talk.org
               ;;
           (article)
-              org_file=${directory}/note-$(date +%Y%m%d).org
+              org_file=${directory}/note-$(date +%y%m%d).org
               ;;
       esac
       echo "#+TITLE:  ${title}"                               > ${org_file}
@@ -292,7 +292,6 @@ components.
               echo "${beginsrc}_SRC latex :noweb yes" >> ${org_file}
               echo "<<vc-status()>>" >> ${org_file}
               echo "${endsrc}_SRC" >> ${org_file}
-              echo "* Authors :ignoreheading:" >> ${org_file}
               echo "* Abstract :ignoreheading:" >> ${org_file}
               echo "#+BEGIN_ABSTRACT" >> ${org_file}
               echo "#+END_ABSTRACT" >> ${org_file}
