@@ -362,13 +362,13 @@ components.
               pkgtools__msg_warning "Directory '${directory}' is already under git-svn !"
               return 0
           fi
-          # svn mkdir ${svn_directory}/${dirname} -m "create ${dirname} directory"
-          # svn import ${directory} ${svn_directory}/${dirname} -m "import trunk directory"
-          # rm -rf ${base_directory}/${dirname}
-          # mkdir -p ${base_directory}/${dirname}
-          # cd ${base_directory}/${dirname}
-          # git svn init --prefix=svn/ --trunk=. ${svn_directory}/${dirname}
-          # git svn fetch
+          svn mkdir ${svn_directory}/${dirname} -m "create ${dirname} directory"
+          svn import ${directory} ${svn_directory}/${dirname} -m "import trunk directory"
+          rm -rf ${base_directory}/${dirname}
+          mkdir -p ${base_directory}/${dirname}
+          cd ${base_directory}/${dirname}
+          git svn init --prefix=svn/ --trunk=. ${svn_directory}/${dirname}
+          git svn fetch
       )
   }
 #+END_SRC
