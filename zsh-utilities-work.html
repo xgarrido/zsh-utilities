@@ -14,7 +14,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -195,9 +195,9 @@ components.
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">if</span> [[ $<span class="org-variable-name">HOSTNAME</span> = ccage* ]]; <span class="org-keyword">then</span>
-    <span class="org-builtin">alias</span> <span class="org-variable-name">qjob_nemo_user</span>=<span class="org-string">'echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| grep nemo | awk "{print \$5}" | sort | uniq -c'</span>
-    <span class="org-builtin">alias</span> <span class="org-variable-name">qjob_my_total</span>=<span class="org-string">'echo -ne "Total number of jobs: ";qstat | wc -l'</span>
-    <span class="org-builtin">alias</span> <span class="org-variable-name">qjob_my_run</span>=<span class="org-string">'echo -ne "Number of running jobs: ";qstat | awk "{if (\$5 == \"r\") print 1}" | wc -l'</span>
+    <span class="org-builtin">alias</span> <span class="org-variable-name">qjob_nemo_user</span>=<span class="org-string">'echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| tail -n+3 | grep nemo | awk "{print \$5}" | sort | uniq -c'</span>
+    <span class="org-builtin">alias</span> <span class="org-variable-name">qjob_my_total</span>=<span class="org-string">'echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'</span>
+    <span class="org-builtin">alias</span> <span class="org-variable-name">qjob_my_run</span>=<span class="org-string">'echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'</span>
     <span class="org-builtin">alias</span> <span class="org-variable-name">qjob_summary</span>=<span class="org-string">'qjob_my_total; qjob_my_run; qjob_nemo_user'</span>
 <span class="org-keyword">fi</span>
 </pre>
@@ -229,36 +229,40 @@ components.
 </div>
 
 <div id="outline-container-sec-1-6" class="outline-3">
-<h3 id="sec-1-6">Generate talk skeleton</h3>
+<h3 id="sec-1-6">Generate org doc skeletons</h3>
 <div class="outline-text-3" id="text-1-6">
 </div><div id="outline-container-sec-1-6-1" class="outline-4">
 <h4 id="sec-1-6-1">Main function</h4>
 <div class="outline-text-4" id="text-1-6-1">
+</div><ul class="org-ul"><li>Parsing options<br  /><div class="outline-text-5" id="text-1-6-1-1">
 <div class="org-src-container">
 
-<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">make_new_talk</span> ()
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">make_org_doc</span> ()
 {
     __pkgtools__default_values
-    __pkgtools__at_function_enter make_new_talk
+    __pkgtools__at_function_enter make_org_doc
 
     <span class="org-comment-delimiter"># </span><span class="org-comment">Internal functions</span>
-    --mnt::usage () {
+    --mod::usage () {
     }
 
     <span class="org-builtin">local</span> append_list_of_options
     <span class="org-builtin">local</span> append_list_of_arguments
 
+    <span class="org-builtin">local</span> type
     <span class="org-builtin">local</span> title
     <span class="org-builtin">local</span> <span class="org-variable-name">author</span>=<span class="org-string">"Xavier Garrido"</span>
-    <span class="org-builtin">local</span> <span class="org-variable-name">latex_class</span>=<span class="org-string">"beamer"</span>
-    <span class="org-builtin">local</span> <span class="org-variable-name">latex_class_options</span>=<span class="org-string">"snemo,nologo"</span>
+    <span class="org-builtin">local</span> <span class="org-variable-name">email</span>=<span class="org-string">"xavier.garrido@lal.in2p3.fr"</span>
+    <span class="org-builtin">local</span> latex_class
+    <span class="org-builtin">local</span> latex_class_options
+    <span class="org-builtin">local</span> base_directory
     <span class="org-keyword">while</span> [ -n <span class="org-string">"$1"</span> ]; <span class="org-keyword">do</span>
         <span class="org-builtin">local</span> <span class="org-variable-name">token</span>=$<span class="org-variable-name">1</span>
         <span class="org-keyword">if</span> [ <span class="org-string">"${token[0,1]}"</span> = <span class="org-string">"-"</span> ]; <span class="org-keyword">then</span>
             <span class="org-builtin">local</span> <span class="org-variable-name">opt</span>=${<span class="org-variable-name">token</span>}
             <span class="org-variable-name">append_list_of_options</span>+=<span class="org-string">"${opt} "</span>
             <span class="org-keyword">if</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"-h"</span> -o <span class="org-string">"${opt}"</span> = <span class="org-string">"--help"</span> ]; <span class="org-keyword">then</span>
-                --mnt::usage
+                --mod::usage
                 <span class="org-keyword">return</span> 0
             <span class="org-keyword">elif</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"-d"</span> -o <span class="org-string">"${opt}"</span> = <span class="org-string">"--debug"</span> ]; <span class="org-keyword">then</span>
                 pkgtools__msg_using_debug
@@ -277,14 +281,20 @@ components.
                 pkgtools__ui_batch
             <span class="org-keyword">elif</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"--gui"</span> ]; <span class="org-keyword">then</span>
                 pkgtools__ui_using_gui
+            <span class="org-keyword">elif</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"--doc-type"</span> ]; <span class="org-keyword">then</span>
+                <span class="org-builtin">shift</span> 1; <span class="org-variable-name">type</span>=<span class="org-string">"$1"</span>
             <span class="org-keyword">elif</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"--title"</span> ]; <span class="org-keyword">then</span>
                 <span class="org-builtin">shift</span> 1; <span class="org-variable-name">title</span>=<span class="org-string">"$1"</span>
             <span class="org-keyword">elif</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"--author"</span> ]; <span class="org-keyword">then</span>
                 <span class="org-builtin">shift</span> 1; <span class="org-variable-name">author</span>=<span class="org-string">"$1"</span>
+            <span class="org-keyword">elif</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"--email"</span> ]; <span class="org-keyword">then</span>
+                <span class="org-builtin">shift</span> 1; <span class="org-variable-name">email</span>=<span class="org-string">"$1"</span>
             <span class="org-keyword">elif</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"--latex-class"</span> ]; <span class="org-keyword">then</span>
                 <span class="org-builtin">shift</span> 1; <span class="org-variable-name">latex_class</span>=<span class="org-string">"$1"</span>
             <span class="org-keyword">elif</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"--latex-class-options"</span> ]; <span class="org-keyword">then</span>
                 <span class="org-builtin">shift</span> 1; <span class="org-variable-name">latex_class_options</span>=<span class="org-string">"$1"</span>
+            <span class="org-keyword">elif</span> [ <span class="org-string">"${opt}"</span> = <span class="org-string">"--base-directory"</span> ]; <span class="org-keyword">then</span>
+                <span class="org-builtin">shift</span> 1; <span class="org-variable-name">base_directory</span>=<span class="org-string">"$1"</span>
             <span class="org-keyword">fi</span>
         <span class="org-keyword">else</span>
             <span class="org-variable-name">arg</span>=${<span class="org-variable-name">token</span>}
@@ -294,110 +304,248 @@ components.
         <span class="org-keyword">fi</span>
         <span class="org-builtin">shift</span> 1
     <span class="org-keyword">done</span>
+</pre>
+</div>
+</div>
+</li>
 
-    <span class="org-comment-delimiter"># </span><span class="org-comment">Remove last space</span>
-    <span class="org-variable-name">append_list_of_arguments</span>=${<span class="org-variable-name">append_list_of_arguments</span>%?}
-    <span class="org-variable-name">append_list_of_options</span>=${<span class="org-variable-name">append_list_of_options</span>%?}
-    pkgtools__msg_devel <span class="org-string">"append_list_of_arguments=${append_list_of_arguments}"</span>
-    pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_list_of_options}"</span>
+<li>Parsing options<br  /><div class="outline-text-5" id="text-1-6-1-2">
+<div class="org-src-container">
 
-    <span class="org-comment-delimiter"># </span><span class="org-comment">Local functions</span>
-    <span class="org-builtin">local</span> <span class="org-variable-name">base</span>=~/Workdir/Talk
-    <span class="org-builtin">local</span> <span class="org-variable-name">dirname</span>=<span class="org-string">"$(echo ${append_list_of_arguments} | awk '{print $1}')"</span>
-    <span class="org-builtin">local</span> <span class="org-variable-name">directory</span>=${<span class="org-variable-name">base</span>}/${<span class="org-variable-name">dirname</span>}
-
-    --mnt::create_directories () {
-        mkdir -p ${<span class="org-variable-name">directory</span>}/{pdf,plot}
-    }
-
-    --mnt::generate_org_skeleton () {
-        <span class="org-builtin">local</span> <span class="org-variable-name">org_file</span>=${<span class="org-variable-name">directory</span>}/talk.org
-        <span class="org-builtin">echo</span> <span class="org-string">"#+TITLE:  ${title}"</span>                               &gt; ${<span class="org-variable-name">org_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"#+AUTHOR: ${author}"</span>                             &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"#+DATE:   $(date +%d/%m/%Y)"</span>                     &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil ^:{}"</span>                         &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"#+STARTUP: beamer"</span>                               &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"#+LATEX_CLASS: ${latex_class}"</span>                   &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"#+LATEX_CLASS_OPTIONS: [${latex_class_options}]"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-    }
-
-    --mnt::generate_makefile () {
-        <span class="org-builtin">local</span> <span class="org-variable-name">make_file</span>=${<span class="org-variable-name">directory</span>}/Makefile
-        <span class="org-builtin">echo</span> <span class="org-string">"# -*- mode: makefile; -*-"</span>                                         &gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"EMACS=emacs"</span>                                                      &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \</span>
-<span class="org-string">                                      --load '~/.emacs.d/starter-kit-org.el'"</span>   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"files_org = \$(wildcard *.org)"</span>                                   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"files_pdf = \$(files_org:.org=.pdf)"</span>                              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"all: \$(files_pdf)"</span>                                               &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"%.pdf: %.org"</span>                                                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"\t@echo \"NOTICE: Exporting \$&lt; to pdf...\";"</span>                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"\t@\$(BATCH) --visit \"\$&lt;\" --funcall org-beamer-export-to-pdf"</span>  &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"clean:"</span>                                                           &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf latex.d *.tex *.pdf *.fdb* *~"</span>                          &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    }
-
-    --mnt::generate_gitignore () {
-        <span class="org-builtin">local</span> <span class="org-variable-name">gitignore</span>=${<span class="org-variable-name">directory</span>}/.gitignore
-        <span class="org-builtin">echo</span> <span class="org-string">"/talk*.pdf"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"/talk*.tex"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"/talk*.auxlock"</span>     &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"/talk*.vrb"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"/talk*.fdb_latexmk"</span> &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"/talk*.fls"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"/talk*.aux"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"*~"</span>            &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
-        <span class="org-builtin">echo</span> <span class="org-string">"latex.d/"</span>      &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
-      }
-
-    --mnt::import_talk () {
-        (
-            <span class="org-keyword">if</span> [ -d ${<span class="org-variable-name">directory</span>}/.git ]; <span class="org-keyword">then</span>
-                pkgtools__msg_warning <span class="org-string">"Directory '${directory}' is already under git-svn !"</span>
-                <span class="org-keyword">return</span> 0
-            <span class="org-keyword">fi</span>
-            svn mkdir https://svn.lal.in2p3.fr/users/garrido/Talk/${<span class="org-variable-name">dirname</span>} -m <span class="org-string">"create ${dirname} directory"</span>
-            svn import ${<span class="org-variable-name">directory</span>} https://svn.lal.in2p3.fr/users/garrido/Talk/${<span class="org-variable-name">dirname</span>} -m <span class="org-string">"import trunk directory"</span>
-            rm -rf ${<span class="org-variable-name">base</span>}/${<span class="org-variable-name">dirname</span>}
-            mkdir -p ${<span class="org-variable-name">base</span>}/${<span class="org-variable-name">dirname</span>}
-            <span class="org-builtin">cd</span> ${<span class="org-variable-name">base</span>}/${<span class="org-variable-name">dirname</span>}
-            git svn init --prefix=svn/ --trunk=. https://svn.lal.in2p3.fr/users/garrido/Talk/${<span class="org-variable-name">dirname</span>}
-            git svn fetch
-        )
-    }
-
-    <span class="org-keyword">if</span> [ <span class="org-string">"${dirname}"</span> = <span class="org-string">""</span> ]; <span class="org-keyword">then</span>
-        pkgtools__msg_error <span class="org-string">"You must give a repository name !"</span>
-        __pkgtools__at_function_exit
-        <span class="org-keyword">return</span> 1
-    <span class="org-keyword">fi</span>
-
-    --mnt::create_directories
-    --mnt::generate_org_skeleton
-    --mnt::generate_makefile
-    --mnt::generate_gitignore
-    --mnt::import_talk
-
-    <span class="org-comment-delimiter"># </span><span class="org-comment">Finally goto the directory</span>
-    <span class="org-builtin">cd</span> ${<span class="org-variable-name">base</span>}/${<span class="org-variable-name">dirname</span>}
-
-    <span class="org-builtin">unset</span> title author latex_class latex_class_options
-    <span class="org-builtin">unset</span> dirname directory base
-    <span class="org-builtin">unset</span> append_list_of_arguments append_list_of_options
-    <span class="org-builtin">unfunction</span> -- --mnt::usage
-    <span class="org-builtin">unfunction</span> -- --mnt::generate_org_skeleton
-    <span class="org-builtin">unfunction</span> -- --mnt::create_directories
-    <span class="org-builtin">unfunction</span> -- --mnt::import_talk
+<pre class="src src-sh"><span class="org-builtin">local</span> <span class="org-variable-name">dirname</span>=<span class="org-string">"$(echo ${append_list_of_arguments} | awk '{print $1}')"</span>
+<span class="org-keyword">if</span> [ <span class="org-string">"${dirname}"</span> = <span class="org-string">""</span> ]; <span class="org-keyword">then</span>
+    pkgtools__msg_error <span class="org-string">"You must give a repository name !"</span>
     __pkgtools__at_function_exit
-    <span class="org-keyword">return</span> 0
+    <span class="org-keyword">return</span> 1
+<span class="org-keyword">fi</span>
+
+<span class="org-keyword">if</span> [ <span class="org-negation-char">!</span> -n <span class="org-string">"$type"</span> ]; <span class="org-keyword">then</span>
+    pkgtools__msg_error <span class="org-string">"Missing type of documents !"</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 1
+<span class="org-keyword">fi</span>
+
+<span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
+    (talk)
+        test ! -n <span class="org-string">"$base_directory"</span> &amp;&amp; <span class="org-variable-name">base_directory</span>=~/Workdir/Talk
+        test ! -n <span class="org-string">"$latex_class"</span> &amp;&amp; <span class="org-variable-name">latex_class</span>=<span class="org-string">"beamer"</span>
+        test ! -n <span class="org-string">"$latex_class_options"</span> &amp;&amp; <span class="org-variable-name">latex_class_options</span>=<span class="org-string">"snemo,nologo"</span>
+        ;;
+    (note)
+        ;;
+    (article)
+        test ! -n <span class="org-string">"$base_directory"</span> &amp;&amp; <span class="org-variable-name">base_directory</span>=~/Workdir/Papers/pub/nemo-note
+        test ! -n <span class="org-string">"$latex_class"</span> &amp;&amp; <span class="org-variable-name">latex_class</span>=<span class="org-string">"snemo-article"</span>
+        test ! -n <span class="org-string">"$latex_class_options"</span> &amp;&amp; <span class="org-variable-name">latex_class_options</span>=<span class="org-string">"classic"</span>
+        ;;
+<span class="org-keyword">esac</span>
+
+pkgtools__msg_devel <span class="org-string">"base_directory=${base_directory}"</span>
+pkgtools__msg_devel <span class="org-string">"latex_class=${latex_class}"</span>
+pkgtools__msg_devel <span class="org-string">"latex_class_options=${latex_class_options}"</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Remove last space</span>
+<span class="org-variable-name">append_list_of_arguments</span>=${<span class="org-variable-name">append_list_of_arguments</span>%?}
+<span class="org-variable-name">append_list_of_options</span>=${<span class="org-variable-name">append_list_of_options</span>%?}
+pkgtools__msg_devel <span class="org-string">"append_list_of_arguments=${append_list_of_arguments}"</span>
+pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_list_of_options}"</span>
+</pre>
+</div>
+</div>
+</li>
+
+<li>Internal functions<br  /><ul class="org-ul"><li>Create directories<br  /><div class="outline-text-6" id="text-1-6-1-3-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-builtin">local</span> <span class="org-variable-name">directory</span>=${<span class="org-variable-name">base_directory</span>}/${<span class="org-variable-name">dirname</span>}
+--mod::create_directories () {
+    mkdir -p ${<span class="org-variable-name">directory</span>}/{pdf,plot}
 }
 </pre>
 </div>
 </div>
+</li>
+
+<li>Generate org skeleton<br  /><div class="outline-text-6" id="text-1-6-1-3-2">
+<div class="org-src-container">
+
+<pre class="src src-sh">--mod::generate_org_skeleton () {
+    <span class="org-builtin">local</span> org_file
+    <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
+        (talk)
+            <span class="org-variable-name">org_file</span>=${<span class="org-variable-name">directory</span>}/talk.org
+            ;;
+        (article)
+            <span class="org-variable-name">org_file</span>=${<span class="org-variable-name">directory</span>}/note-$(date +%Y%m%d).org
+            ;;
+    <span class="org-keyword">esac</span>
+    <span class="org-builtin">echo</span> <span class="org-string">"#+TITLE:  ${title}"</span>                               &gt; ${<span class="org-variable-name">org_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"#+AUTHOR: ${author}"</span>                             &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"#+EMAIL:  ${email}"</span>                              &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"#+DATE:   $(date +%d/%m/%Y)"</span>                     &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+    <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
+        (talk)
+            <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil ^:{}"</span>                 &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"#+STARTUP: beamer"</span>                       &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            ;;
+        (article)
+            <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil author:nil ^:{}"</span>      &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"#+STARTUP: hideblocks entitiespretty"</span>    &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            ;;
+    <span class="org-keyword">esac</span>
+    <span class="org-builtin">echo</span> <span class="org-string">"#+LATEX_CLASS: ${latex_class}"</span>                   &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"#+LATEX_CLASS_OPTIONS: [${latex_class_options}]"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">""</span>                                                &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Special setup for article</span>
+    <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
+        (article)
+            <span class="org-variable-name">beginsrc</span>=<span class="org-string">"#+BEGIN"</span>
+            <span class="org-variable-name">endsrc</span>=<span class="org-string">"#+END"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"* VC status :ignoreheading:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"#+NAME: vc-status"</span>  &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"${beginsrc}_SRC sh :results output :exports none"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"  if [ -d .svn ]; then"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"    status=\$(LC_MESSAGES=en svn info)"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"    rev=\$(echo -e \$status | sed -n 's/.*Revision: *\([^ ]*\).*/\1/p')"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"    date=\$(echo -e \$status | sed -n 's/.*Last Changed Date: *\([^ ]*\).*/\1/p')"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"    log=\"\\\texttt{svn} revision \${rev} \\\$-\\\$ \${date}\""</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"  fi"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"  if [ -d .git ]; then"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"    log=\$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:\"\\\texttt{git} commit \\\texttt{%h} -- %ad\")"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"  fi"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"  echo \"\\\renewcommand*{\\\PrelimText}{\\\small\\\textnormal{\\\color{gray}\${log}}}\""</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"${endsrc}_SRC"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"${beginsrc}_SRC latex :noweb yes"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"&lt;&lt;vc-status()&gt;&gt;"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"${endsrc}_SRC"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"* Authors :ignoreheading:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"* Abstract :ignoreheading:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"#+BEGIN_ABSTRACT"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"#+END_ABSTRACT"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            ;;
+    <span class="org-keyword">esac</span>
+}
+</pre>
+</div>
+</div>
+</li>
+
+<li>Generate <code>makefile</code><br  /><div class="outline-text-6" id="text-1-6-1-3-3">
+<div class="org-src-container">
+
+<pre class="src src-sh">--mod::generate_makefile () {
+    <span class="org-builtin">local</span> <span class="org-variable-name">make_file</span>=${<span class="org-variable-name">directory</span>}/Makefile
+    <span class="org-builtin">echo</span> <span class="org-string">"# -*- mode: makefile; -*-"</span>                                         &gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"EMACS=emacs"</span>                                                      &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \</span>
+<span class="org-string">                                  --load '~/.emacs.d/starter-kit-org.el'"</span>   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"files_org = \$(wildcard *.org)"</span>                                   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"files_pdf = \$(files_org:.org=.pdf)"</span>                              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"all: \$(files_pdf)"</span>                                               &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"%.pdf: %.org"</span>                                                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"\t@echo \"NOTICE: Exporting \$&lt; to pdf...\";"</span>                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
+        (talk)
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@\$(BATCH) --visit \"\$&lt;\" --funcall org-beamer-export-to-pdf"</span> &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            ;;
+        (article)
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@\$(BATCH) --visit \"\$&lt;\" --funcall org-latex-export-to-pdf"</span>  &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            ;;
+    <span class="org-keyword">esac</span>
+    <span class="org-builtin">echo</span> <span class="org-string">"\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"clean:"</span>                                                           &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf latex.d *.tex *.pdf *.fdb* *~ "</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"</span>              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+}
+</pre>
+</div>
+</div>
+</li>
+
+<li>Generate <code>.gitignore</code><br  /><div class="outline-text-6" id="text-1-6-1-3-4">
+<div class="org-src-container">
+
+<pre class="src src-sh">--mod::generate_gitignore () {
+    <span class="org-builtin">local</span> <span class="org-variable-name">gitignore</span>=${<span class="org-variable-name">directory</span>}/.gitignore
+    <span class="org-builtin">echo</span> <span class="org-string">"/*.pdf"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"/*.tex"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"/*.auxlock"</span>     &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"/*.vrb"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"/*.fdb_latexmk"</span> &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"/*.fls"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"/*.aux"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"*~"</span>             &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"latex.d/"</span>       &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+  }
+</pre>
+</div>
+</div>
+</li>
+
+<li>Import function<br  /><div class="outline-text-6" id="text-1-6-1-3-5">
+<div class="org-src-container">
+
+<pre class="src src-sh">--mod::import_doc () {
+    (
+        <span class="org-builtin">local</span> svn_directory
+        <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
+            (talk)
+                <span class="org-variable-name">svn_directory</span>=https://svn.lal.in2p3.fr/users/garrido/Talk
+                ;;
+            (article)
+                <span class="org-variable-name">svn_directory</span>=https://svn.lal.in2p3.fr/users/garrido/Publications/nemo-note
+                ;;
+        <span class="org-keyword">esac</span>
+        <span class="org-keyword">if</span> [ -d ${<span class="org-variable-name">directory</span>}/.git ]; <span class="org-keyword">then</span>
+            pkgtools__msg_warning <span class="org-string">"Directory '${directory}' is already under git-svn !"</span>
+            <span class="org-keyword">return</span> 0
+        <span class="org-keyword">fi</span>
+        svn mkdir ${<span class="org-variable-name">svn_directory</span>}/${<span class="org-variable-name">dirname</span>} -m <span class="org-string">"create ${dirname} directory"</span>
+        svn import ${<span class="org-variable-name">directory</span>} ${<span class="org-variable-name">svn_directory</span>}/${<span class="org-variable-name">dirname</span>} -m <span class="org-string">"import trunk directory"</span>
+        rm -rf ${<span class="org-variable-name">base_directory</span>}/${<span class="org-variable-name">dirname</span>}
+        mkdir -p ${<span class="org-variable-name">base_directory</span>}/${<span class="org-variable-name">dirname</span>}
+        <span class="org-builtin">cd</span> ${<span class="org-variable-name">base_directory</span>}/${<span class="org-variable-name">dirname</span>}
+        git svn init --prefix=svn/ --trunk=. ${<span class="org-variable-name">svn_directory</span>}/${<span class="org-variable-name">dirname</span>}
+        git svn fetch
+    )
+}
+</pre>
+</div>
+</div>
+</li></ul>
+</li>
+
+<li>Calling functions<br  /><div class="outline-text-5" id="text-1-6-1-4">
+<div class="org-src-container">
+
+<pre class="src src-sh">--mod::create_directories
+--mod::generate_org_skeleton
+--mod::generate_makefile
+--mod::generate_gitignore
+--mod::import_doc
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Finally goto the directory</span>
+<span class="org-builtin">cd</span> ${<span class="org-variable-name">base_directory</span>}/${<span class="org-variable-name">dirname</span>}
+
+<span class="org-builtin">unset</span> title author email latex_class latex_class_options
+<span class="org-builtin">unset</span> dirname directory base svn_directory org_file
+<span class="org-builtin">unset</span> append_list_of_arguments append_list_of_options
+<span class="org-builtin">unfunction</span> -- --mod::usage
+<span class="org-builtin">unfunction</span> -- --mod::import_doc
+<span class="org-builtin">unfunction</span> -- --mod::generate_gitignore
+<span class="org-builtin">unfunction</span> -- --mod::generate_makefile
+<span class="org-builtin">unfunction</span> -- --mod::generate_org_skeleton
+<span class="org-builtin">unfunction</span> -- --mod::create_directories
+__pkgtools__at_function_exit
+<span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</li></ul>
 </div>
 <div id="outline-container-sec-1-6-2" class="outline-4">
 <h4 id="sec-1-6-2">Completion function</h4>
@@ -405,19 +553,26 @@ components.
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-comment-delimiter"># </span><span class="org-comment">Connect completion system</span>
-compdef _make_new_talk make_new_talk
-<span class="org-function-name">_make_new_talk</span> () {
+compdef _make_org_doc make_org_doc
+<span class="org-function-name">_make_org_doc</span> () {
     _arguments -C                                                                      <span class="org-sh-escaped-newline">\</span>
         <span class="org-string">'(-h --help)'</span>{-h,--help}<span class="org-string">'[print help message]'</span>                                 <span class="org-sh-escaped-newline">\</span>
         <span class="org-string">'(-v --verbose)'</span>{-v,--verbose}<span class="org-string">'[produce verbose logging]'</span>                      <span class="org-sh-escaped-newline">\</span>
         <span class="org-string">'(-d --debug)'</span>{-d,--debug}<span class="org-string">'[produce debug logging]'</span>                            <span class="org-sh-escaped-newline">\</span>
         <span class="org-string">'(-D --devel)'</span>{-D,--devel}<span class="org-string">'[produce devel logging]'</span>                            <span class="org-sh-escaped-newline">\</span>
+        --doc-type<span class="org-string">'[set document type]:type:-&gt;type'</span>                                    <span class="org-sh-escaped-newline">\</span>
         --title<span class="org-string">'[set talk title]'</span>                                                      <span class="org-sh-escaped-newline">\</span>
         --author<span class="org-string">'[set author name]'</span>                                                    <span class="org-sh-escaped-newline">\</span>
+        --email<span class="org-string">'[set email]'</span>                                                           <span class="org-sh-escaped-newline">\</span>
         --latex-class<span class="org-string">'[set LaTeX class name]:class:-&gt;class'</span>                            <span class="org-sh-escaped-newline">\</span>
         --latex-class-options<span class="org-string">'[set LaTeX class options]:class-options:-&gt;class-options'</span> <span class="org-sh-escaped-newline">\</span>
+        --base-directory<span class="org-string">'[directory to put document]'</span>                                  <span class="org-sh-escaped-newline">\</span>
         <span class="org-string">'*: :-&gt;args'</span> &amp;&amp; <span class="org-variable-name">ret</span>=0
     <span class="org-keyword">case</span> $<span class="org-variable-name">state</span><span class="org-keyword"> in</span>
+        (<span class="org-builtin">type</span>)
+            <span class="org-builtin">local</span> types; <span class="org-variable-name">types</span>=(<span class="org-string">'talk'</span> <span class="org-string">'article'</span> <span class="org-string">'note'</span>)
+            _describe -t <span class="org-string">'types'</span> <span class="org-string">'type'</span> types &amp;&amp; <span class="org-variable-name">ret</span>=0
+            ;;
         (class)
             <span class="org-builtin">local</span> classes; <span class="org-variable-name">classes</span>=(<span class="org-string">'beamer'</span>)
             _describe -t <span class="org-string">'classes'</span> <span class="org-string">'class'</span> classes &amp;&amp; <span class="org-variable-name">ret</span>=0
@@ -443,7 +598,7 @@ compdef _make_new_talk make_new_talk
 </div>
 </div>
 <div id="postamble" class="status">
-File under git version control - commit 9d6686b - 2013-11-03
+File under git version control - commit 1e618d8 - 2013-12-19
 </div>
 </body>
 </html>

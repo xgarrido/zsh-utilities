@@ -14,7 +14,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -190,21 +190,6 @@ way it should be easy to add its own configuration.
     pkgtools__unset_variable TEXMFCNF
     pkgtools__unset_variable TETEXDIR
 
-    <span class="org-builtin">alias</span> <span class="org-variable-name">cmake</span>=cmake28
-
-    <span class="org-comment-delimiter"># </span><span class="org-comment"># Add python path</span>
-    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_env_variable PYTHONPATH ${WORKDIR}/software/lib/python2.6/site-packages</span>
-
-    <span class="org-comment-delimiter"># </span><span class="org-comment"># Load Go Programming Language</span>
-    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__reset_variable GOROOT ${WORKDIR}/software/go</span>
-    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_PATH ${WORKDIR}/software/go/bin</span>
-    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__reset_variable GOPATH ${WORKDIR}/development/go</span>
-
-    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_PATH /exp/nemo/install/bin</span>
-    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_PATH ${WORKDIR}/software/bin</span>
-    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_LD_LIBRARY_PATH ${WORKDIR}/software/lib</span>
-    <span class="org-comment-delimiter"># </span><span class="org-comment">pkgtools__add_path_to_LD_LIBRARY_PATH /exp/nemo/install/lib</span>
-
     __pkgtools__at_function_exit
     <span class="org-keyword">return</span> 0
 }
@@ -222,8 +207,8 @@ way it should be easy to add its own configuration.
 {
     __pkgtools__at_function_enter __configure_lyon_machines
     pkgtools__reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
-    <span class="org-builtin">source</span> ${<span class="org-variable-name">THRONG_DIR</span>}/sw/config/SL6.4/nemo_basic_sw_setup-1.0.bash &gt; /dev/null 2&gt;1 <span class="org-sh-escaped-newline">\</span>
-        do_nemo_basics_sw_setup_1 &gt; /dev/null 2&gt;&amp;1
+    <span class="org-builtin">source</span> ${<span class="org-variable-name">THRONG_DIR</span>}/sw/config/SL6.4/nemo_basic_sw_setup-1.0.bash &gt; /dev/null 2&gt;&amp;1
+    do_nemo_basics_sw_setup_1 &gt; /dev/null 2&gt;&amp;1
     __pkgtools__at_function_exit
     <span class="org-keyword">return</span> 0
 }
@@ -234,7 +219,7 @@ way it should be easy to add its own configuration.
 </div>
 </div>
 <div id="postamble" class="status">
-File under git version control - commit 9d6686b - 2013-11-03
+File under git version control - commit 1e618d8 - 2013-12-19
 </div>
 </body>
 </html>
