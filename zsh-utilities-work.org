@@ -234,12 +234,14 @@ components.
   pkgtools__msg_devel "append_list_of_options=${append_list_of_options}"
 #+END_SRC
 **** Internal functions
+***** Create directories
 #+BEGIN_SRC sh
   local directory=${base_directory}/${dirname}
   --mod::create_directories () {
       mkdir -p ${directory}/{pdf,plot}
   }
 #+END_SRC
+***** Generate org skeleton
 #+BEGIN_SRC sh
   --mod::generate_org_skeleton () {
       local org_file
@@ -298,6 +300,7 @@ components.
       esac
   }
 #+END_SRC
+***** Generate =makefile=
 #+BEGIN_SRC sh
   --mod::generate_makefile () {
       local make_file=${directory}/Makefile
@@ -327,6 +330,7 @@ components.
       echo "\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"              >> ${make_file}
   }
 #+END_SRC
+***** Generate =.gitignore=
 #+BEGIN_SRC sh
       --mod::generate_gitignore () {
           local gitignore=${directory}/.gitignore
@@ -341,6 +345,7 @@ components.
           echo "latex.d/"       >> ${gitignore}
         }
 #+END_SRC
+***** Import function
 #+BEGIN_SRC sh
   --mod::import_doc () {
       (
