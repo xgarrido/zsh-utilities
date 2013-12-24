@@ -273,11 +273,11 @@ components.
       # Special setup for article
       case $type in
           (article)
-              beginsrc="#+BEGIN"
-              endsrc="#+END"
+              begin="#+BEGIN"
+              end="#+END"
               echo "* VC status :ignoreheading:" >> ${org_file}
               echo "#+NAME: vc-status"  >> ${org_file}
-              echo "${beginsrc}_SRC sh :results output :exports none" >> ${org_file}
+              echo "${begin}_SRC sh :results output :exports none" >> ${org_file}
               echo "  if [ -d .svn ]; then" >> ${org_file}
               echo "    status=\$(LC_MESSAGES=en svn info)" >> ${org_file}
               echo "    rev=\$(echo -e \$status | sed -n 's/.*Revision: *\([^ ]*\).*/\1/p')" >> ${org_file}
@@ -288,13 +288,14 @@ components.
               echo "    log=\$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:\"\\\texttt{git} commit \\\texttt{%h} -- %ad\")" >> ${org_file}
               echo "  fi" >> ${org_file}
               echo "  echo \"\\\renewcommand*{\\\PrelimText}{\\\small\\\textnormal{\\\color{gray}\${log}}}\"" >> ${org_file}
-              echo "${endsrc}_SRC" >> ${org_file}
-              echo "${beginsrc}_SRC latex :noweb yes" >> ${org_file}
-              echo "<<vc-status()>>" >> ${org_file}
-              echo "${endsrc}_SRC" >> ${org_file}
+              echo "${end}_SRC" >> ${org_file}
+              echo "#+CALL: vc-status() :results value latex" >> ${org_file}
               echo "* Abstract :ignoreheading:" >> ${org_file}
-              echo "#+BEGIN_ABSTRACT" >> ${org_file}
-              echo "#+END_ABSTRACT" >> ${org_file}
+              echo "${begin}_ABSTRACT" >> ${org_file}
+              echo "${end}_ABSTRACT" >> ${org_file}
+              echo "* References :ignoresecnumber:" >> ${org_file}
+              echo "${begin}_BIBLIOGRAPHY" >> ${org_file}
+              echo "${end}_BIBLIOGRAPHY" >> ${org_file}
               ;;
       esac
   }
