@@ -275,24 +275,12 @@ components.
           (article)
               begin="#+BEGIN"
               end="#+END"
-              echo "* VC status :ignoreheading:" >> ${org_file}
-              echo "#+NAME: vc-status"  >> ${org_file}
-              echo "${begin}_SRC sh :results output :exports none" >> ${org_file}
-              echo "  if [ -d .svn ]; then" >> ${org_file}
-              echo "    status=\$(LC_MESSAGES=en svn info)" >> ${org_file}
-              echo "    rev=\$(echo -e \$status | sed -n 's/.*Revision: *\([^ ]*\).*/\1/p')" >> ${org_file}
-              echo "    date=\$(echo -e \$status | sed -n 's/.*Last Changed Date: *\([^ ]*\).*/\1/p')" >> ${org_file}
-              echo "    log=\"\\\texttt{svn} revision \${rev} \\\$-\\\$ \${date}\"" >> ${org_file}
-              echo "  fi" >> ${org_file}
-              echo "  if [ -d .git ]; then" >> ${org_file}
-              echo "    log=\$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:\"\\\texttt{git} commit \\\texttt{%h} -- %ad\")" >> ${org_file}
-              echo "  fi" >> ${org_file}
-              echo "  echo \"\\\renewcommand*{\\\PrelimText}{\\\small\\\textnormal{\\\color{gray}\${log}}}\"" >> ${org_file}
-              echo "${end}_SRC" >> ${org_file}
               echo "#+CALL: vc-status() :results value latex" >> ${org_file}
               echo "* Abstract :ignoreheading:" >> ${org_file}
               echo "${begin}_ABSTRACT" >> ${org_file}
               echo "${end}_ABSTRACT" >> ${org_file}
+              echo "* Introduction :ignoresecnumber:" >> ${org_file}
+              echo "* Conclusion :ignoresecnumber:" >> ${org_file}
               echo "* References :ignoresecnumber:" >> ${org_file}
               echo "${begin}_BIBLIOGRAPHY" >> ${org_file}
               echo "${end}_BIBLIOGRAPHY" >> ${org_file}
