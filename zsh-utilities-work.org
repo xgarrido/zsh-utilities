@@ -264,7 +264,7 @@ components.
               ;;
           (article)
               echo "#+OPTIONS: toc:nil author:nil ^:{}"      >> ${org_file}
-              echo "#+STARTUP: hideblocks entitiespretty"    >> ${org_file}
+              echo "#+STARTUP: entitiespretty"               >> ${org_file}
               ;;
       esac
       echo "#+LATEX_CLASS: ${latex_class}"                   >> ${org_file}
