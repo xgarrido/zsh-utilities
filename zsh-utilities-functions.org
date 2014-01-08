@@ -571,6 +571,16 @@ Astrophysics Data System.
   }
 #+END_SRC
 
+** Mounting/unmounting USB drives
+#+BEGIN_SRC sh
+  function usb_umount ()
+  {
+      for d in /media/*; do
+          sudo umount $d
+      done
+      sudo modprobe usb_storage
+  }
+#+END_SRC
 ** Subversion functions
 *** Better SVN status
 #+BEGIN_SRC sh
