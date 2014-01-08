@@ -349,22 +349,26 @@ db.
               server_name="nemoacq@lsmlx5.in2p3.fr"
           elif [[ $1 == pc-nemo* ]]; then
               server_name="nemo@$1"
-          else
-              if [ "${HOSTNAME}" = "garrido-laptop" ]; then
-                  server_name="garrido@localhost"
-                  if [ -f /tmp/npu.d/ports ]; then
-                      ssh_port=$(cat /tmp/npu.d/ports | grep $1 | cut -d' ' -f2)
-                      ssh_option="-p ${ssh_port}"
-                  else
-                      append_command+="$1 "
-                  fi
-              else
-                  if [[ "$1" == "pc" ]]; then
-                      server_name="pc-91089.lal.in2p3.fr"
-                  else
-                      server_name="$1.lal.in2p3.fr"
-                  fi
-              fi
+          elif [[ $1 == pc-91089 ]]; then
+              server_name="garrido@$1"
+          elif [[ $1 == nemo* ]]; then
+              server_name="garrido@$1.lal.in2p3.fr"
+          # else
+          #     if [ "${HOSTNAME}" = "garrido-laptop" ]; then
+          #         server_name="garrido@localhost"
+          #         if [ -f /tmp/npu.d/ports ]; then
+          #             ssh_port=$(cat /tmp/npu.d/ports | grep $1 | cut -d' ' -f2)
+          #             ssh_option="-p ${ssh_port}"
+          #         else
+          #             append_command+="$1 "
+          #         fi
+          #     else
+          #         if [[ "$1" == "pc" ]]; then
+          #             server_name="pc-91089.lal.in2p3.fr"
+          #         else
+          #             server_name="$1.lal.in2p3.fr"
+          #         fi
+          #     fi
           fi
           shift 1
       done
