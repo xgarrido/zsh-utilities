@@ -58,15 +58,18 @@ change wrt to =geomtools= vs. =materials= dependency as well as =genbb_help=
 depending on =dpp= for programs, we have to set the full list of Bayeux
 components.
 #+BEGIN_SRC sh
-  alias build_snailware_legacy='do_nemo_setup && snailware setup channel && \
-  snailware git-branch --branch legacy datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
-  snailware git-branch --branch legacy sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis && \
-  snrebuild datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
-  snrebuild sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis'
-  alias build_snailware_master='do_nemo_setup && snailware setup channel && \
-  snailware git-branch --branch master bayeux sngeometry sncore snreconstruction snvisualization && \
-  snailware git-branch --branch xg_devel snanalysis && \
-  snrebuild bayeux falaise'
+     alias build_snailware_legacy='do_nemo_setup && \
+     snailware git-branch --branch legacy datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
+     snailware git-branch --branch legacy sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis && \
+     snrebuild --no-ninja datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
+     snrebuild channel && snailware setup channel && \
+     snrebuild sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis'
+     alias build_snailware_master='do_nemo_setup && \
+     snailware git-branch --branch master bayeux sngeometry sncore snreconstruction snvisualization && \
+     snailware git-branch --branch xg_devel snanalysis && \
+     snrebuild bayeux channel && \
+     snailware setup channel && \
+  snrebuild falaise'
 #+END_SRC
 
 *** =dpp_processing= shortcuts
