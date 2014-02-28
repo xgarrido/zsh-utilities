@@ -448,7 +448,7 @@ db.
 #+END_SRC
 
 ** Text edition
-Remove all trailing whitespace in a given file
+*** Remove all trailing whitespace in a given file
 #+BEGIN_SRC sh
   function remove_trailing_whitespace ()
   {
@@ -456,6 +456,24 @@ Remove all trailing whitespace in a given file
       if [[ ! -z $1 ]] ; then
           pkgtools__msg_notice "Removing trailing whitespace in file $1..."
           find $1 -type f -exec sed -i 's/ *$//' '{}' ';'
+      else
+          pkgtools__msg_error "Missing filename !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+*** Remove duplicate lines
+#+BEGIN_SRC sh
+  function remove_duplicate_lines ()
+  {
+      __pkgtools__at_function_enter remove_duplicate_lines
+      if [[ ! -z $1 ]] ; then
+          pkgtools__msg_notice "Removing duplicate lines in file $1..."
+          awk '!seen[$0]++' $1 > /tmp/$1.tmp
+          mv /tmp/$1.tmp $1
       else
           pkgtools__msg_error "Missing filename !"
           __pkgtools__at_function_exit
