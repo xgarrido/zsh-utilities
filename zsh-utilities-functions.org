@@ -99,7 +99,7 @@ generic function name given the linux system installed : "debian-like" system or
       function upgrade ()
       {
           __pkgtools__at_function_enter upgrade
-          ${__pkg_mgr} -Suy && pkg-notify "Upgrade done"
+          ${__pkg_mgr} -Suya --devel && pkg-notify "Upgrade done"
           __pkgtools__at_function_exit
           return 0
       }
@@ -472,8 +472,8 @@ db.
       __pkgtools__at_function_enter remove_duplicate_lines
       if [[ ! -z $1 ]] ; then
           pkgtools__msg_notice "Removing duplicate lines in file $1..."
-          awk '!seen[$0]++' $1 > /tmp/$1.tmp
-          mv /tmp/$1.tmp $1
+          awk '!seen[$0]++' $1 > /tmp/$(basename $1).tmp
+          mv /tmp/$(basename $1).tmp $1
       else
           pkgtools__msg_error "Missing filename !"
           __pkgtools__at_function_exit
