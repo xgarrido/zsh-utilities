@@ -99,6 +99,14 @@ generic function name given the linux system installed : "debian-like" system or
       function upgrade ()
       {
           __pkgtools__at_function_enter upgrade
+          ${__pkg_mgr} -Suy && pkg-notify "Upgrade done"
+          __pkgtools__at_function_exit
+          return 0
+      }
+
+      function upgrade-devel ()
+      {
+          __pkgtools__at_function_enter upgrade-devel
           ${__pkg_mgr} -Suya --devel && pkg-notify "Upgrade done"
           __pkgtools__at_function_exit
           return 0
