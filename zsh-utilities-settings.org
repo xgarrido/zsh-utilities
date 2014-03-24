@@ -23,11 +23,9 @@ This file provides some default settings for =zsh= (currently not so much).
 *** Move history search
 #+BEGIN_SRC sh
   # bind up and down arrow keys
-  for keycode in '[' '0'; do
-      bindkey "^[${keycode}A" history-substring-search-up
-      bindkey "^[${keycode}B" history-substring-search-down
-  done
-  unset keycode
+  zmodload zsh/terminfo
+  bindkey "$terminfo[kcuu1]" history-substring-search-up
+  bindkey "$terminfo[kcud1]" history-substring-search-down
 #+END_SRC
 *** For/backward word
 #+BEGIN_SRC sh
