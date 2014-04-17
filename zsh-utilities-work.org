@@ -574,5 +574,5 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
       __pkgtools__at_function_exit
       return 0
   }
-  #compdef '_files -g \"*.cpp|*.cc\"' parse_cpp_program_options
+  compdef '_files -g "*.cxx"' parse_cpp_program_options
 #+END_SRC
