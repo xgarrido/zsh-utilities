@@ -61,8 +61,6 @@ way it should be easy to add its own configuration.
   function __configure_laptop ()
   {
       __pkgtools__at_function_enter __configure_laptop
-      # Load RVM function (Ruby manager)
-      #[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
       # Use 256 colors terminal
       pkgtools__reset_variable TERM xterm-256color
