@@ -340,7 +340,7 @@ db.
               ssh_option="-p 1234"
               server_name="garrido@r17187.ovh.net"
           elif [[ "$1" == "laptop" ]]; then
-              server_name="garrido@nb-76121.lal.in2p3.fr"
+              server_name="garrido@nb-nemo6.lal.in2p3.fr"
           elif [[ "$1" == "mac" ]]; then
               ssh_option="-p 24"
               server_name="garrido@xgarrido.dyndns.org"
