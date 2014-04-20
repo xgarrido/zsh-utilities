@@ -345,10 +345,9 @@ db.
               ssh_option="-p 24"
               server_name="garrido@xgarrido.dyndns.org"
           elif [[ "$1" == "syno" ]]; then
-              echo "Connecting via telnet ..."
-              telnet -l garrido xgarrido.dyndns.org
-          elif [[ "$1" == "debian" ]]; then
-              server_name="debian@xgarrido.dyndns.org"
+              server_name="xgarrido@xgarrido.ydns.eu"
+          # elif [[ "$1" == "debian" ]]; then
+          #     server_name="debian@xgarrido.dyndns.org"
           elif [[ "$1" == "lx3" ]]; then
               server_name="garrido@lx3.lal.in2p3.fr"
           elif [[ "$1" == "daq-nemo" ]]; then
@@ -404,7 +403,6 @@ db.
           laptop:'Laptop machine'
           mac:'iMac machine'
           syno:'Synology server @ home'
-          debian:'Debian server @ home'
           lx3:'lxplus machine @ LAL'
           nemo3:'nemo3 machine @ LAL'
           nemo4:'nemo4 machine @ LAL'
