@@ -7,8 +7,9 @@
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Xavier Garrido" />
-<link rel="stylesheet" href="stylesheets/styles.css">
-                <link rel="stylesheet" href="stylesheets/org-pygments.css">
+<link rel="stylesheet" href="css/styles.css" />
+               <link rel="stylesheet" href="css/org-pygments.css" />
+               <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -54,9 +55,32 @@ for the JavaScript code in this tag.
      target.className = elem.cacheClassTarget;
  }
 /*]]>*///-->
-</script>
+</script><script type="text/javascript">
+  function randomLinkColor() {
+      var colors = ['#67ad00', '#D5BC23', '#FF9927', '#FF2D27', '#AB0045', '#B81FC8'];
+      var random_color = colors[Math.floor(Math.random() * colors.length)];
+      var elements = document.querySelectorAll('a');
+      [].slice.call(elements).forEach(function(elem) {
+          //elem.style.color = random_color;
+      });
+  }
+  function displayTOC() {
+      var ttoc = document.getElementById("text-table-of-contents");
+      if (ttoc) {
+          var maincontent = '<a class="button"><i class="fa fa-list"></i></a>'
+          maincontent += "<div>" + ttoc.innerHTML + "</div>";
+          document.getElementById("toc").innerHTML = maincontent;
+      } else {
+          document.getElementById("toc").style.display = "none";
+          document.getElementById("preamble").style.top = "10px";
+      }
+     }
+  </script>
 </head>
-<body>
+<body onload="randomLinkColor();displayTOC();"><div id="toc"></div>
+<div id="preamble" class="status">
+<a href="index.html"><i class="fa fa-home"></i></a><br/> <a href="https://github.com/xgarrido/zsh-utilities"><i class="fa fa-github"></i></a><br/>
+</div>
 <div id="content">
 <h1 class="title">Zsh Utilities Settings</h1>
 
@@ -78,7 +102,6 @@ This file provides some default settings for <code>zsh</code> (currently not so 
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2">Disable autocorrect</h3>
 <div class="outline-text-3" id="text-1-2">
@@ -89,6 +112,7 @@ This file provides some default settings for <code>zsh</code> (currently not so 
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3">Binding keys</h3>
 <div class="outline-text-3" id="text-1-3">
@@ -102,23 +126,19 @@ This file provides some default settings for <code>zsh</code> (currently not so 
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-1-3-2" class="outline-4">
 <h4 id="sec-1-3-2">Move history search</h4>
 <div class="outline-text-4" id="text-1-3-2">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-comment-delimiter"># </span><span class="org-comment">bind up and down arrow keys</span>
-<span class="org-keyword">for</span> keycode<span class="org-keyword"> in</span> <span class="org-string">'['</span> <span class="org-string">'0'</span>; <span class="org-keyword">do</span>
-    <span class="org-builtin">bindkey</span> <span class="org-string">"^[${keycode}A"</span> history-substring-search-up
-    <span class="org-builtin">bindkey</span> <span class="org-string">"^[${keycode}B"</span> history-substring-search-down
-<span class="org-keyword">done</span>
-<span class="org-builtin">unset</span> keycode
+zmodload zsh/terminfo
+<span class="org-builtin">bindkey</span> <span class="org-string">"$terminfo[kcuu1]"</span> history-substring-search-up
+<span class="org-builtin">bindkey</span> <span class="org-string">"$terminfo[kcud1]"</span> history-substring-search-down
 </pre>
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-1-3-3" class="outline-4">
 <h4 id="sec-1-3-3">For/backward word</h4>
 <div class="outline-text-4" id="text-1-3-3">
@@ -134,7 +154,7 @@ This file provides some default settings for <code>zsh</code> (currently not so 
 </div>
 </div>
 <div id="postamble" class="status">
-File under git version control - commit 1e618d8 - 2013-12-19
+File under <i class="fa fa-github-alt"></i> version control - commit <a href="https://github.com/xgarrido/zsh-utilities/commit/6511cb0e54545f0e8312a0dc6552a90678b5dea4">6511cb0</a> - 2014-05-01
 </div>
 </body>
 </html>

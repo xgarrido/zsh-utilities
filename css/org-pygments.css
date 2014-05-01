@@ -7,7 +7,7 @@
 .org-variable-name,
 .org-constant,
 .org-function-name {
-    color: #69B7F0;
+    color: #67ad00;
 }
 
 .org-comment,
@@ -17,7 +17,7 @@
 }
 
 .org-keyword {
-    color: #D33682;
+    color: #69B7F0;/*#D33682;*/
 }
 
 pre {

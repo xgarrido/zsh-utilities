@@ -7,8 +7,9 @@
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Xavier Garrido" />
-<link rel="stylesheet" href="stylesheets/styles.css">
-                <link rel="stylesheet" href="stylesheets/org-pygments.css">
+<link rel="stylesheet" href="css/styles.css" />
+               <link rel="stylesheet" href="css/org-pygments.css" />
+               <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -54,9 +55,32 @@ for the JavaScript code in this tag.
      target.className = elem.cacheClassTarget;
  }
 /*]]>*///-->
-</script>
+</script><script type="text/javascript">
+  function randomLinkColor() {
+      var colors = ['#67ad00', '#D5BC23', '#FF9927', '#FF2D27', '#AB0045', '#B81FC8'];
+      var random_color = colors[Math.floor(Math.random() * colors.length)];
+      var elements = document.querySelectorAll('a');
+      [].slice.call(elements).forEach(function(elem) {
+          //elem.style.color = random_color;
+      });
+  }
+  function displayTOC() {
+      var ttoc = document.getElementById("text-table-of-contents");
+      if (ttoc) {
+          var maincontent = '<a class="button"><i class="fa fa-list"></i></a>'
+          maincontent += "<div>" + ttoc.innerHTML + "</div>";
+          document.getElementById("toc").innerHTML = maincontent;
+      } else {
+          document.getElementById("toc").style.display = "none";
+          document.getElementById("preamble").style.top = "10px";
+      }
+     }
+  </script>
 </head>
-<body>
+<body onload="randomLinkColor();displayTOC();"><div id="toc"></div>
+<div id="preamble" class="status">
+<a href="index.html"><i class="fa fa-home"></i></a><br/> <a href="https://github.com/xgarrido/zsh-utilities"><i class="fa fa-github"></i></a><br/>
+</div>
 <div id="content">
 <h1 class="title">Zsh Utilities Functions</h1>
 <p>
@@ -107,7 +131,6 @@ generic function name given the linux system installed : "debian-like" system or
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-1-1-2" class="outline-4">
 <h4 id="sec-1-1-2">Implement generic function</h4>
 <div class="outline-text-4" id="text-1-1-2">
@@ -182,6 +205,14 @@ generic function name given the linux system installed : "debian-like" system or
         <span class="org-keyword">return</span> 0
     }
 
+    <span class="org-keyword">function</span> <span class="org-function-name">upgrade-devel</span> ()
+    {
+        __pkgtools__at_function_enter upgrade-devel
+        ${<span class="org-variable-name">__pkg_mgr</span>} -Suya --devel &amp;&amp; pkg-notify <span class="org-string">"Upgrade done"</span>
+        __pkgtools__at_function_exit
+        <span class="org-keyword">return</span> 0
+    }
+
     <span class="org-keyword">function</span> <span class="org-function-name">search</span> ()
     {
         __pkgtools__at_function_enter search
@@ -203,6 +234,7 @@ generic function name given the linux system installed : "debian-like" system or
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2">Extract archive</h3>
 <div class="outline-text-3" id="text-1-2">
@@ -284,6 +316,7 @@ generic function name given the linux system installed : "debian-like" system or
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3">Notification</h3>
 <div class="outline-text-3" id="text-1-3">
@@ -322,7 +355,6 @@ Base function for notification
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-1-3-2" class="outline-4">
 <h4 id="sec-1-3-2">Error</h4>
 <div class="outline-text-4" id="text-1-3-2">
@@ -340,7 +372,6 @@ Base function for notification
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-1-3-3" class="outline-4">
 <h4 id="sec-1-3-3">Warning</h4>
 <div class="outline-text-4" id="text-1-3-3">
@@ -356,6 +387,7 @@ Base function for notification
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-4" class="outline-3">
 <h3 id="sec-1-4">Zsh <code>precmd</code> and <code>preexec</code></h3>
 <div class="outline-text-3" id="text-1-4">
@@ -414,6 +446,7 @@ get warned when the command has finished or has failed.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-5" class="outline-3">
 <h3 id="sec-1-5">SSH connection</h3>
 <div class="outline-text-3" id="text-1-5">
@@ -457,15 +490,14 @@ db.
             <span class="org-variable-name">ssh_option</span>=<span class="org-string">"-p 1234"</span>
             <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@r17187.ovh.net"</span>
         <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"laptop"</span> ]]; <span class="org-keyword">then</span>
-            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@nb-76121.lal.in2p3.fr"</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@nb-nemo6.lal.in2p3.fr"</span>
         <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"mac"</span> ]]; <span class="org-keyword">then</span>
             <span class="org-variable-name">ssh_option</span>=<span class="org-string">"-p 24"</span>
             <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@xgarrido.dyndns.org"</span>
         <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"syno"</span> ]]; <span class="org-keyword">then</span>
-            <span class="org-builtin">echo</span> <span class="org-string">"Connecting via telnet ..."</span>
-            telnet -l garrido xgarrido.dyndns.org
-        <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"debian"</span> ]]; <span class="org-keyword">then</span>
-            <span class="org-variable-name">server_name</span>=<span class="org-string">"debian@xgarrido.dyndns.org"</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"xgarrido@xgarrido.ydns.eu"</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">elif [[ "$1" == "debian" ]]; then</span>
+        <span class="org-comment-delimiter">#     </span><span class="org-comment">server_name="debian@xgarrido.dyndns.org"</span>
         <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"lx3"</span> ]]; <span class="org-keyword">then</span>
             <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@lx3.lal.in2p3.fr"</span>
         <span class="org-keyword">elif</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"daq-nemo"</span> ]]; <span class="org-keyword">then</span>
@@ -474,22 +506,26 @@ db.
             <span class="org-variable-name">server_name</span>=<span class="org-string">"nemoacq@lsmlx5.in2p3.fr"</span>
         <span class="org-keyword">elif</span> [[ $<span class="org-variable-name">1</span> == pc-nemo* ]]; <span class="org-keyword">then</span>
             <span class="org-variable-name">server_name</span>=<span class="org-string">"nemo@$1"</span>
-        <span class="org-keyword">else</span>
-            <span class="org-keyword">if</span> [ <span class="org-string">"${HOSTNAME}"</span> = <span class="org-string">"garrido-laptop"</span> ]; <span class="org-keyword">then</span>
-                <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@localhost"</span>
-                <span class="org-keyword">if</span> [ -f /tmp/npu.d/ports ]; <span class="org-keyword">then</span>
-                    <span class="org-variable-name">ssh_port</span>=$(cat /tmp/npu.d/ports | grep $<span class="org-variable-name">1</span> | cut -d<span class="org-string">' '</span> -f2)
-                    <span class="org-variable-name">ssh_option</span>=<span class="org-string">"-p ${ssh_port}"</span>
-                <span class="org-keyword">else</span>
-                    <span class="org-variable-name">append_command</span>+=<span class="org-string">"$1 "</span>
-                <span class="org-keyword">fi</span>
-            <span class="org-keyword">else</span>
-                <span class="org-keyword">if</span> [[ <span class="org-string">"$1"</span> == <span class="org-string">"pc"</span> ]]; <span class="org-keyword">then</span>
-                    <span class="org-variable-name">server_name</span>=<span class="org-string">"pc-91089.lal.in2p3.fr"</span>
-                <span class="org-keyword">else</span>
-                    <span class="org-variable-name">server_name</span>=<span class="org-string">"$1.lal.in2p3.fr"</span>
-                <span class="org-keyword">fi</span>
-            <span class="org-keyword">fi</span>
+        <span class="org-keyword">elif</span> [[ $<span class="org-variable-name">1</span> == pc-91089 ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@$1"</span>
+        <span class="org-keyword">elif</span> [[ $<span class="org-variable-name">1</span> == nemo* ]]; <span class="org-keyword">then</span>
+            <span class="org-variable-name">server_name</span>=<span class="org-string">"garrido@$1.lal.in2p3.fr"</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">else</span>
+        <span class="org-comment-delimiter">#     </span><span class="org-comment">if [ "${HOSTNAME}" = "garrido-laptop" ]; then</span>
+        <span class="org-comment-delimiter">#         </span><span class="org-comment">server_name="garrido@localhost"</span>
+        <span class="org-comment-delimiter">#         </span><span class="org-comment">if [ -f /tmp/npu.d/ports ]; then</span>
+        <span class="org-comment-delimiter">#             </span><span class="org-comment">ssh_port=$(cat /tmp/npu.d/ports | grep $1 | cut -d' ' -f2)</span>
+        <span class="org-comment-delimiter">#             </span><span class="org-comment">ssh_option="-p ${ssh_port}"</span>
+        <span class="org-comment-delimiter">#         </span><span class="org-comment">else</span>
+        <span class="org-comment-delimiter">#             </span><span class="org-comment">append_command+="$1 "</span>
+        <span class="org-comment-delimiter">#         </span><span class="org-comment">fi</span>
+        <span class="org-comment-delimiter">#     </span><span class="org-comment">else</span>
+        <span class="org-comment-delimiter">#         </span><span class="org-comment">if [[ "$1" == "pc" ]]; then</span>
+        <span class="org-comment-delimiter">#             </span><span class="org-comment">server_name="pc-91089.lal.in2p3.fr"</span>
+        <span class="org-comment-delimiter">#         </span><span class="org-comment">else</span>
+        <span class="org-comment-delimiter">#             </span><span class="org-comment">server_name="$1.lal.in2p3.fr"</span>
+        <span class="org-comment-delimiter">#         </span><span class="org-comment">fi</span>
+        <span class="org-comment-delimiter">#     </span><span class="org-comment">fi</span>
         <span class="org-keyword">fi</span>
         <span class="org-builtin">shift</span> 1
     <span class="org-keyword">done</span>
@@ -517,7 +553,6 @@ compdef _connect connect
         laptop:<span class="org-string">'Laptop machine'</span>
         mac:<span class="org-string">'iMac machine'</span>
         syno:<span class="org-string">'Synology server @ home'</span>
-        debian:<span class="org-string">'Debian server @ home'</span>
         lx3:<span class="org-string">'lxplus machine @ LAL'</span>
         nemo3:<span class="org-string">'nemo3 machine @ LAL'</span>
         nemo4:<span class="org-string">'nemo4 machine @ LAL'</span>
@@ -533,6 +568,7 @@ compdef _connect connect
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-6" class="outline-3">
 <h3 id="sec-1-6">Grepping information</h3>
 <div class="outline-text-3" id="text-1-6">
@@ -559,6 +595,7 @@ compdef _connect connect
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-6-2" class="outline-4">
 <h4 id="sec-1-6-2">Find a command within history</h4>
 <div class="outline-text-4" id="text-1-6-2">
@@ -583,12 +620,13 @@ compdef _connect connect
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-7" class="outline-3">
 <h3 id="sec-1-7">Text edition</h3>
 <div class="outline-text-3" id="text-1-7">
-<p>
-Remove all trailing whitespace in a given file
-</p>
+</div><div id="outline-container-sec-1-7-1" class="outline-4">
+<h4 id="sec-1-7-1">Remove all trailing whitespace in a given file</h4>
+<div class="outline-text-4" id="text-1-7-1">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">remove_trailing_whitespace</span> ()
@@ -609,7 +647,31 @@ Remove all trailing whitespace in a given file
 </div>
 </div>
 </div>
+<div id="outline-container-sec-1-7-2" class="outline-4">
+<h4 id="sec-1-7-2">Remove duplicate lines</h4>
+<div class="outline-text-4" id="text-1-7-2">
+<div class="org-src-container">
 
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">remove_duplicate_lines</span> ()
+{
+    __pkgtools__at_function_enter remove_duplicate_lines
+    <span class="org-keyword">if</span> [[ <span class="org-negation-char">!</span> -z $<span class="org-variable-name">1</span> ]] ; <span class="org-keyword">then</span>
+        pkgtools__msg_notice <span class="org-string">"Removing duplicate lines in file $1..."</span>
+        awk <span class="org-string">'!seen[$0]++'</span> $<span class="org-variable-name">1</span> &gt; /tmp/$(basename $<span class="org-variable-name">1</span>).tmp
+        mv /tmp/$(basename $<span class="org-variable-name">1</span>).tmp $<span class="org-variable-name">1</span>
+    <span class="org-keyword">else</span>
+        pkgtools__msg_error <span class="org-string">"Missing filename !"</span>
+        __pkgtools__at_function_exit
+        <span class="org-keyword">return</span> 1
+    <span class="org-keyword">fi</span>
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-1-8" class="outline-3">
 <h3 id="sec-1-8">Image edition</h3>
 <div class="outline-text-3" id="text-1-8">
@@ -687,7 +749,10 @@ Remove all trailing whitespace in a given file
             __pkgtools__at_function_exit
             <span class="org-keyword">return</span> 1
         <span class="org-keyword">fi</span>
-        fig2tikz ${<span class="org-variable-name">fig_file</span>} &gt; ${<span class="org-variable-name">tikz_file</span>}
+        fig2tikz ${<span class="org-variable-name">fig_file</span>} &gt; ${<span class="org-variable-name">tikz_file</span>}.tmp
+        pkgtools__msg_notice <span class="org-string">"Remove duplicate lines..."</span>
+        awk <span class="org-string">'!seen[$0]++'</span> ${<span class="org-variable-name">tikz_file</span>}.tmp &gt; ${<span class="org-variable-name">tikz_file</span>}
+        rm -f ${<span class="org-variable-name">tikz_file</span>}.tmp
 
         <span class="org-keyword">if</span> [[ ${<span class="org-variable-name">keep_xfig</span>} -eq 0 ]]; <span class="org-keyword">then</span>
             rm -f ${<span class="org-variable-name">fig_file</span>}
@@ -701,6 +766,7 @@ Remove all trailing whitespace in a given file
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-8-2" class="outline-4">
 <h4 id="sec-1-8-2">Grab point with <code>dexter</code></h4>
 <div class="outline-text-4" id="text-1-8-2">
@@ -731,12 +797,29 @@ Astrophysics Data System.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-9" class="outline-3">
-<h3 id="sec-1-9">Subversion functions</h3>
+<h3 id="sec-1-9">Mounting/unmounting USB drives</h3>
 <div class="outline-text-3" id="text-1-9">
-</div><div id="outline-container-sec-1-9-1" class="outline-4">
-<h4 id="sec-1-9-1">Better SVN status</h4>
-<div class="outline-text-4" id="text-1-9-1">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">usb_umount</span> ()
+{
+    <span class="org-keyword">for</span> d<span class="org-keyword"> in</span> /media/*; <span class="org-keyword">do</span>
+        sudo umount $<span class="org-variable-name">d</span>
+    <span class="org-keyword">done</span>
+    sudo modprobe usb_storage
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-10" class="outline-3">
+<h3 id="sec-1-10">Subversion functions</h3>
+<div class="outline-text-3" id="text-1-10">
+</div><div id="outline-container-sec-1-10-1" class="outline-4">
+<h4 id="sec-1-10-1">Better SVN status</h4>
+<div class="outline-text-4" id="text-1-10-1">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">svnstatus</span> ()
@@ -752,10 +835,9 @@ Astrophysics Data System.
 </div>
 </div>
 </div>
-
-<div id="outline-container-sec-1-9-2" class="outline-4">
-<h4 id="sec-1-9-2">Better SVN diff (needs code2color)</h4>
-<div class="outline-text-4" id="text-1-9-2">
+<div id="outline-container-sec-1-10-2" class="outline-4">
+<h4 id="sec-1-10-2">Better SVN diff (needs code2color)</h4>
+<div class="outline-text-4" id="text-1-10-2">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">svndiff</span> ()
@@ -770,13 +852,12 @@ Astrophysics Data System.
 </div>
 </div>
 </div>
-
-<div id="outline-container-sec-1-10" class="outline-3">
-<h3 id="sec-1-10">Misc.</h3>
-<div class="outline-text-3" id="text-1-10">
-</div><div id="outline-container-sec-1-10-1" class="outline-4">
-<h4 id="sec-1-10-1">Grabbing video from mms link</h4>
-<div class="outline-text-4" id="text-1-10-1">
+<div id="outline-container-sec-1-11" class="outline-3">
+<h3 id="sec-1-11">Misc.</h3>
+<div class="outline-text-3" id="text-1-11">
+</div><div id="outline-container-sec-1-11-1" class="outline-4">
+<h4 id="sec-1-11-1">Grabbing video from mms link</h4>
+<div class="outline-text-4" id="text-1-11-1">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">grab_video</span> ()
@@ -801,7 +882,7 @@ Astrophysics Data System.
 </div>
 </div>
 <div id="postamble" class="status">
-File under git version control - commit 1e618d8 - 2013-12-19
+File under <i class="fa fa-github-alt"></i> version control - commit <a href="https://github.com/xgarrido/zsh-utilities/commit/6511cb0e54545f0e8312a0dc6552a90678b5dea4">6511cb0</a> - 2014-05-01
 </div>
 </body>
 </html>

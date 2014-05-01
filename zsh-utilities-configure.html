@@ -7,8 +7,9 @@
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Xavier Garrido" />
-<link rel="stylesheet" href="stylesheets/styles.css">
-                <link rel="stylesheet" href="stylesheets/org-pygments.css">
+<link rel="stylesheet" href="css/styles.css" />
+               <link rel="stylesheet" href="css/org-pygments.css" />
+               <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -54,9 +55,32 @@ for the JavaScript code in this tag.
      target.className = elem.cacheClassTarget;
  }
 /*]]>*///-->
-</script>
+</script><script type="text/javascript">
+  function randomLinkColor() {
+      var colors = ['#67ad00', '#D5BC23', '#FF9927', '#FF2D27', '#AB0045', '#B81FC8'];
+      var random_color = colors[Math.floor(Math.random() * colors.length)];
+      var elements = document.querySelectorAll('a');
+      [].slice.call(elements).forEach(function(elem) {
+          //elem.style.color = random_color;
+      });
+  }
+  function displayTOC() {
+      var ttoc = document.getElementById("text-table-of-contents");
+      if (ttoc) {
+          var maincontent = '<a class="button"><i class="fa fa-list"></i></a>'
+          maincontent += "<div>" + ttoc.innerHTML + "</div>";
+          document.getElementById("toc").innerHTML = maincontent;
+      } else {
+          document.getElementById("toc").style.display = "none";
+          document.getElementById("preamble").style.top = "10px";
+      }
+     }
+  </script>
 </head>
-<body>
+<body onload="randomLinkColor();displayTOC();"><div id="toc"></div>
+<div id="preamble" class="status">
+<a href="index.html"><i class="fa fa-home"></i></a><br/> <a href="https://github.com/xgarrido/zsh-utilities"><i class="fa fa-github"></i></a><br/>
+</div>
 <div id="content">
 <h1 class="title">Zsh Utilities Configuration</h1>
 <p>
@@ -114,6 +138,7 @@ way it should be easy to add its own configuration.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2">Default configuration</h3>
 <div class="outline-text-3" id="text-1-2">
@@ -130,7 +155,6 @@ way it should be easy to add its own configuration.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3">Laptop/server configuration</h3>
 <div class="outline-text-3" id="text-1-3">
@@ -139,8 +163,6 @@ way it should be easy to add its own configuration.
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">__configure_laptop</span> ()
 {
     __pkgtools__at_function_enter __configure_laptop
-    <span class="org-comment-delimiter"># </span><span class="org-comment">Load RVM function (Ruby manager)</span>
-    <span class="org-comment-delimiter">#</span><span class="org-comment">[[ -s "$HOME/.rvm/scripts/rvm" ]] &amp;&amp; . "$HOME/.rvm/scripts/rvm"</span>
 
     <span class="org-comment-delimiter"># </span><span class="org-comment">Use 256 colors terminal</span>
     pkgtools__reset_variable TERM xterm-256color
@@ -173,6 +195,7 @@ way it should be easy to add its own configuration.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-4" class="outline-3">
 <h3 id="sec-1-4">LAL machines configuration</h3>
 <div class="outline-text-3" id="text-1-4">
@@ -197,7 +220,6 @@ way it should be easy to add its own configuration.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-1-5" class="outline-3">
 <h3 id="sec-1-5">Lyon machines configuration</h3>
 <div class="outline-text-3" id="text-1-5">
@@ -219,7 +241,7 @@ way it should be easy to add its own configuration.
 </div>
 </div>
 <div id="postamble" class="status">
-File under git version control - commit 1e618d8 - 2013-12-19
+File under <i class="fa fa-github-alt"></i> version control - commit <a href="https://github.com/xgarrido/zsh-utilities/commit/6511cb0e54545f0e8312a0dc6552a90678b5dea4">6511cb0</a> - 2014-05-01
 </div>
 </body>
 </html>

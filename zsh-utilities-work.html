@@ -7,8 +7,9 @@
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Xavier Garrido" />
-<link rel="stylesheet" href="stylesheets/styles.css">
-                <link rel="stylesheet" href="stylesheets/org-pygments.css">
+<link rel="stylesheet" href="css/styles.css" />
+               <link rel="stylesheet" href="css/org-pygments.css" />
+               <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -54,9 +55,32 @@ for the JavaScript code in this tag.
      target.className = elem.cacheClassTarget;
  }
 /*]]>*///-->
-</script>
+</script><script type="text/javascript">
+  function randomLinkColor() {
+      var colors = ['#67ad00', '#D5BC23', '#FF9927', '#FF2D27', '#AB0045', '#B81FC8'];
+      var random_color = colors[Math.floor(Math.random() * colors.length)];
+      var elements = document.querySelectorAll('a');
+      [].slice.call(elements).forEach(function(elem) {
+          //elem.style.color = random_color;
+      });
+  }
+  function displayTOC() {
+      var ttoc = document.getElementById("text-table-of-contents");
+      if (ttoc) {
+          var maincontent = '<a class="button"><i class="fa fa-list"></i></a>'
+          maincontent += "<div>" + ttoc.innerHTML + "</div>";
+          document.getElementById("toc").innerHTML = maincontent;
+      } else {
+          document.getElementById("toc").style.display = "none";
+          document.getElementById("preamble").style.top = "10px";
+      }
+     }
+  </script>
 </head>
-<body>
+<body onload="randomLinkColor();displayTOC();"><div id="toc"></div>
+<div id="preamble" class="status">
+<a href="index.html"><i class="fa fa-home"></i></a><br/> <a href="https://github.com/xgarrido/zsh-utilities"><i class="fa fa-github"></i></a><br/>
+</div>
 <div id="content">
 <h1 class="title">Zsh Utilities Work</h1>
 <p>
@@ -109,6 +133,7 @@ This file contains some function/alias in relation with "work" topic.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2">ROOT aliases</h3>
 <div class="outline-text-3" id="text-1-2">
@@ -119,6 +144,7 @@ This file contains some function/alias in relation with "work" topic.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3">SN@ilWare aliases</h3>
 <div class="outline-text-3" id="text-1-3">
@@ -133,6 +159,7 @@ This file contains some function/alias in relation with "work" topic.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-3-2" class="outline-4">
 <h4 id="sec-1-3-2">Working configuration</h4>
 <div class="outline-text-4" id="text-1-3-2">
@@ -145,19 +172,23 @@ components.
 </p>
 <div class="org-src-container">
 
-<pre class="src src-sh"><span class="org-builtin">alias</span> <span class="org-variable-name">build_snailware_legacy</span>=<span class="org-string">'do_nemo_setup &amp;&amp; snailware setup channel &amp;&amp; \</span>
-<span class="org-string">snailware git-branch --branch legacy datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield &amp;&amp; \</span>
-<span class="org-string">snailware git-branch --branch legacy sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis &amp;&amp; \</span>
-<span class="org-string">snrebuild datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield &amp;&amp; \</span>
-<span class="org-string">snrebuild sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis'</span>
-<span class="org-builtin">alias</span> <span class="org-variable-name">build_snailware_master</span>=<span class="org-string">'do_nemo_setup &amp;&amp; snailware setup channel &amp;&amp; \</span>
-<span class="org-string">snailware git-branch --branch master bayeux sngeometry sncore snreconstruction snvisualization &amp;&amp; \</span>
-<span class="org-string">snailware git-branch --branch xg_devel snanalysis &amp;&amp; \</span>
-<span class="org-string">snrebuild bayeux falaise'</span>
+<pre class="src src-sh">   <span class="org-builtin">alias</span> <span class="org-variable-name">build_snailware_legacy</span>=<span class="org-string">'do_nemo_setup &amp;&amp; \</span>
+<span class="org-string">   snailware git-branch --branch legacy datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield &amp;&amp; \</span>
+<span class="org-string">   snailware git-branch --branch legacy sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis &amp;&amp; \</span>
+<span class="org-string">   snrebuild --no-ninja datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield &amp;&amp; \</span>
+<span class="org-string">   snrebuild channel &amp;&amp; snailware setup channel &amp;&amp; \</span>
+<span class="org-string">   snrebuild sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis'</span>
+   <span class="org-builtin">alias</span> <span class="org-variable-name">build_snailware_master</span>=<span class="org-string">'do_nemo_setup &amp;&amp; \</span>
+<span class="org-string">   snailware git-branch --branch master bayeux sngeometry sncore snreconstruction snvisualization &amp;&amp; \</span>
+<span class="org-string">   snailware git-branch --branch xg_devel snanalysis &amp;&amp; \</span>
+<span class="org-string">   snrebuild bayeux channel &amp;&amp; \</span>
+<span class="org-string">   snailware setup channel &amp;&amp; \</span>
+<span class="org-string">snrebuild falaise'</span>
 </pre>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-3-3" class="outline-4">
 <h4 id="sec-1-3-3"><code>dpp_processing</code> shortcuts</h4>
 <div class="outline-text-4" id="text-1-3-3">
@@ -189,6 +220,7 @@ components.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-4" class="outline-3">
 <h3 id="sec-1-4">Lyon ccali aliases</h3>
 <div class="outline-text-3" id="text-1-4">
@@ -204,6 +236,7 @@ components.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-5" class="outline-3">
 <h3 id="sec-1-5">Activate g++ warnings</h3>
 <div class="outline-text-3" id="text-1-5">
@@ -227,7 +260,6 @@ components.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-1-6" class="outline-3">
 <h3 id="sec-1-6">Generate org doc skeletons</h3>
 <div class="outline-text-3" id="text-1-6">
@@ -308,7 +340,6 @@ components.
 </div>
 </div>
 </li>
-
 <li>Parsing options<br  /><div class="outline-text-5" id="text-1-6-1-2">
 <div class="org-src-container">
 
@@ -336,7 +367,7 @@ components.
     (article)
         test ! -n <span class="org-string">"$base_directory"</span> &amp;&amp; <span class="org-variable-name">base_directory</span>=~/Workdir/Papers/pub/nemo-note
         test ! -n <span class="org-string">"$latex_class"</span> &amp;&amp; <span class="org-variable-name">latex_class</span>=<span class="org-string">"snemo-article"</span>
-        test ! -n <span class="org-string">"$latex_class_options"</span> &amp;&amp; <span class="org-variable-name">latex_class_options</span>=<span class="org-string">"classic"</span>
+        test ! -n <span class="org-string">"$latex_class_options"</span> &amp;&amp; <span class="org-variable-name">latex_class_options</span>=<span class="org-string">""</span>
         ;;
 <span class="org-keyword">esac</span>
 
@@ -353,7 +384,6 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
 </div>
 </div>
 </li>
-
 <li>Internal functions<br  /><ul class="org-ul"><li>Create directories<br  /><div class="outline-text-6" id="text-1-6-1-3-1">
 <div class="org-src-container">
 
@@ -365,7 +395,6 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
 </div>
 </div>
 </li>
-
 <li>Generate org skeleton<br  /><div class="outline-text-6" id="text-1-6-1-3-2">
 <div class="org-src-container">
 
@@ -376,7 +405,7 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
             <span class="org-variable-name">org_file</span>=${<span class="org-variable-name">directory</span>}/talk.org
             ;;
         (article)
-            <span class="org-variable-name">org_file</span>=${<span class="org-variable-name">directory</span>}/note-$(date +%Y%m%d).org
+            <span class="org-variable-name">org_file</span>=${<span class="org-variable-name">directory</span>}/note-$(date +%y%m%d).org
             ;;
     <span class="org-keyword">esac</span>
     <span class="org-builtin">echo</span> <span class="org-string">"#+TITLE:  ${title}"</span>                               &gt; ${<span class="org-variable-name">org_file</span>}
@@ -385,12 +414,12 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
     <span class="org-builtin">echo</span> <span class="org-string">"#+DATE:   $(date +%d/%m/%Y)"</span>                     &gt;&gt; ${<span class="org-variable-name">org_file</span>}
     <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
         (talk)
-            <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil ^:{}"</span>                 &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil num:nil author:nil ^:{}"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             <span class="org-builtin">echo</span> <span class="org-string">"#+STARTUP: beamer"</span>                       &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             ;;
         (article)
             <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil author:nil ^:{}"</span>      &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"#+STARTUP: hideblocks entitiespretty"</span>    &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"#+STARTUP: entitiespretty"</span>               &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             ;;
     <span class="org-keyword">esac</span>
     <span class="org-builtin">echo</span> <span class="org-string">"#+LATEX_CLASS: ${latex_class}"</span>                   &gt;&gt; ${<span class="org-variable-name">org_file</span>}
@@ -399,29 +428,17 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
     <span class="org-comment-delimiter"># </span><span class="org-comment">Special setup for article</span>
     <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
         (article)
-            <span class="org-variable-name">beginsrc</span>=<span class="org-string">"#+BEGIN"</span>
-            <span class="org-variable-name">endsrc</span>=<span class="org-string">"#+END"</span>
-            <span class="org-builtin">echo</span> <span class="org-string">"* VC status :ignoreheading:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"#+NAME: vc-status"</span>  &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"${beginsrc}_SRC sh :results output :exports none"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"  if [ -d .svn ]; then"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"    status=\$(LC_MESSAGES=en svn info)"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"    rev=\$(echo -e \$status | sed -n 's/.*Revision: *\([^ ]*\).*/\1/p')"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"    date=\$(echo -e \$status | sed -n 's/.*Last Changed Date: *\([^ ]*\).*/\1/p')"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"    log=\"\\\texttt{svn} revision \${rev} \\\$-\\\$ \${date}\""</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"  fi"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"  if [ -d .git ]; then"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"    log=\$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:\"\\\texttt{git} commit \\\texttt{%h} -- %ad\")"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"  fi"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"  echo \"\\\renewcommand*{\\\PrelimText}{\\\small\\\textnormal{\\\color{gray}\${log}}}\""</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"${endsrc}_SRC"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"${beginsrc}_SRC latex :noweb yes"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"&lt;&lt;vc-status()&gt;&gt;"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"${endsrc}_SRC"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"* Authors :ignoreheading:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-variable-name">begin</span>=<span class="org-string">"#+BEGIN"</span>
+            <span class="org-variable-name">end</span>=<span class="org-string">"#+END"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"#+CALL: vc-status() :results value latex"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             <span class="org-builtin">echo</span> <span class="org-string">"* Abstract :ignoreheading:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"#+BEGIN_ABSTRACT"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"#+END_ABSTRACT"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"${begin}_ABSTRACT"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"${end}_ABSTRACT"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"* Introduction :ignoresecnumber:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"* Conclusion :ignoresecnumber:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"* References :ignoresecnumber:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"${begin}_BIBLIOGRAPHY"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"${end}_BIBLIOGRAPHY"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             ;;
     <span class="org-keyword">esac</span>
 }
@@ -429,7 +446,6 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
 </div>
 </div>
 </li>
-
 <li>Generate <code>makefile</code><br  /><div class="outline-text-6" id="text-1-6-1-3-3">
 <div class="org-src-container">
 
@@ -440,11 +456,11 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
     <span class="org-builtin">echo</span> <span class="org-string">"BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \</span>
 <span class="org-string">                                  --load '~/.emacs.d/starter-kit-org.el'"</span>   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-builtin">echo</span> <span class="org-string">"files_org = \$(wildcard *.org)"</span>                                   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"files_pdf = \$(files_org:.org=.pdf)"</span>                              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"files_pdf = \$(files_org:.org=.png)"</span>                              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-builtin">echo</span> <span class="org-string">"all: \$(files_pdf)"</span>                                               &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"%.pdf: %.org"</span>                                                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"%.png: %.org"</span>                                                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-builtin">echo</span> <span class="org-string">"\t@echo \"NOTICE: Exporting \$&lt; to pdf...\";"</span>                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
         (talk)
@@ -454,23 +470,22 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
             <span class="org-builtin">echo</span> <span class="org-string">"\t@\$(BATCH) --visit \"\$&lt;\" --funcall org-latex-export-to-pdf"</span>  &gt;&gt; ${<span class="org-variable-name">make_file</span>}
             ;;
     <span class="org-keyword">esac</span>
-    <span class="org-builtin">echo</span> <span class="org-string">"\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"\t@cp \$@ pdf/\${@:.png=_${dirname}.png}"</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-builtin">echo</span> <span class="org-string">"clean:"</span>                                                           &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf latex.d *.tex *.pdf *.fdb* *~ "</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf latex.d *.tex *.png *.fdb* *~ "</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"</span>              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
 }
 </pre>
 </div>
 </div>
 </li>
-
 <li>Generate <code>.gitignore</code><br  /><div class="outline-text-6" id="text-1-6-1-3-4">
 <div class="org-src-container">
 
 <pre class="src src-sh">--mod::generate_gitignore () {
     <span class="org-builtin">local</span> <span class="org-variable-name">gitignore</span>=${<span class="org-variable-name">directory</span>}/.gitignore
-    <span class="org-builtin">echo</span> <span class="org-string">"/*.pdf"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
+    <span class="org-builtin">echo</span> <span class="org-string">"/*.png"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
     <span class="org-builtin">echo</span> <span class="org-string">"/*.tex"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
     <span class="org-builtin">echo</span> <span class="org-string">"/*.auxlock"</span>     &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
     <span class="org-builtin">echo</span> <span class="org-string">"/*.vrb"</span>         &gt;&gt; ${<span class="org-variable-name">gitignore</span>}
@@ -484,7 +499,6 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
 </div>
 </div>
 </li>
-
 <li>Import function<br  /><div class="outline-text-6" id="text-1-6-1-3-5">
 <div class="org-src-container">
 
@@ -517,7 +531,6 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
 </div>
 </li></ul>
 </li>
-
 <li>Calling functions<br  /><div class="outline-text-5" id="text-1-6-1-4">
 <div class="org-src-container">
 
@@ -547,6 +560,7 @@ __pkgtools__at_function_exit
 </div>
 </li></ul>
 </div>
+
 <div id="outline-container-sec-1-6-2" class="outline-4">
 <h4 id="sec-1-6-2">Completion function</h4>
 <div class="outline-text-4" id="text-1-6-2">
@@ -595,10 +609,165 @@ compdef _make_org_doc make_org_doc
 </div>
 </div>
 </div>
+
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7">Parse C++ program options</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+This function parse the content of a C++ program and extract command line
+options passed with <a href="http://www.boost.org/doc/libs/1_55_0/doc/html/program_options.html">boost::program_options</a>
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">parse_cpp_program_options</span> ()
+{
+    __pkgtools__at_function_enter parse_cpp_program_options
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Internal function to stream 'echo' command</span>
+    __parse ()
+    {
+        <span class="org-builtin">local</span> <span class="org-variable-name">find_begin_description</span>=0
+        <span class="org-builtin">local</span> <span class="org-variable-name">find_end_description</span>=1
+        <span class="org-builtin">local</span> <span class="org-variable-name">data_type</span>=<span class="org-string">""</span>
+        <span class="org-keyword">for</span> token<span class="org-keyword"> in</span> $(sed -n <span class="org-string">'/add_options/,/;/p'</span> $<span class="org-variable-name">1</span>)
+        <span class="org-keyword">do</span>
+            <span class="org-keyword">if</span> [[ <span class="org-string">"$token"</span> == *<span class="org-string">';'</span>* ]]; <span class="org-keyword">then</span>
+                <span class="org-keyword">break</span>
+            <span class="org-keyword">fi</span>
+            <span class="org-variable-name">token</span>=${<span class="org-variable-name">token</span>/<span class="org-string">\\</span>n/ }
+            pkgtools__msg_devel <span class="org-string">"token = ${token}"</span>
+            <span class="org-keyword">if</span> [[ <span class="org-string">"$token"</span> == *<span class="org-string">'"'</span>* ]]; <span class="org-keyword">then</span>
+                <span class="org-comment-delimiter"># </span><span class="org-comment">Get option indentificator</span>
+                <span class="org-keyword">if</span> [[ <span class="org-string">"$token"</span> == *<span class="org-string">'("'</span>* ]]; <span class="org-keyword">then</span>
+                    <span class="org-keyword">if</span> [[ <span class="org-string">"$token"</span> == *<span class="org-string">'")'</span>* ]]; <span class="org-keyword">then</span>
+                        <span class="org-keyword">continue</span>
+                    <span class="org-keyword">fi</span>
+                    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">find_end_description</span>} -eq 0 ]; <span class="org-keyword">then</span>
+                        <span class="org-variable-name">data_type</span>=<span class="org-string">""</span>
+                        <span class="org-variable-name">find_end_description</span>=1
+                        <span class="org-variable-name">find_begin_description</span>=0
+                        <span class="org-builtin">echo</span> <span class="org-string">"]' \\"</span>
+
+                    <span class="org-keyword">fi</span>
+                    <span class="org-builtin">local</span> <span class="org-variable-name">tmp</span>=$(<span class="org-builtin">echo</span> ${<span class="org-variable-name">token</span>%?} | sed <span class="org-string">'s/[("\]//g'</span>)
+                    <span class="org-builtin">local</span> <span class="org-variable-name">opt1</span>=$(<span class="org-builtin">echo</span> $<span class="org-variable-name">tmp</span> | cut -d<span class="org-string">','</span> -f1)
+                    <span class="org-builtin">local</span> <span class="org-variable-name">opt2</span>=$(<span class="org-builtin">echo</span> $<span class="org-variable-name">tmp</span> | cut -d<span class="org-string">','</span> -f2)
+                    <span class="org-keyword">if</span> [ ${#<span class="org-variable-name">opt1</span>} = ${#<span class="org-variable-name">opt2</span>} ]; <span class="org-keyword">then</span>
+                        test ${#<span class="org-variable-name">opt1</span>} -gt 1 &amp;&amp; <span class="org-builtin">echo</span> -ne <span class="org-string">"--${opt1}"</span>
+                    <span class="org-keyword">elif</span> [ ${#<span class="org-variable-name">opt1</span>} -gt ${#<span class="org-variable-name">opt2</span>} ]; <span class="org-keyword">then</span>
+                        <span class="org-builtin">echo</span> -ne <span class="org-string">"{-${opt2},--${opt1}}"</span>
+                    <span class="org-keyword">else</span>
+                        <span class="org-builtin">echo</span> -ne <span class="org-string">"{-${opt1},--${opt2}}"</span>
+                    <span class="org-keyword">fi</span>
+                <span class="org-keyword">elif</span> [[ <span class="org-string">"$token"</span> == *<span class="org-string">'")'</span>* ]]; <span class="org-keyword">then</span>
+                    <span class="org-variable-name">token</span>=$(<span class="org-builtin">echo</span> ${<span class="org-variable-name">token</span>} | sed <span class="org-string">'s/[."]//g'</span>)
+                    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">find_begin_description</span>} -eq 1 ]; <span class="org-keyword">then</span>
+                        <span class="org-variable-name">data_type</span>=<span class="org-string">""</span>
+                        <span class="org-variable-name">find_end_description</span>=1
+                        <span class="org-variable-name">find_begin_description</span>=0
+                        <span class="org-builtin">echo</span> <span class="org-string">"${token%)}${data_type}]' \\"</span>
+                    <span class="org-keyword">fi</span>
+                <span class="org-keyword">else</span>
+                    <span class="org-variable-name">token</span>=$(<span class="org-builtin">echo</span> ${<span class="org-variable-name">token</span>} | sed <span class="org-string">'s/["\\]//g'</span>)
+                    <span class="org-keyword">if</span> [ ${<span class="org-variable-name">find_end_description</span>} -eq 1 ]; <span class="org-keyword">then</span>
+                        <span class="org-variable-name">find_end_description</span>=0
+                        <span class="org-variable-name">find_begin_description</span>=1
+                        <span class="org-builtin">echo</span> -ne <span class="org-string">"'[${token#\"} "</span>
+                    <span class="org-keyword">else</span>
+                        <span class="org-builtin">echo</span> -ne <span class="org-string">"${token} "</span>
+                    <span class="org-keyword">fi</span>
+                <span class="org-keyword">fi</span>
+            <span class="org-keyword">elif</span> [[ <span class="org-string">"$token"</span> != *<span class="org-string">'-&gt;'</span>* ]]; <span class="org-keyword">then</span>
+                <span class="org-keyword">if</span> [[ ${<span class="org-variable-name">find_begin_description</span>} -eq 1 &amp;&amp; ${<span class="org-variable-name">find_end_description</span>} -eq 0 ]]; <span class="org-keyword">then</span>
+                    <span class="org-keyword">if</span> [ <span class="org-string">"$token"</span> != <span class="org-string">")"</span> ]; <span class="org-keyword">then</span>
+                        <span class="org-variable-name">token</span>=$(<span class="org-builtin">echo</span> ${<span class="org-variable-name">token</span>} | sed <span class="org-string">'s/[;"\\]//g'</span>)
+                        <span class="org-builtin">echo</span> -ne <span class="org-string">"${token} "</span>
+                    <span class="org-keyword">fi</span>
+                    <span class="org-comment-delimiter"># </span><span class="org-comment">elif [[ "${token}" == *"::value&lt;"* ]]; then</span>
+                    <span class="org-comment-delimiter">#     </span><span class="org-comment">tmp=${token##*value&lt;}</span>
+                    <span class="org-comment-delimiter">#     </span><span class="org-comment">tmp=${tmp%%&gt;*}</span>
+                    <span class="org-comment-delimiter">#     </span><span class="org-comment">if [ "${tmp}" == "bool" ];then</span>
+                    <span class="org-comment-delimiter">#         </span><span class="org-comment">data_type=":boolean:(true false)"</span>
+                    <span class="org-comment-delimiter">#     </span><span class="org-comment">elif [ "${tmp}" == "int" ]; then</span>
+                    <span class="org-comment-delimiter">#         </span><span class="org-comment">data_type=":number"</span>
+                    <span class="org-comment-delimiter">#     </span><span class="org-comment">elif [ "${tmp}" == "double" ]; then</span>
+                    <span class="org-comment-delimiter">#         </span><span class="org-comment">data_type=":number"</span>
+                    <span class="org-comment-delimiter">#     </span><span class="org-comment">fi</span>
+                <span class="org-keyword">fi</span>
+            <span class="org-keyword">fi</span>
+        <span class="org-keyword">done</span>
+        <span class="org-keyword">if</span> [ ${<span class="org-variable-name">find_end_description</span>} -eq 0 ]; <span class="org-keyword">then</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"]' \\"</span>
+        <span class="org-keyword">fi</span>
+        <span class="org-builtin">unset</span> token
+        <span class="org-builtin">unset</span> find_begin_description find_end_description
+        <span class="org-builtin">unset</span> data_type
+    }
+
+    <span class="org-keyword">for</span> program_file<span class="org-keyword"> in</span> $<span class="org-variable-name">1</span>
+    <span class="org-keyword">do</span>
+        <span class="org-builtin">local</span> <span class="org-variable-name">program_name</span>=$(basename ${<span class="org-variable-name">program_file</span>%.cxx})
+
+        <span class="org-builtin">local</span> <span class="org-variable-name">completion_file</span>=/tmp/_${<span class="org-variable-name">program_name</span>}
+        cat ${<span class="org-variable-name">program_file</span>} | grep -q add_options
+        <span class="org-keyword">if</span> [ $<span class="org-variable-name">?</span> -ne 0 ]; <span class="org-keyword">then</span>
+            pkgtools__msg_warning <span class="org-string">"Program ${program_name} does not use boost::program_option ! Skip it !"</span>
+            <span class="org-keyword">continue</span>
+        <span class="org-keyword">else</span>
+            pkgtools__msg_notice <span class="org-string">"Build completion system for program ${program_name}"</span>
+        <span class="org-keyword">fi</span>
+
+        __header () {
+            <span class="org-builtin">echo</span> <span class="org-string">"#compdef ${program_name}"</span>
+            <span class="org-builtin">echo</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"function _${program_name} ()"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"{"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"typeset -A opt_args"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"local context state line curcontext=\"$curcontext\""</span>
+            <span class="org-builtin">echo</span>
+            <span class="org-builtin">echo</span> <span class="org-string">" _arguments \\"</span>
+        }
+        __header &gt; ${<span class="org-variable-name">completion_file</span>}
+        __parse ${<span class="org-variable-name">program_file</span>} &gt;&gt; ${<span class="org-variable-name">completion_file</span>}
+        __footer () {
+            <span class="org-builtin">echo</span> <span class="org-string">"'*: :-&gt;args' \\"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"&amp;&amp; ret=0"</span>
+            <span class="org-builtin">echo</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"case \$state in"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"args)"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"_files -/"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">";;"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"esac"</span>
+            <span class="org-builtin">echo</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"return ret"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"}"</span>
+            <span class="org-builtin">echo</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"_${program_name} \"\$@\""</span>
+            <span class="org-builtin">echo</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"# Local Variables&#58;"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"# mode: Shell-Script"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"# sh-indentation: 2"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"# indent-tabs-mode: nil"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"# sh-basic-offset: 2"</span>
+            <span class="org-builtin">echo</span> <span class="org-string">"# End:"</span>
+        }
+        __footer &gt;&gt; ${<span class="org-variable-name">completion_file</span>}
+        pkgtools__msg_notice <span class="org-string">"File has been parsed in ${completion_file} file"</span>
+    <span class="org-keyword">done</span>
+
+    __pkgtools__at_function_exit
+    <span class="org-keyword">return</span> 0
+}
+compdef <span class="org-string">'_files -g "*.cxx"'</span> parse_cpp_program_options
+</pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
-File under git version control - commit 1e618d8 - 2013-12-19
+File under <i class="fa fa-github-alt"></i> version control - commit <a href="https://github.com/xgarrido/zsh-utilities/commit/6511cb0e54545f0e8312a0dc6552a90678b5dea4">6511cb0</a> - 2014-05-01
 </div>
 </body>
 </html>
