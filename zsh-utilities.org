@@ -18,35 +18,39 @@ There are different way to install this plugin :
    #+BEGIN_SRC sh :tangle no
      git clone git://github.com/xgarrido/zsh-utilities.git
    #+END_SRC
+
 2) Source this script *at the end* of =~/.zshrc=:
    #+BEGIN_SRC sh :tangle no
      source /path/to/zsh-utilities/init.zsh
    #+END_SRC
+
 3) Source =~/.zshrc= to take changes into account:
    #+BEGIN_SRC sh :tangle no
      source ~/.zshrc
    #+END_SRC
+
 ** With oh-my-zsh
 1) Download the script or clone this repository in [[http://github.com/robbyrussell/oh-my-zsh][oh-my-zsh]] plugins directory:
    #+BEGIN_SRC sh :tangle no
      cd ~/.oh-my-zsh/custom/plugins
      git clone git://github.com/xgarrido/zsh-utilities.git
    #+END_SRC
+
 2) Activate the plugin in =~/.zshrc= (in *last* position)
    #+BEGIN_SRC sh :tangle no
      plugins=( [plugins...] zsh-utilities)
    #+END_SRC
+
 3) Source =~/.zshrc= to take changes into account:
    #+BEGIN_SRC sh :tangle no
      source ~/.zshrc
    #+END_SRC
+
 ** With [[https://github.com/zsh-users/antigen][antigen]] (recommended way)
 Add the following line into your =~/.zshrc= file:
 #+BEGIN_SRC sh :tangle no
   antigen-bundle xgarrido/zsh-utilities
 #+END_SRC
-
-
 
 * Structure
 This =zsh-utilities.org= file is where everything begins. It is loaded
