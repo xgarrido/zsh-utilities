@@ -47,6 +47,7 @@ Add the following line into your =~/.zshrc= file:
 #+END_SRC
 
 
+
 * Structure
 This =zsh-utilities.org= file is where everything begins. It is loaded
 automatically on =zsh= startup if you have well followed the [[Installation][installation]]
