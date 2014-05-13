@@ -241,7 +241,7 @@ components.
 #+BEGIN_SRC sh
   local directory=${base_directory}/${dirname}
   --mod::create_directories () {
-      mkdir -p ${directory}/{pdf,plot}
+      mkdir -p ${directory}/{pdf,figures}
   }
 #+END_SRC
 ***** Generate org skeleton
