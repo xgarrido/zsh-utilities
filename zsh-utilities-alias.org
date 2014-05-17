@@ -92,7 +92,3 @@ Options for =less= program are the following
       pkgtools__unset_variable LESS
   fi
 #+END_SRC
-** Transmission web application
-#+BEGIN_SRC sh
-  alias transmission='/usr/bin/chromium "--app=http://xgarrido.dyndns.org:9091"'
-#+END_SRC
