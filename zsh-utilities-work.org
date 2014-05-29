@@ -104,6 +104,7 @@ components.
       alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
       alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
       alias qjob_summary='qjob_my_total; qjob_my_run; qjob_nemo_user'
+      alias qdel_all='qstat | awk '{print "qdel",$1}' | sh'
   fi
 #+END_SRC
 
