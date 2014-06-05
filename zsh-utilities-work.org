@@ -44,11 +44,16 @@ This file contains some function/alias in relation with "work" topic.
   alias root='root -l'
 #+END_SRC
 
-** SN@ilWare aliases
+** SN@ilWare setup
+*** Environment variable
+#+BEGIN_SRC sh
+  export SNAILWARE_SIMULATION_DIR=~/Workdir/NEMO/supernemo/simulations
+#+END_SRC
+
 *** Setup
 #+BEGIN_SRC sh
   alias do_nemo_setup='aggregator setup cadfael'
-  alias do_snailware_setup='do_nemo_setup && snailware setup all && mkdir -p /tmp/${USER}/snemo.d'
+  alias do_snailware_setup='aggregator setup all && mkdir -p /tmp/${USER}/snemo.d'
 #+END_SRC
 
 *** Working configuration
@@ -82,11 +87,11 @@ components.
           __pkgtools__at_function_exit
           return 1
       fi
-      if pkgtools__has_binary dpp_processing; then
-          dpp_processing -m $1 -c $SNAILWARE_SIMULATION_DIR/configuration/current/module_manager.conf \
-              -l mctoools_g4 -l mctools_bio \
-              -l sngeometry -l sncore -l sncore_bio -l snanalysis -l snanalysis_bio -l snreconstruction \
-              -M 100 -% 10
+      if $(pkgtools__has_binary bxdpp_processing); then
+          cm bxdpp_processing -m $1 -c $SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/master/module_manager.conf \
+              --dlls-config $SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/master/dlls.conf \
+              --datatools::resource_path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-1.0.0/resources \
+              -M 100 --modulo 1 -P notice
       else
           pkgtools__msg_error "SN@ilWare has not been set"
           __pkgtools__at_function_exit
