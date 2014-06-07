@@ -345,7 +345,7 @@ db.
               ssh_option="-p 24"
               server_name="garrido@xgarrido.dyndns.org"
           elif [[ "$1" == "syno" ]]; then
-              server_name="garrido@xgarrido.ydns.eu"
+              server_name="garrido@xgarrido.synology.me"
           # elif [[ "$1" == "debian" ]]; then
           #     server_name="debian@xgarrido.dyndns.org"
           elif [[ "$1" == "lx3" ]]; then
