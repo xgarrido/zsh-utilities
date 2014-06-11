@@ -118,10 +118,6 @@ order* since there are some dependencies.
 Modules are defined in [[file:zsh-utilities-modules.org][zsh-utilities-modules]] files. This file provides some
 configuration for external resources.
 
-Since it requires external resources, the machine configuration must be run
-before to have a full access to all binaries (basically the =PATH= must be
-updated).
-
 #+BEGIN_SRC sh
   source ${zsh_utilities_dir}/zsh-utilities-modules.zsh
 #+END_SRC
