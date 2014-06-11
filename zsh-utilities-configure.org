@@ -102,9 +102,9 @@ way it should be easy to add its own configuration.
       pkgtools__reset_variable WORKDIR /exp/nemo/garrido/workdir
 
       # Add emacs 24.3
-      pkgtools__add_path_to_PATH ${WORKDIR}/software/bin
+      pkgtools__add_path_to_PATH ${EXPDIR}/software/bin
       # Add TeXLive 2012
-      pkgtools__add_path_to_PATH ${WORKDIR}/software/texlive/2012/bin/x86_64-linux
+      pkgtools__add_path_to_PATH ${EXPDIR}/software/texlive/2012/bin/x86_64-linux
       pkgtools__unset_variable TEXMFCNF
       pkgtools__unset_variable TETEXDIR
 
