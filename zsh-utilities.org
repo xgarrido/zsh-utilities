@@ -93,6 +93,12 @@ order* since there are some dependencies.
     source ${zsh_utilities_dir}/zsh-utilities-configure.zsh
   #+END_SRC
 
+  After "sourcing", we must run the private function =__configure_machine= to
+  get defined environment variable related to local machine.
+  #+BEGIN_SRC sh
+    __configure_machine
+  #+END_SRC
+
 - Basic zsh functions in [[file:zsh-utilities-functions.org][zsh-utilities-functions]]
   #+BEGIN_SRC sh
     source ${zsh_utilities_dir}/zsh-utilities-functions.zsh
@@ -115,10 +121,6 @@ configuration for external resources.
 Since it requires external resources, the machine configuration must be run
 before to have a full access to all binaries (basically the =PATH= must be
 updated).
-
-#+BEGIN_SRC sh
-  __configure_machine
-#+END_SRC
 
 #+BEGIN_SRC sh
   source ${zsh_utilities_dir}/zsh-utilities-modules.zsh
