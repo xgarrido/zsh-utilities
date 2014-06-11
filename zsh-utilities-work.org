@@ -47,7 +47,7 @@ This file contains some function/alias in relation with "work" topic.
 ** SN@ilWare setup
 *** Environment variable
 #+BEGIN_SRC sh
-  export SNAILWARE_SIMULATION_DIR=~/Workdir/NEMO/supernemo/simulations
+  export SNAILWARE_SIMULATION_DIR=$WORKDIR/supernemo/simulations
 #+END_SRC
 
 *** Setup
