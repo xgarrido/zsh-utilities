@@ -271,7 +271,7 @@ components.
               echo "#+STARTUP: beamer"                       >> ${org_file}
               ;;
           (article)
-              echo "#+OPTIONS: toc:nil author:nil ^:{}"      >> ${org_file}
+              echo "#+OPTIONS: toc:nil date:nil author:nil email:t ^:{}" >> ${org_file}
               echo "#+STARTUP: entitiespretty"               >> ${org_file}
               ;;
       esac
@@ -283,7 +283,6 @@ components.
           (article)
               begin="#+BEGIN"
               end="#+END"
-              echo "#+CALL: vc-status() :results value latex" >> ${org_file}
               echo "* Abstract :ignoreheading:" >> ${org_file}
               echo "${begin}_ABSTRACT" >> ${org_file}
               echo "${end}_ABSTRACT" >> ${org_file}
@@ -299,31 +298,50 @@ components.
 ***** Generate =makefile=
 #+BEGIN_SRC sh
   --mod::generate_makefile () {
-      local make_file=${directory}/Makefile
-      echo "# -*- mode: makefile; -*-"                                         > ${make_file}
-      echo "EMACS=emacs"                                                      >> ${make_file}
-      echo "BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \
-                                    --load '~/.emacs.d/starter-kit-org.el'"   >> ${make_file}
-      echo "files_org = \$(wildcard *.org)"                                   >> ${make_file}
-      echo "files_pdf = \$(files_org:.org=.pdf)"                              >> ${make_file}
-      echo                                                                    >> ${make_file}
-      echo "all: \$(files_pdf)"                                               >> ${make_file}
-      echo                                                                    >> ${make_file}
-      echo "%.pdf: %.org"                                                     >> ${make_file}
-      echo "\t@echo \"NOTICE: Exporting \$< to pdf...\";"                     >> ${make_file}
       case $type in
           (talk)
+              local make_file=${directory}/Makefile
+              echo "# -*- mode: makefile; -*-"                                         > ${make_file}
+              echo "EMACS=emacs"                                                      >> ${make_file}
+              echo "BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \
+                                    --load '~/.emacs.d/starter-kit-org.el'"   >> ${make_file}
+              echo "files_org = \$(wildcard *.org)"                                   >> ${make_file}
+              echo "files_pdf = \$(files_org:.org=.pdf)"                              >> ${make_file}
+              echo                                                                    >> ${make_file}
+              echo "all: \$(files_pdf)"                                               >> ${make_file}
+              echo                                                                    >> ${make_file}
+              echo "%.pdf: %.org"                                                     >> ${make_file}
+              echo "\t@echo \"NOTICE: Exporting \$< to pdf...\";"                     >> ${make_file}
               echo "\t@\$(BATCH) --visit \"\$<\" --funcall org-beamer-export-to-pdf" >> ${make_file}
+              echo "\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"                         >> ${make_file}
+              echo                                                                    >> ${make_file}
+              echo "clean:"                                                           >> ${make_file}
+              echo "\t@rm -rf latex.d *.tex *.pdf *.fdb* *~ "                         >> ${make_file}
+              echo "\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"              >> ${make_file}
               ;;
           (article)
-              echo "\t@\$(BATCH) --visit \"\$<\" --funcall org-latex-export-to-pdf"  >> ${make_file}
+              echo "# -*- mode: makefile; -*-"
+              echo "files_org  = $(wildcard note*.org)"
+              echo "files_pdf  = doc/pdf/$(files_org:.org=.pdf)"
+              echo "files_html = doc/html/$(files_org:.org=.html)"
+              echo
+              echo "all: pdf"
+              echo
+              echo "pdf: $(files_pdf)"
+              echo "doc/pdf/%.pdf: %.org"
+              echo "@echo \"NOTICE: Exporting $< to pdf...\""
+              echo "@zsh -i -c \"org-pages --pdf --debug generate\""
+              echo
+              echo "html: $(files_html)"
+              echo "doc/html/%.html: %.org"
+              echo "@echo \"NOTICE: Exporting $< to html...\""
+              echo "@zsh -i -c \"org-pages --html --debug generate\""
+              echo
+              echo "clean:"
+              echo "@rm -rf latex.d doc *.tex *.pdf *.toc *.fdb* *~ README.el"
+              echo
+              echo ".PHONY: all pdf html clean"
               ;;
-      esac
-      echo "\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"                         >> ${make_file}
-      echo                                                                    >> ${make_file}
-      echo "clean:"                                                           >> ${make_file}
-      echo "\t@rm -rf latex.d *.tex *.pdf *.fdb* *~ "                         >> ${make_file}
-      echo "\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"              >> ${make_file}
   }
 #+END_SRC
 ***** Generate =.gitignore=
