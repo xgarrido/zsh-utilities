@@ -320,28 +320,29 @@ components.
               echo "\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"              >> ${make_file}
               ;;
           (article)
-              echo "# -*- mode: makefile; -*-"
-              echo "files_org  = $(wildcard note*.org)"
-              echo "files_pdf  = doc/pdf/$(files_org:.org=.pdf)"
-              echo "files_html = doc/html/$(files_org:.org=.html)"
-              echo
-              echo "all: pdf"
-              echo
-              echo "pdf: $(files_pdf)"
-              echo "doc/pdf/%.pdf: %.org"
-              echo "@echo \"NOTICE: Exporting $< to pdf...\""
-              echo "@zsh -i -c \"org-pages --pdf --debug generate\""
-              echo
-              echo "html: $(files_html)"
-              echo "doc/html/%.html: %.org"
-              echo "@echo \"NOTICE: Exporting $< to html...\""
-              echo "@zsh -i -c \"org-pages --html --debug generate\""
-              echo
-              echo "clean:"
-              echo "@rm -rf latex.d doc *.tex *.pdf *.toc *.fdb* *~ README.el"
-              echo
-              echo ".PHONY: all pdf html clean"
+              echo "# -*- mode: makefile; -*-"                                        >> ${make_file}
+              echo "files_org  = $(wildcard note*.org)"                               >> ${make_file}
+              echo "files_pdf  = doc/pdf/$(files_org:.org=.pdf)"                      >> ${make_file}
+              echo "files_html = doc/html/$(files_org:.org=.html)"                    >> ${make_file}
+              echo                                                                    >> ${make_file}
+              echo "all: pdf"                                                         >> ${make_file}
+              echo                                                                    >> ${make_file}
+              echo "pdf: $(files_pdf)"                                                >> ${make_file}
+              echo "doc/pdf/%.pdf: %.org"                                             >> ${make_file}
+              echo "@echo \"NOTICE: Exporting $< to pdf...\""                         >> ${make_file}
+              echo "@zsh -i -c \"org-pages --pdf --debug generate\""                  >> ${make_file}
+              echo                                                                    >> ${make_file}
+              echo "html: $(files_html)"                                              >> ${make_file}
+              echo "doc/html/%.html: %.org"                                           >> ${make_file}
+              echo "@echo \"NOTICE: Exporting $< to html...\""                        >> ${make_file}
+              echo "@zsh -i -c \"org-pages --html --debug generate\""                 >> ${make_file}
+              echo                                                                    >> ${make_file}
+              echo "clean:"                                                           >> ${make_file}
+              echo "@rm -rf latex.d doc *.tex *.pdf *.toc *.fdb* *~ README.el"        >> ${make_file}
+              echo                                                                    >> ${make_file}
+              echo ".PHONY: all pdf html clean"                                       >> ${make_file}
               ;;
+      esac
   }
 #+END_SRC
 ***** Generate =.gitignore=
