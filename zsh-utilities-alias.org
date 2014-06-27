@@ -75,6 +75,14 @@ command.
   }
 #+END_SRC
 
+** top alias
+In case =glances= is installed (see https://github.com/nicolargo/glances), use
+it as replacement for top command
+#+BEGIN_SRC sh
+  if (( $+commands[glances] )); then
+      alias top='glances'
+  fi
+#+END_SRC
 ** Terminal pager program
 Options for =less= program are the following
 + =-M= : shows more detailed prompt, including file position
