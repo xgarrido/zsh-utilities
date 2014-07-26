@@ -102,7 +102,9 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
   fi
 #+END_SRC
 ** colout
-[[https://github.com/nojhan/colout][colout]]
+[[https://github.com/nojhan/colout][colout]] read lines of text stream on the standard input and output characters
+matching a given regular expression /pattern/ in given and /style/: /style/ may
+be colored bold strings, for instance.
 *** Preamble
 #+BEGIN_SRC sh
   if (( $+commands[colout] )); then
@@ -112,8 +114,8 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
   function cm ()
   {
       $@ 2>&1 | colout "\[(?i)notice.*$|\[information.*$|\[INFO.*$" 4 \ |
-      colout "\[(?i)error.*$|\[fatal.*$" 1 \ |
-      colout "\[(?i)warning.*$" 5 \ |
+      colout "\[(?i)error.*$|\[fatal.*$|erreur.*$|FAILED.*$" 1 \ |
+      colout "\[(?i)warning.*$|attention.*$" 5 \ |
       colout "\[(?i)debug.*$" 2 normal |
       colout "\[(?i)trace.*$|DEVEL:.*$" 28 normal |
       colout ".*\|.*|\|\-\-.*|\`.*" 3 normal
@@ -123,3 +125,19 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
 #+BEGIN_SRC sh
   fi
 #+END_SRC
+** plan
+[[https://github.com/fengsp/plan][plan]] is a python package for writing and deploying cron jobs. =plan= will convert
+python code to cron syntax.
+*** Cron syntax
+#+BEGIN_SRC python :results output :tangle no
+  from plan import Plan
+
+  cron = Plan()
+
+  cron.command('DISPLAY=:0 /home/garrido/.config/openbox/scripts/change-wallpaper', every='hourly')
+  if __name__ == '__main__':
+      cron.run('update')
+#+END_SRC
+
+#+RESULTS:
+: [write] crontab file updated
