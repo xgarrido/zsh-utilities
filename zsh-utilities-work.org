@@ -298,9 +298,9 @@ components.
 ***** Generate =makefile=
 #+BEGIN_SRC sh
   --mod::generate_makefile () {
+      local make_file=${directory}/Makefile
       case $type in
           (talk)
-              local make_file=${directory}/Makefile
               echo "# -*- mode: makefile; -*-"                                         > ${make_file}
               echo "EMACS=emacs"                                                      >> ${make_file}
               echo "BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \
@@ -320,25 +320,28 @@ components.
               echo "\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"              >> ${make_file}
               ;;
           (article)
-              echo "# -*- mode: makefile; -*-"                                        >> ${make_file}
-              echo "files_org  = $(wildcard note*.org)"                               >> ${make_file}
-              echo "files_pdf  = doc/pdf/$(files_org:.org=.pdf)"                      >> ${make_file}
-              echo "files_html = doc/html/$(files_org:.org=.html)"                    >> ${make_file}
+              echo "# -*- mode: makefile; -*-"                                        > ${make_file}
+              echo "EMACS=emacs"                                                      >> ${make_file}
+              echo "BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \
+                                    --load '~/.emacs.d/starter-kit-org.el'"   >> ${make_file}
+              echo "files_org  = \$(wildcard note*.org)"                               >> ${make_file}
+              echo "files_pdf  = doc/pdf/\$(files_org:.org=.pdf)"                      >> ${make_file}
+              echo "files_html = doc/html/\$(files_org:.org=.html)"                    >> ${make_file}
               echo                                                                    >> ${make_file}
               echo "all: pdf"                                                         >> ${make_file}
               echo                                                                    >> ${make_file}
-              echo "pdf: $(files_pdf)"                                                >> ${make_file}
+              echo "pdf: \$(files_pdf)"                                                >> ${make_file}
               echo "doc/pdf/%.pdf: %.org"                                             >> ${make_file}
-              echo "@echo \"NOTICE: Exporting $< to pdf...\""                         >> ${make_file}
-              echo "@zsh -i -c \"org-pages --pdf --debug generate\""                  >> ${make_file}
+              echo "\t@echo \"NOTICE: Exporting $< to pdf...\""                         >> ${make_file}
+              echo "\t@zsh -i -c \"org-pages --pdf --debug generate\""                  >> ${make_file}
               echo                                                                    >> ${make_file}
-              echo "html: $(files_html)"                                              >> ${make_file}
+              echo "html: \$(files_html)"                                              >> ${make_file}
               echo "doc/html/%.html: %.org"                                           >> ${make_file}
-              echo "@echo \"NOTICE: Exporting $< to html...\""                        >> ${make_file}
-              echo "@zsh -i -c \"org-pages --html --debug generate\""                 >> ${make_file}
+              echo "\t@echo \"NOTICE: Exporting $< to html...\""                        >> ${make_file}
+              echo "\t@zsh -i -c \"org-pages --html --debug generate\""                 >> ${make_file}
               echo                                                                    >> ${make_file}
               echo "clean:"                                                           >> ${make_file}
-              echo "@rm -rf latex.d doc *.tex *.pdf *.toc *.fdb* *~ README.el"        >> ${make_file}
+              echo "\t@rm -rf latex.d doc *.tex *.pdf *.toc *.fdb* *~ README.el"        >> ${make_file}
               echo                                                                    >> ${make_file}
               echo ".PHONY: all pdf html clean"                                       >> ${make_file}
               ;;
