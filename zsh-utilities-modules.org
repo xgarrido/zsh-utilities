@@ -134,7 +134,7 @@ python code to cron syntax.
 
   cron = Plan()
 
-  cron.command('DISPLAY=:0 /home/garrido/.config/openbox/scripts/change-wallpaper', every='hourly')
+  cron.command('DISPLAY=:0 /home/garrido/.config/openbox/scripts/change-wallpaper', every='15.minute')
   if __name__ == '__main__':
       cron.run('update')
 #+END_SRC
