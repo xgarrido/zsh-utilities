@@ -100,3 +100,8 @@ Options for =less= program are the following
       pkgtools__unset_variable LESS
   fi
 #+END_SRC
+
+** Python server
+#+BEGIN_SRC sh
+  alias start_server='python -m http.server 8888'
+#+END_SRC
