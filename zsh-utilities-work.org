@@ -267,7 +267,7 @@ components.
       echo "#+DATE:   $(date +%d/%m/%Y)"                     >> ${org_file}
       case $type in
           (talk)
-              echo "#+OPTIONS: toc:nil num:nil author:nil ^:{}" >> ${org_file}
+              echo "#+OPTIONS: toc:nil num:nil author:nil email:t ^:{}" >> ${org_file}
               echo "#+STARTUP: beamer"                       >> ${org_file}
               ;;
           (article)
