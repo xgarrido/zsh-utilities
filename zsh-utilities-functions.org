@@ -434,7 +434,16 @@ db.
       return 0
   }
 #+END_SRC
-
+*** Find a running job & kill it
+#+BEGIN_SRC sh
+  function pskill ()
+  {
+      __pkgtools__at_function_enter pskill
+      psgrep $1 | awk '{print "kill -9",$2}' | sh
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
 *** Find a command within history
 #+BEGIN_SRC sh
   function hgrep ()
