@@ -501,88 +501,110 @@ db.
 ** Image edition
 *** Convert an EPS figure into tikz
 #+BEGIN_SRC sh
-  function eps2tikz ()
-  {
-      __pkgtools__at_function_enter eps2tikz
-      local use_helvetica=0
-      local keep_xfig=0
-      local eps_file=
-      local parse_switch=1
+    function eps2tikz ()
+    {
+        __pkgtools__at_function_enter eps2tikz
+        local use_helvetica=0
+        local keep_xfig=0
+        local remove_duplicate_lines=1
+        local eps_file=
+        local parse_switch=1
 
-      if [[ "$1" == "" ]]; then
-          echo "Usage: eps2tikz [-option] [eps files ...]"
-          echo
-          echo "Options:"
-          echo "    -k, --keep-xfig : Keep the intermediate xfig file."
-          echo
-      fi
+        if [[ "$1" == "" ]]; then
+            echo "Usage: eps2tikz [-option] [eps files ...]"
+            echo
+            echo "Options:"
+            echo "    -k, --keep-xfig : Keep the intermediate xfig file."
+            echo
+        fi
 
-      while [ -n "$1" ]; do
-          token="$1"
-          if [[ "${token[1]}" = "-" ]]; then
-              opt=${token}
-              if [[ ${parse_switch} -eq 0 ]]; then
-                  break
-              fi
-              if [ "${opt}" = "--keep-xfig" ]; then
-                  keep_xfig=1
-              else
-                  pkgtools__msg_warning "Ignoring option '${opt}' !"
-              fi
-          else
-              arg=${token}
-              parse_switch=0
-              if [ "${arg##*.}" = "eps" ]; then
-                  eps_file="${eps_file} ${arg}"
-              else
-                  pkgtools_msg_warning "'${eps_file}' is not an Encapsulated PostScript"
-              fi
-          fi
-          shift
-      done
+        while [ -n "$1" ]; do
+            token="$1"
+            if [[ "${token[1]}" = "-" ]]; then
+                opt=${token}
+                if [[ ${parse_switch} -eq 0 ]]; then
+                    break
+                fi
+                if [ "${opt}" = "--keep-xfig" ]; then
+                    keep_xfig=1
+                elif [ "${opt}" = "--do-not-remove-duplicate-lines" ]; then
+                    remove_duplicate_lines=0
+                else
+                    pkgtools__msg_warning "Ignoring option '${opt}' !"
+                fi
+            else
+                arg=${token}
+                parse_switch=0
+                if [ "${arg##*.}" = "eps" ]; then
+                    eps_file="${eps_file} ${arg}"
+                else
+                    pkgtools_msg_warning "'${eps_file}' is not an Encapsulated PostScript"
+                fi
+            fi
+            shift
+        done
 
-      if [[ -z "${eps_file}" ]]; then
-          pkgtools__msg_error "Missing EPS file !"
-          __pkgtools__at_function_exit
-          return 1
-      fi
+        if [[ -z "${eps_file}" ]]; then
+            pkgtools__msg_error "Missing EPS file !"
+            __pkgtools__at_function_exit
+            return 1
+        fi
 
-      for i in $(echo ${eps_file}); do
-          if [ ! -f "${i}" ]; then
-              pkgtools__msg_warning "File ${i} does not exist! Skip it"
-              continue
-          fi
+        for i in $(echo ${eps_file}); do
+            if [ ! -f "${i}" ]; then
+                pkgtools__msg_warning "File ${i} does not exist! Skip it"
+                continue
+            fi
 
-          local fig_file=${i/.eps/.fig}
-          local tikz_file=${i/.eps/.tikz}
+            local fig_file=${i/.eps/.fig}
+            local tikz_file=${i/.eps/.tikz}
 
-          pkgtools__msg_notice "Converting ${i} file to ${tikz_file}..."
+            pkgtools__msg_notice "Converting ${i} file to ${tikz_file}..."
 
-          if [[ ! -x $(which pstoedit) ]]; then
-              pkgtools__msg_error "Missing 'pstoedit' binary !"
-              __pkgtools__at_function_exit
-              return 1
-          fi
-          pstoedit -f xfig "${i}" > ${fig_file} 2> /dev/null
+            if [[ ! -x $(which pstoedit) ]]; then
+                pkgtools__msg_error "Missing 'pstoedit' binary !"
+                __pkgtools__at_function_exit
+                return 1
+            fi
+            pstoedit -f xfig "${i}" > ${fig_file} 2> /dev/null
 
-          if [[ ! -x $(which fig2tikz) ]]; then
-              pkgtools__msg_error "Missing fig2tikz' binary !"
-              __pkgtools__at_function_exit
-              return 1
-          fi
-          fig2tikz ${fig_file} > ${tikz_file}.tmp
-          pkgtools__msg_notice "Remove duplicate lines..."
-          awk '!seen[$0]++' ${tikz_file}.tmp > ${tikz_file}
-          rm -f ${tikz_file}.tmp
+            if [[ ! -x $(which fig2tikz) ]]; then
+                pkgtools__msg_error "Missing fig2tikz' binary !"
+                __pkgtools__at_function_exit
+                return 1
+            fi
+            fig2tikz ${fig_file} > ${tikz_file}.tmp
+            if [[ ${remove_duplicate_lines} -eq 1 ]]; then
+                pkgtools__msg_notice "Remove duplicate lines..."
+                awk '!seen[$0]++' ${tikz_file}.tmp > ${tikz_file}
+            else
+                cp ${tikz_file}.tmp ${tikz_file}
+            fi
 
-          if [[ ${keep_xfig} -eq 0 ]]; then
-              rm -f ${fig_file}
-          fi
+            rm -f ${tikz_file}.tmp
 
-      done
-      __pkgtools__at_function_exit
-      return 0
-  }
+            if [[ ${keep_xfig} -eq 0 ]]; then
+                rm -f ${fig_file}
+            fi
+
+        done
+        __pkgtools__at_function_exit
+        return 0
+    }
+
+    # Connect completion system
+    compdef _eps2tikz eps2tikz
+
+    function _eps2tikz ()
+    {
+        _arguments -C                                                                             \
+            '(-v --verbose)'{-v,--verbose}'[verbose output]'                                      \
+            '(-h --help)'{-h,--help}'[print help message]'                                        \
+            --keep-xfig'[Keep Xfig files]'                                                        \
+            --do-not-remove-duplicate-lines'[do not edit tikz file by removing duplicated lines]' \
+            "*:filename: _alternative 'files:file:_files -g  \"*.eps\"'" && ret=0
+    }
+
 #+END_SRC
 
 *** Grab point with =dexter=
