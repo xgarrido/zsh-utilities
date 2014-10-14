@@ -538,7 +538,7 @@ db.
                 if [ "${arg##*.}" = "eps" ]; then
                     eps_file="${eps_file} ${arg}"
                 else
-                    pkgtools_msg_warning "'${eps_file}' is not an Encapsulated PostScript"
+                    pkgtools__msg_warning "'${eps_file}' is not an Encapsulated PostScript"
                 fi
             fi
             shift
@@ -576,7 +576,7 @@ db.
             fig2tikz ${fig_file} > ${tikz_file}.tmp
             if [[ ${remove_duplicate_lines} -eq 1 ]]; then
                 pkgtools__msg_notice "Remove duplicate lines..."
-                awk '!seen[$0]++' ${tikz_file}.tmp > ${tikz_file}
+                awk '{if (match($0,"definecolor") || !seen[$0]++) {print $0}}' ${tikz_file}.tmp > ${tikz_file}
             else
                 cp ${tikz_file}.tmp ${tikz_file}
             fi
