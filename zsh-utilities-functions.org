@@ -346,8 +346,8 @@ db.
               server_name="garrido@xgarrido.dyndns.org"
           elif [[ "$1" == "syno" ]]; then
               server_name="garrido@xgarrido.synology.me"
-          # elif [[ "$1" == "debian" ]]; then
-          #     server_name="debian@xgarrido.dyndns.org"
+              # elif [[ "$1" == "debian" ]]; then
+              #     server_name="debian@xgarrido.dyndns.org"
           elif [[ "$1" == "lx3" ]]; then
               server_name="garrido@lx3.lal.in2p3.fr"
           elif [[ "$1" == "daq-nemo" ]]; then
@@ -360,22 +360,22 @@ db.
               server_name="garrido@$1"
           elif [[ $1 == nemo* ]]; then
               server_name="garrido@$1.lal.in2p3.fr"
-          # else
-          #     if [ "${HOSTNAME}" = "garrido-laptop" ]; then
-          #         server_name="garrido@localhost"
-          #         if [ -f /tmp/npu.d/ports ]; then
-          #             ssh_port=$(cat /tmp/npu.d/ports | grep $1 | cut -d' ' -f2)
-          #             ssh_option="-p ${ssh_port}"
-          #         else
-          #             append_command+="$1 "
-          #         fi
-          #     else
-          #         if [[ "$1" == "pc" ]]; then
-          #             server_name="pc-91089.lal.in2p3.fr"
-          #         else
-          #             server_name="$1.lal.in2p3.fr"
-          #         fi
-          #     fi
+              # else
+              #     if [ "${HOSTNAME}" = "garrido-laptop" ]; then
+              #         server_name="garrido@localhost"
+              #         if [ -f /tmp/npu.d/ports ]; then
+              #             ssh_port=$(cat /tmp/npu.d/ports | grep $1 | cut -d' ' -f2)
+              #             ssh_option="-p ${ssh_port}"
+              #         else
+              #             append_command+="$1 "
+              #         fi
+              #     else
+              #         if [[ "$1" == "pc" ]]; then
+              #             server_name="pc-91089.lal.in2p3.fr"
+              #         else
+              #             server_name="$1.lal.in2p3.fr"
+              #         fi
+              #     fi
           fi
           shift 1
       done
@@ -501,109 +501,109 @@ db.
 ** Image edition
 *** Convert an EPS figure into tikz
 #+BEGIN_SRC sh
-    function eps2tikz ()
-    {
-        __pkgtools__at_function_enter eps2tikz
-        local use_helvetica=0
-        local keep_xfig=0
-        local remove_duplicate_lines=1
-        local eps_file=
-        local parse_switch=1
+  function eps2tikz ()
+  {
+      __pkgtools__at_function_enter eps2tikz
+      local use_helvetica=0
+      local keep_xfig=0
+      local remove_duplicate_lines=1
+      local eps_file=
+      local parse_switch=1
 
-        if [[ "$1" == "" ]]; then
-            echo "Usage: eps2tikz [-option] [eps files ...]"
-            echo
-            echo "Options:"
-            echo "    -k, --keep-xfig : Keep the intermediate xfig file."
-            echo
-        fi
+      if [[ "$1" == "" ]]; then
+          echo "Usage: eps2tikz [-option] [eps files ...]"
+          echo
+          echo "Options:"
+          echo "    -k, --keep-xfig : Keep the intermediate xfig file."
+          echo
+      fi
 
-        while [ -n "$1" ]; do
-            token="$1"
-            if [[ "${token[1]}" = "-" ]]; then
-                opt=${token}
-                if [[ ${parse_switch} -eq 0 ]]; then
-                    break
-                fi
-                if [ "${opt}" = "--keep-xfig" ]; then
-                    keep_xfig=1
-                elif [ "${opt}" = "--do-not-remove-duplicate-lines" ]; then
-                    remove_duplicate_lines=0
-                else
-                    pkgtools__msg_warning "Ignoring option '${opt}' !"
-                fi
-            else
-                arg=${token}
-                parse_switch=0
-                if [ "${arg##*.}" = "eps" ]; then
-                    eps_file="${eps_file} ${arg}"
-                else
-                    pkgtools__msg_warning "'${eps_file}' is not an Encapsulated PostScript"
-                fi
-            fi
-            shift
-        done
+      while [ -n "$1" ]; do
+          token="$1"
+          if [[ "${token[1]}" = "-" ]]; then
+              opt=${token}
+              if [[ ${parse_switch} -eq 0 ]]; then
+                  break
+              fi
+              if [ "${opt}" = "--keep-xfig" ]; then
+                  keep_xfig=1
+              elif [ "${opt}" = "--do-not-remove-duplicate-lines" ]; then
+                  remove_duplicate_lines=0
+              else
+                  pkgtools__msg_warning "Ignoring option '${opt}' !"
+              fi
+          else
+              arg=${token}
+              parse_switch=0
+              if [ "${arg##*.}" = "eps" ]; then
+                  eps_file="${eps_file} ${arg}"
+              else
+                  pkgtools__msg_warning "'${eps_file}' is not an Encapsulated PostScript"
+              fi
+          fi
+          shift
+      done
 
-        if [[ -z "${eps_file}" ]]; then
-            pkgtools__msg_error "Missing EPS file !"
-            __pkgtools__at_function_exit
-            return 1
-        fi
+      if [[ -z "${eps_file}" ]]; then
+          pkgtools__msg_error "Missing EPS file !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
 
-        for i in $(echo ${eps_file}); do
-            if [ ! -f "${i}" ]; then
-                pkgtools__msg_warning "File ${i} does not exist! Skip it"
-                continue
-            fi
+      for i in $(echo ${eps_file}); do
+          if [ ! -f "${i}" ]; then
+              pkgtools__msg_warning "File ${i} does not exist! Skip it"
+              continue
+          fi
 
-            local fig_file=${i/.eps/.fig}
-            local tikz_file=${i/.eps/.tikz}
+          local fig_file=${i/.eps/.fig}
+          local tikz_file=${i/.eps/.tikz}
 
-            pkgtools__msg_notice "Converting ${i} file to ${tikz_file}..."
+          pkgtools__msg_notice "Converting ${i} file to ${tikz_file}..."
 
-            if [[ ! -x $(which pstoedit) ]]; then
-                pkgtools__msg_error "Missing 'pstoedit' binary !"
-                __pkgtools__at_function_exit
-                return 1
-            fi
-            pstoedit -f xfig "${i}" > ${fig_file} 2> /dev/null
+          if [[ ! -x $(which pstoedit) ]]; then
+              pkgtools__msg_error "Missing 'pstoedit' binary !"
+              __pkgtools__at_function_exit
+              return 1
+          fi
+          pstoedit -f xfig "${i}" > ${fig_file} 2> /dev/null
 
-            if [[ ! -x $(which fig2tikz) ]]; then
-                pkgtools__msg_error "Missing fig2tikz' binary !"
-                __pkgtools__at_function_exit
-                return 1
-            fi
-            fig2tikz ${fig_file} > ${tikz_file}.tmp
-            if [[ ${remove_duplicate_lines} -eq 1 ]]; then
-                pkgtools__msg_notice "Remove duplicate lines..."
-                awk '{if (match($0,"definecolor") || !seen[$0]++) {print $0}}' ${tikz_file}.tmp > ${tikz_file}
-            else
-                cp ${tikz_file}.tmp ${tikz_file}
-            fi
+          if [[ ! -x $(which fig2tikz) ]]; then
+              pkgtools__msg_error "Missing fig2tikz' binary !"
+              __pkgtools__at_function_exit
+              return 1
+          fi
+          fig2tikz ${fig_file} > ${tikz_file}.tmp
+          if [[ ${remove_duplicate_lines} -eq 1 ]]; then
+              pkgtools__msg_notice "Remove duplicate lines..."
+              awk '{if (match($0,"definecolor") || !seen[$0]++) {print $0}}' ${tikz_file}.tmp > ${tikz_file}
+          else
+              cp ${tikz_file}.tmp ${tikz_file}
+          fi
 
-            rm -f ${tikz_file}.tmp
+          rm -f ${tikz_file}.tmp
 
-            if [[ ${keep_xfig} -eq 0 ]]; then
-                rm -f ${fig_file}
-            fi
+          if [[ ${keep_xfig} -eq 0 ]]; then
+              rm -f ${fig_file}
+          fi
 
-        done
-        __pkgtools__at_function_exit
-        return 0
-    }
+      done
+      __pkgtools__at_function_exit
+      return 0
+  }
 
-    # Connect completion system
-    compdef _eps2tikz eps2tikz
+  # Connect completion system
+  compdef _eps2tikz eps2tikz
 
-    function _eps2tikz ()
-    {
-        _arguments -C                                                                             \
-            '(-v --verbose)'{-v,--verbose}'[verbose output]'                                      \
-            '(-h --help)'{-h,--help}'[print help message]'                                        \
-            --keep-xfig'[Keep Xfig files]'                                                        \
-            --do-not-remove-duplicate-lines'[do not edit tikz file by removing duplicated lines]' \
-            "*:filename: _alternative 'files:file:_files -g  \"*.eps\"'" && ret=0
-    }
+  function _eps2tikz ()
+  {
+      _arguments -C                                                                             \
+          '(-v --verbose)'{-v,--verbose}'[verbose output]'                                      \
+          '(-h --help)'{-h,--help}'[print help message]'                                        \
+          --keep-xfig'[Keep Xfig files]'                                                        \
+          --do-not-remove-duplicate-lines'[do not edit tikz file by removing duplicated lines]' \
+          "*:filename: _alternative 'files:file:_files -g  \"*.eps\"'" && ret=0
+  }
 
 #+END_SRC
 
@@ -746,7 +746,7 @@ Astrophysics Data System.
       typeset -A sv
 
       # for fn in . .. *(D)
-      for fn in $(command \ls -rt $@)
+      for fn in $(command \ls -rdt $@/*)
       do
           if [[ $fn == "." || $fn == ".." ]]; then continue; fi
           statvar="stats_$i"
@@ -907,16 +907,16 @@ Astrophysics Data System.
           # # Check for git repo, first checking if the result is a directory
           # if (( IS_GIT_REPO == 0)) || (( k <= 2 ))
           # then
-          #     if (( IS_DIRECTORY )) && [[ -d "$NAME/.git" ]]
-          #     then
-          #         if command git --git-dir="$PWD/$NAME/.git" --work-tree="$PWD/$NAME" diff --quiet --ignore-submodules HEAD &>/dev/null # if dirty
-          #         then REPOMARKER=$'\e[38;5;46m|\e[0m' # Show a green vertical bar for dirty
-          #         else REPOMARKER=$'\e[0;31m|\e[0m' # Show a red vertical bar if clean
-          #         fi
-          #     fi
+              # if (( IS_DIRECTORY )) && [[ -d "$NAME/.git" ]]
+              # then
+              #     if command git --git-dir="$PWD/$NAME/.git" --work-tree="$PWD/$NAME" diff --quiet --ignore-submodules HEAD &>/dev/null # if dirty
+              #     then REPOMARKER=$'\e[38;5;46m|\e[0m' # Show a green vertical bar for dirty
+              #     else REPOMARKER=$'\e[0;31m|\e[0m' # Show a red vertical bar if clean
+              #     fi
+              # fi
           # fi
 
-          if (( IS_GIT_REPO )) && (( k > 0 )) && [[ "$NAME" != '.git' ]]
+          if (( IS_GIT_REPO )) && (( k > 0 )) && [[ "$NAME" != '.git' ]] && (( !IS_DIRECTORY ))
           then
               STATUS="$(command git status --porcelain --ignored --untracked-files=normal "$NAME")"
               STATUS="${STATUS[1,2]}"
