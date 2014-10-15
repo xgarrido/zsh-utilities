@@ -663,6 +663,8 @@ Astrophysics Data System.
   }
 #+END_SRC
 ** Better ls wit h=git= support
+Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
+
 #+BEGIN_SRC sh
   zmodload zsh/datetime
   zmodload -F zsh/stat b:zstat
@@ -746,7 +748,7 @@ Astrophysics Data System.
       typeset -A sv
 
       # for fn in . .. *(D)
-      for fn in $(command \ls -rdt $@/*)
+      for fn in $(command \ls -rt $@)
       do
           if [[ $fn == "." || $fn == ".." ]]; then continue; fi
           statvar="stats_$i"
