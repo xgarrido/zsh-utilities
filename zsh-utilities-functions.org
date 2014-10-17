@@ -662,7 +662,7 @@ Astrophysics Data System.
       return 0
   }
 #+END_SRC
-** Better ls wit h=git= support
+** Better =ls= with =git= support
 Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
 
 #+BEGIN_SRC sh
@@ -918,7 +918,7 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
               # fi
           # fi
 
-          if (( IS_GIT_REPO )) && (( k > 0 )) && [[ "$NAME" != '.git' ]] && (( !IS_DIRECTORY ))
+          if (( IS_GIT_REPO )) && (( k > 0 )) && [[ "$NAME" != '.git' ]]
           then
               STATUS="$(command git status --porcelain --ignored --untracked-files=normal "$NAME")"
               STATUS="${STATUS[1,2]}"
@@ -965,6 +965,49 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
   }
 
   # http://upload.wikimedia.org/wikipedia/en/1/15/Xterm_256color_chart.svg
+#+END_SRC
+** Better =tree= with =git= support
+#+BEGIN_SRC sh
+  function t()
+  {
+      tree -ft $@ | awk '{
+    status=""
+    marker=" "
+    color="\033[0m"
+    # if (system("test -f " $NF) == 0) print "file="$NF
+    if (system("test -d " $NF) == 0) {
+        is_git_repo=system("git rev-parse --is-inside-work-tree > /dev/null 2>&1")
+        color="\033[01;38;5;004m"
+        marker=""
+    }
+    if (is_git_repo == 0) {
+        cmd = "git status --porcelain --ignored --untracked-files=normal \"" $NF "\""
+        cmd | getline status
+        status=substr(status,1,2)
+        if (status == " M") {
+            color="\033[38;5;001m"
+            marker="✘ "
+        } else if (status == "??") {
+            color="\033[38;5;009m"
+            marker="⚑ "
+        } else if (status == "!!") {
+            color="\033[38;5;004m"
+            marker=color "⚐ "
+        } else if (status == "A ") {
+            color="\033[38;5;093m"
+            marker="| "
+        } else {
+            color="\033[38;5;002m"
+            marker="✔ "
+        }
+    }
+    basefile=$NF
+    sub(".*/",color marker,basefile)
+    sub($NF,basefile,$0)
+
+    print $0 "\033[0m"
+      }'
+  }
 #+END_SRC
 ** Misc.
 *** Grabbing video from mms link
