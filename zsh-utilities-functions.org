@@ -1008,6 +1008,8 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
     print $0 "\033[0m"
       }'
   }
+alias tt='t -L 1'
+alias tt='t -a -L 1'
 #+END_SRC
 ** Misc.
 *** Grabbing video from mms link
