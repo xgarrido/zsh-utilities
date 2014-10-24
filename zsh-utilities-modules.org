@@ -97,6 +97,7 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
 
   unset _rsync_cmd
 #+END_SRC
+
 *** Postamble
 #+BEGIN_SRC sh
   fi
