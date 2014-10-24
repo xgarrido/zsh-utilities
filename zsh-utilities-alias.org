@@ -52,15 +52,13 @@ command.
       if [[ "${pid}" == "" ]]; then
           notify -i emacs "Emacs" "New emacs daemon"
           emacs --daemon  > /dev/null 2>&1
-          emacsclient -e "(sk-desktop)" "$@"
-      else
-          emacsclient "$@"
       fi
+      emacsclient "$@"
   }
   alias emacs='--check-emacs -n -c $@'
   alias iemacs='--check-emacs -n $@'
   alias ve='--check-emacs -nw $@'
-  alias relaunch_emacs='killall emacs; sleep 1; --check-emacs -n -c $@'
+  alias relaunch_emacs='killall emacs; sleep 1; emacs'
 #+END_SRC
 
 *** Cask function to use it everywhere
