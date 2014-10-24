@@ -970,7 +970,12 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
 #+BEGIN_SRC sh
   function t()
   {
-      tree -ft $@ | awk '{
+      skip_ignore_files=0
+      if [[ $@ == *--skip-ignore-files* ]]; then
+          skip_ignore_files=1
+          arguments=${@/--skip-ignore-files/}
+      fi
+      tree -ft $arguments | awk -v skip_ignore_files=$skip_ignore_files '{
     status=""
     marker=" "
     color="\033[0m"
@@ -993,6 +998,7 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
         } else if (status == "!!") {
             color="\033[38;5;004m"
             marker=color "⚐ "
+            if (skip_ignore_files) next
         } else if (status == "A ") {
             color="\033[38;5;093m"
             marker="| "
@@ -1008,8 +1014,9 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
     print $0 "\033[0m"
       }'
   }
-alias tt='t -L 1'
-alias ta='t -a -L 1'
+  alias tt='t -L 1'
+  alias ta='t -a -L 1'
+  alias ti='t --skip-ignore-files'
 #+END_SRC
 ** Misc.
 *** Grabbing video from mms link
