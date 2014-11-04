@@ -126,6 +126,30 @@ be colored bold strings, for instance.
 #+BEGIN_SRC sh
   fi
 #+END_SRC
+** mr
+*** Preamble
+#+BEGIN_SRC sh
+  if (( $+commands[mr] )); then
+#+END_SRC
+*** Function
+#+BEGIN_SRC sh
+  function mr ()
+  {
+      last=~/${@[-1]}
+      if [ -d $last ]; then
+          (
+              cd $last
+              $(pkgtools__get_binary_path $0) ${@:1:-1}
+          )
+      else
+          $(pkgtools__get_binary_path $0) $@
+      fi
+  }
+#+END_SRC
+*** Postamble
+#+BEGIN_SRC sh
+  fi
+#+END_SRC
 ** plan
 [[https://github.com/fengsp/plan][plan]] is a python package for writing and deploying cron jobs. =plan= will convert
 python code to cron syntax.
