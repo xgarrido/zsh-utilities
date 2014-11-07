@@ -7,7 +7,7 @@ This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
 
 * Zsh Utilities - Work
 This file contains some function/alias in relation with "work" topic.
-** pkgtools aliases
+** pkgtools aliases                                               :obsolete:
 =pkgtools= is used as wrapper for installation. It is a bash program which wraps
 =cmake= or some =Makefile= and is intensively used with SuperNEMO software.
 #+BEGIN_SRC sh
@@ -53,7 +53,7 @@ This file contains some function/alias in relation with "work" topic.
 *** Setup
 #+BEGIN_SRC sh
   alias do_nemo_setup='aggregator setup cadfael'
-  alias do_snailware_setup='aggregator setup all && mkdir -p /tmp/${USER}/snemo.d'
+  alias do_aggregator_setup='aggregator setup all && mkdir -p /tmp/${USER}/snemo.d'
 #+END_SRC
 
 *** Working configuration
@@ -102,6 +102,20 @@ components.
   }
 #+END_SRC
 
+*** Aliases
+#+BEGIN_SRC sh
+  if (( $+functions[cm] )); then
+      function snemo_event_browser ()
+      {
+          cm $(pkgtools__get_binary_path snemo_event_browser) $@
+      }
+      function bxdpp_processing ()
+      {
+          cm $(pkgtools__get_binary_path bxdpp_processing) $@
+      }
+  fi
+  #  compdef _snemo_event_browser snemo_toto
+#+END_SRC
 ** Lyon ccali aliases
 #+BEGIN_SRC sh
   if [[ $HOSTNAME = ccage* ]]; then
@@ -602,4 +616,9 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
       return 0
   }
   compdef '_files -g "*.cxx"' parse_cpp_program_options
+#+END_SRC
+** Completion system
+#+BEGIN_SRC sh
+  compdef _dpp_processing bxdpp_processing
+  compdef _genbb_inspector bxgenbb_inspector
 #+END_SRC
