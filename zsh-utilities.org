@@ -74,6 +74,14 @@ The only "core" thing is to know where the files are.
   zsh_utilities_dir=$(dirname $0)
 #+END_SRC
 
+** Modules
+Modules are defined in [[file:zsh-utilities-modules.org][zsh-utilities-modules]] files. This file provides some
+configuration for external resources.
+
+#+BEGIN_SRC sh
+  source ${zsh_utilities_dir}/zsh-utilities-modules.zsh
+#+END_SRC
+
 ** Load plugin files
 The following files contain specific settings for several plugins. *Keep this
 order* since there are some dependencies.
@@ -113,14 +121,6 @@ order* since there are some dependencies.
   #+BEGIN_SRC sh
     source ${zsh_utilities_dir}/zsh-utilities-work.zsh
   #+END_SRC
-
-** Modules
-Modules are defined in [[file:zsh-utilities-modules.org][zsh-utilities-modules]] files. This file provides some
-configuration for external resources.
-
-#+BEGIN_SRC sh
-  source ${zsh_utilities_dir}/zsh-utilities-modules.zsh
-#+END_SRC
 
 ** Custom plugins
 If you want to add your plugins to the list you can =source= it here. This
