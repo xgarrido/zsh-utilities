@@ -9,7 +9,7 @@
 <meta  name="author" content="Xavier Garrido" />
 <link rel="stylesheet" href="css/styles.css" />
                <link rel="stylesheet" href="css/org-pygments.css" />
-               <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+               <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -57,7 +57,7 @@ for the JavaScript code in this tag.
 /*]]>*///-->
 </script><script type="text/javascript">
   function randomLinkColor() {
-      var colors = ['#67ad00', '#D5BC23', '#FF9927', '#FF2D27', '#AB0045', '#B81FC8'];
+      var colors = ['#f1c40f','#e74c3c','#3399cc','#e67e22','#67ad00','#8e44ad','#1abc9c','#003399'];
       var random_color = colors[Math.floor(Math.random() * colors.length)];
       var elements = document.querySelectorAll('a');
       [].slice.call(elements).forEach(function(elem) {
@@ -79,7 +79,7 @@ for the JavaScript code in this tag.
 </head>
 <body onload="randomLinkColor();displayTOC();"><div id="toc"></div>
 <div id="preamble" class="status">
-<a href="index.html"><i class="fa fa-home"></i></a><br/> <a href="https://github.com/xgarrido/zsh-utilities"><i class="fa fa-github"></i></a><br/>
+ <a href="https://github.com/xgarrido/zsh-utilities"><i class="fa fa-github"></i></a><br/> 
 </div>
 <div id="content">
 <h1 class="title">Zsh Utilities Work</h1>
@@ -87,16 +87,16 @@ for the JavaScript code in this tag.
 This is part of the <a href="zsh-utilities.html">Zsh Utilities</a>.
 </p>
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">Zsh Utilities - Work</h2>
-<div class="outline-text-2" id="text-1">
+<div id="outline-container-unnumbered-1" class="outline-2">
+<h2 id="unnumbered-1">Zsh Utilities - Work</h2>
+<div class="outline-text-2" id="text-unnumbered-1">
 <p>
 This file contains some function/alias in relation with "work" topic.
 </p>
 </div>
-<div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1">pkgtools aliases</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-unnumbered-2" class="outline-3">
+<h3 id="unnumbered-2">pkgtools aliases&#xa0;&#xa0;&#xa0;<span class="tag"><span class="obsolete">obsolete</span></span></h3>
+<div class="outline-text-3" id="text-unnumbered-2">
 <p>
 <code>pkgtools</code> is used as wrapper for installation. It is a bash program which wraps
 <code>cmake</code> or some <code>Makefile</code> and is intensively used with SuperNEMO software.
@@ -134,9 +134,9 @@ This file contains some function/alias in relation with "work" topic.
 </div>
 </div>
 
-<div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2">ROOT aliases</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-unnumbered-3" class="outline-3">
+<h3 id="unnumbered-3">ROOT aliases</h3>
+<div class="outline-text-3" id="text-unnumbered-3">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-builtin">alias</span> <span class="org-variable-name">root</span>=<span class="org-string">'root -l'</span>
@@ -145,24 +145,35 @@ This file contains some function/alias in relation with "work" topic.
 </div>
 </div>
 
-<div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3">SN@ilWare aliases</h3>
-<div class="outline-text-3" id="text-1-3">
-</div><div id="outline-container-sec-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1">Setup</h4>
-<div class="outline-text-4" id="text-1-3-1">
+<div id="outline-container-unnumbered-4" class="outline-3">
+<h3 id="unnumbered-4">SN@ilWare setup</h3>
+<div class="outline-text-3" id="text-unnumbered-4">
+</div><div id="outline-container-unnumbered-5" class="outline-4">
+<h4 id="unnumbered-5">Environment variable</h4>
+<div class="outline-text-4" id="text-unnumbered-5">
 <div class="org-src-container">
 
-<pre class="src src-sh"><span class="org-builtin">alias</span> <span class="org-variable-name">do_nemo_setup</span>=<span class="org-string">'aggregator setup cadfael'</span>
-<span class="org-builtin">alias</span> <span class="org-variable-name">do_snailware_setup</span>=<span class="org-string">'do_nemo_setup &amp;&amp; snailware setup all &amp;&amp; mkdir -p /tmp/${USER}/snemo.d'</span>
+<pre class="src src-sh"><span class="org-builtin">export</span> <span class="org-variable-name">SNAILWARE_SIMULATION_DIR</span>=$<span class="org-variable-name">WORKDIR</span>/supernemo/simulations
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-sec-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2">Working configuration</h4>
-<div class="outline-text-4" id="text-1-3-2">
+<div id="outline-container-unnumbered-6" class="outline-4">
+<h4 id="unnumbered-6">Setup</h4>
+<div class="outline-text-4" id="text-unnumbered-6">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-builtin">alias</span> <span class="org-variable-name">do_nemo_setup</span>=<span class="org-string">'aggregator setup cadfael'</span>
+<span class="org-builtin">alias</span> <span class="org-variable-name">do_aggregator_setup</span>=<span class="org-string">'aggregator setup all &amp;&amp; mkdir -p /tmp/${USER}/snemo.d'</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-unnumbered-7" class="outline-4">
+<h4 id="unnumbered-7">Working configuration</h4>
+<div class="outline-text-4" id="text-unnumbered-7">
 <p>
 Legacy configuration load the <code>legacy</code> svn branch to work with a full software
 installation. Bayeux components are ordered by dependency and since there is a
@@ -189,9 +200,9 @@ components.
 </div>
 </div>
 
-<div id="outline-container-sec-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><code>dpp_processing</code> shortcuts</h4>
-<div class="outline-text-4" id="text-1-3-3">
+<div id="outline-container-unnumbered-8" class="outline-4">
+<h4 id="unnumbered-8"><code>dpp_processing</code> shortcuts</h4>
+<div class="outline-text-4" id="text-unnumbered-8">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">do_snemo_chain</span> ()
@@ -202,11 +213,11 @@ components.
         __pkgtools__at_function_exit
         <span class="org-keyword">return</span> 1
     <span class="org-keyword">fi</span>
-    <span class="org-keyword">if</span> pkgtools__has_binary dpp_processing; <span class="org-keyword">then</span>
-        dpp_processing -m $<span class="org-variable-name">1</span> -c $<span class="org-variable-name">SNAILWARE_SIMULATION_DIR</span>/configuration/current/module_manager.conf <span class="org-sh-escaped-newline">\</span>
-            -l mctoools_g4 -l mctools_bio <span class="org-sh-escaped-newline">\</span>
-            -l sngeometry -l sncore -l sncore_bio -l snanalysis -l snanalysis_bio -l snreconstruction <span class="org-sh-escaped-newline">\</span>
-            -M 100 -% 10
+    <span class="org-keyword">if</span> $(pkgtools__has_binary bxdpp_processing); <span class="org-keyword">then</span>
+        cm bxdpp_processing -m $<span class="org-variable-name">1</span> -c $<span class="org-variable-name">SNAILWARE_SIMULATION_DIR</span>/snemo_simulation_configuration/master/module_manager.conf <span class="org-sh-escaped-newline">\</span>
+            --dlls-config $<span class="org-variable-name">SNAILWARE_SIMULATION_DIR</span>/snemo_simulation_configuration/master/dlls.conf <span class="org-sh-escaped-newline">\</span>
+            --datatools::<span class="org-variable-name">resource_path</span>=falaise@$<span class="org-variable-name">SNAILWARE_PRO_DIR</span>/falaise/install/share/Falaise-1.0.0/resources <span class="org-sh-escaped-newline">\</span>
+            -M 100 --modulo 1 -P notice
     <span class="org-keyword">else</span>
         pkgtools__msg_error <span class="org-string">"SN@ilWare has not been set"</span>
         __pkgtools__at_function_exit
@@ -219,11 +230,31 @@ components.
 </div>
 </div>
 </div>
-</div>
 
-<div id="outline-container-sec-1-4" class="outline-3">
-<h3 id="sec-1-4">Lyon ccali aliases</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-unnumbered-9" class="outline-4">
+<h4 id="unnumbered-9">Aliases</h4>
+<div class="outline-text-4" id="text-unnumbered-9">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">if</span> (( $+functions[cm] )); <span class="org-keyword">then</span>
+    <span class="org-keyword">function</span> <span class="org-function-name">snemo_event_browser</span> ()
+    {
+        cm $(pkgtools__get_binary_path snemo_event_browser) $<span class="org-variable-name">@</span>
+    }
+    <span class="org-keyword">function</span> <span class="org-function-name">bxdpp_processing</span> ()
+    {
+        cm $(pkgtools__get_binary_path bxdpp_processing) $<span class="org-variable-name">@</span>
+    }
+<span class="org-keyword">fi</span>
+<span class="org-comment-delimiter">#  </span><span class="org-comment">compdef _snemo_event_browser snemo_toto</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-unnumbered-10" class="outline-3">
+<h3 id="unnumbered-10">Lyon ccali aliases</h3>
+<div class="outline-text-3" id="text-unnumbered-10">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">if</span> [[ $<span class="org-variable-name">HOSTNAME</span> = ccage* ]]; <span class="org-keyword">then</span>
@@ -237,9 +268,9 @@ components.
 </div>
 </div>
 
-<div id="outline-container-sec-1-5" class="outline-3">
-<h3 id="sec-1-5">Activate g++ warnings</h3>
-<div class="outline-text-3" id="text-1-5">
+<div id="outline-container-unnumbered-11" class="outline-3">
+<h3 id="unnumbered-11">Activate g++ warnings</h3>
+<div class="outline-text-3" id="text-unnumbered-11">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">activate_cxxflags</span> ()
@@ -260,13 +291,13 @@ components.
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-6" class="outline-3">
-<h3 id="sec-1-6">Generate org doc skeletons</h3>
-<div class="outline-text-3" id="text-1-6">
-</div><div id="outline-container-sec-1-6-1" class="outline-4">
-<h4 id="sec-1-6-1">Main function</h4>
-<div class="outline-text-4" id="text-1-6-1">
-</div><ul class="org-ul"><li>Parsing options<br  /><div class="outline-text-5" id="text-1-6-1-1">
+<div id="outline-container-unnumbered-12" class="outline-3">
+<h3 id="unnumbered-12">Generate org doc skeletons</h3>
+<div class="outline-text-3" id="text-unnumbered-12">
+</div><div id="outline-container-unnumbered-13" class="outline-4">
+<h4 id="unnumbered-13">Main function</h4>
+<div class="outline-text-4" id="text-unnumbered-13">
+</div><ul class="org-ul"><li><a id="unnumbered-14"></a>Parsing options<br  /><div class="outline-text-5" id="text-unnumbered-14">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">make_org_doc</span> ()
@@ -340,7 +371,7 @@ components.
 </div>
 </div>
 </li>
-<li>Parsing options<br  /><div class="outline-text-5" id="text-1-6-1-2">
+<li><a id="unnumbered-15"></a>Parsing options<br  /><div class="outline-text-5" id="text-unnumbered-15">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-builtin">local</span> <span class="org-variable-name">dirname</span>=<span class="org-string">"$(echo ${append_list_of_arguments} | awk '{print $1}')"</span>
@@ -384,18 +415,18 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
 </div>
 </div>
 </li>
-<li>Internal functions<br  /><ul class="org-ul"><li>Create directories<br  /><div class="outline-text-6" id="text-1-6-1-3-1">
+<li><a id="unnumbered-16"></a>Internal functions<br  /><ul class="org-ul"><li><a id="unnumbered-17"></a>Create directories<br  /><div class="outline-text-6" id="text-unnumbered-17">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-builtin">local</span> <span class="org-variable-name">directory</span>=${<span class="org-variable-name">base_directory</span>}/${<span class="org-variable-name">dirname</span>}
 --mod::create_directories () {
-    mkdir -p ${<span class="org-variable-name">directory</span>}/{pdf,plot}
+    mkdir -p ${<span class="org-variable-name">directory</span>}/{pdf,figures}
 }
 </pre>
 </div>
 </div>
 </li>
-<li>Generate org skeleton<br  /><div class="outline-text-6" id="text-1-6-1-3-2">
+<li><a id="unnumbered-18"></a>Generate org skeleton<br  /><div class="outline-text-6" id="text-unnumbered-18">
 <div class="org-src-container">
 
 <pre class="src src-sh">--mod::generate_org_skeleton () {
@@ -414,11 +445,11 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
     <span class="org-builtin">echo</span> <span class="org-string">"#+DATE:   $(date +%d/%m/%Y)"</span>                     &gt;&gt; ${<span class="org-variable-name">org_file</span>}
     <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
         (talk)
-            <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil num:nil author:nil ^:{}"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil num:nil author:nil email:t ^:{}"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             <span class="org-builtin">echo</span> <span class="org-string">"#+STARTUP: beamer"</span>                       &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             ;;
         (article)
-            <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil author:nil ^:{}"</span>      &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"#+OPTIONS: toc:nil date:nil author:nil email:t ^:{}"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             <span class="org-builtin">echo</span> <span class="org-string">"#+STARTUP: entitiespretty"</span>               &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             ;;
     <span class="org-keyword">esac</span>
@@ -430,13 +461,12 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
         (article)
             <span class="org-variable-name">begin</span>=<span class="org-string">"#+BEGIN"</span>
             <span class="org-variable-name">end</span>=<span class="org-string">"#+END"</span>
-            <span class="org-builtin">echo</span> <span class="org-string">"#+CALL: vc-status() :results value latex"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"* Abstract :ignoreheading:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"* Abstract ::"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             <span class="org-builtin">echo</span> <span class="org-string">"${begin}_ABSTRACT"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             <span class="org-builtin">echo</span> <span class="org-string">"${end}_ABSTRACT"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"* Introduction :ignoresecnumber:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"* Conclusion :ignoresecnumber:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
-            <span class="org-builtin">echo</span> <span class="org-string">"* References :ignoresecnumber:"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"* Introduction ::"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"* Conclusion ::"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"* References ::"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             <span class="org-builtin">echo</span> <span class="org-string">"${begin}_BIBLIOGRAPHY"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             <span class="org-builtin">echo</span> <span class="org-string">"${end}_BIBLIOGRAPHY"</span> &gt;&gt; ${<span class="org-variable-name">org_file</span>}
             ;;
@@ -446,41 +476,64 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
 </div>
 </div>
 </li>
-<li>Generate <code>makefile</code><br  /><div class="outline-text-6" id="text-1-6-1-3-3">
+<li><a id="unnumbered-19"></a>Generate <code>makefile</code><br  /><div class="outline-text-6" id="text-unnumbered-19">
 <div class="org-src-container">
 
 <pre class="src src-sh">--mod::generate_makefile () {
     <span class="org-builtin">local</span> <span class="org-variable-name">make_file</span>=${<span class="org-variable-name">directory</span>}/Makefile
-    <span class="org-builtin">echo</span> <span class="org-string">"# -*- mode: makefile; -*-"</span>                                         &gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"EMACS=emacs"</span>                                                      &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \</span>
-<span class="org-string">                                  --load '~/.emacs.d/starter-kit-org.el'"</span>   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"files_org = \$(wildcard *.org)"</span>                                   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"files_pdf = \$(files_org:.org=.png)"</span>                              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"all: \$(files_pdf)"</span>                                               &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"%.png: %.org"</span>                                                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"\t@echo \"NOTICE: Exporting \$&lt; to pdf...\";"</span>                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
     <span class="org-keyword">case</span> $<span class="org-variable-name">type</span><span class="org-keyword"> in</span>
         (talk)
+            <span class="org-builtin">echo</span> <span class="org-string">"# -*- mode: makefile; -*-"</span>                                         &gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"EMACS=emacs"</span>                                                      &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \</span>
+<span class="org-string">                                  --load '~/.emacs.d/starter-kit-org.el'"</span>   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"files_org = \$(wildcard *.org)"</span>                                   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"files_pdf = \$(files_org:.org=.png)"</span>                              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"all: \$(files_pdf)"</span>                                               &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"%.png: %.org"</span>                                                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@echo \"NOTICE: Exporting \$&lt; to pdf...\";"</span>                     &gt;&gt; ${<span class="org-variable-name">make_file</span>}
             <span class="org-builtin">echo</span> <span class="org-string">"\t@\$(BATCH) --visit \"\$&lt;\" --funcall org-beamer-export-to-pdf"</span> &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@cp \$@ pdf/\${@:.png=_${dirname}.png}"</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"clean:"</span>                                                           &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf latex.d *.tex *.png *.fdb* *~ "</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"</span>              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
             ;;
         (article)
-            <span class="org-builtin">echo</span> <span class="org-string">"\t@\$(BATCH) --visit \"\$&lt;\" --funcall org-latex-export-to-pdf"</span>  &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"# -*- mode: makefile; -*-"</span>                                        &gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"EMACS=emacs"</span>                                                      &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"BATCH=\$(EMACS) --batch --eval '(setq starter-kit-dir \"~/.emacs.d\")' \</span>
+<span class="org-string">                                  --load '~/.emacs.d/starter-kit-org.el'"</span>   &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"files_org  = \$(wildcard note*.org)"</span>                               &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"files_pdf  = doc/pdf/\$(files_org:.org=.png)"</span>                      &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"files_html = doc/html/\$(files_org:.org=.html)"</span>                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"all: pdf"</span>                                                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"pdf: \$(files_pdf)"</span>                                                &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"doc/pdf/%.png: %.org"</span>                                             &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@echo \"NOTICE: Exporting $&lt; to pdf...\""</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@zsh -i -c \"org-pages --pdf --debug generate\""</span>                  &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"html: \$(files_html)"</span>                                              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"doc/html/%.html: %.org"</span>                                           &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@echo \"NOTICE: Exporting $&lt; to html...\""</span>                        &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@zsh -i -c \"org-pages --html --debug generate\""</span>                 &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"clean:"</span>                                                           &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf latex.d doc *.tex *.png *.toc *.fdb* *~ README.el"</span>        &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
+            <span class="org-builtin">echo</span> <span class="org-string">".PHONY: all pdf html clean"</span>                                       &gt;&gt; ${<span class="org-variable-name">make_file</span>}
             ;;
     <span class="org-keyword">esac</span>
-    <span class="org-builtin">echo</span> <span class="org-string">"\t@cp \$@ pdf/\${@:.png=_${dirname}.png}"</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span>                                                                    &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"clean:"</span>                                                           &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf latex.d *.tex *.png *.fdb* *~ "</span>                         &gt;&gt; ${<span class="org-variable-name">make_file</span>}
-    <span class="org-builtin">echo</span> <span class="org-string">"\t@rm -rf *.out *.fls *.toc *.aux *.snm *.nav *.log"</span>              &gt;&gt; ${<span class="org-variable-name">make_file</span>}
 }
 </pre>
 </div>
 </div>
 </li>
-<li>Generate <code>.gitignore</code><br  /><div class="outline-text-6" id="text-1-6-1-3-4">
+<li><a id="unnumbered-20"></a>Generate <code>.gitignore</code><br  /><div class="outline-text-6" id="text-unnumbered-20">
 <div class="org-src-container">
 
 <pre class="src src-sh">--mod::generate_gitignore () {
@@ -499,7 +552,7 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
 </div>
 </div>
 </li>
-<li>Import function<br  /><div class="outline-text-6" id="text-1-6-1-3-5">
+<li><a id="unnumbered-21"></a>Import function<br  /><div class="outline-text-6" id="text-unnumbered-21">
 <div class="org-src-container">
 
 <pre class="src src-sh">--mod::import_doc () {
@@ -531,7 +584,7 @@ pkgtools__msg_devel <span class="org-string">"append_list_of_options=${append_li
 </div>
 </li></ul>
 </li>
-<li>Calling functions<br  /><div class="outline-text-5" id="text-1-6-1-4">
+<li><a id="unnumbered-22"></a>Calling functions<br  /><div class="outline-text-5" id="text-unnumbered-22">
 <div class="org-src-container">
 
 <pre class="src src-sh">--mod::create_directories
@@ -561,9 +614,9 @@ __pkgtools__at_function_exit
 </li></ul>
 </div>
 
-<div id="outline-container-sec-1-6-2" class="outline-4">
-<h4 id="sec-1-6-2">Completion function</h4>
-<div class="outline-text-4" id="text-1-6-2">
+<div id="outline-container-unnumbered-23" class="outline-4">
+<h4 id="unnumbered-23">Completion function</h4>
+<div class="outline-text-4" id="text-unnumbered-23">
 <div class="org-src-container">
 
 <pre class="src src-sh"><span class="org-comment-delimiter"># </span><span class="org-comment">Connect completion system</span>
@@ -610,9 +663,9 @@ compdef _make_org_doc make_org_doc
 </div>
 </div>
 
-<div id="outline-container-sec-1-7" class="outline-3">
-<h3 id="sec-1-7">Parse C++ program options</h3>
-<div class="outline-text-3" id="text-1-7">
+<div id="outline-container-unnumbered-24" class="outline-3">
+<h3 id="unnumbered-24">Parse C++ program options</h3>
+<div class="outline-text-3" id="text-unnumbered-24">
 <p>
 This function parse the content of a C++ program and extract command line
 options passed with <a href="http://www.boost.org/doc/libs/1_55_0/doc/html/program_options.html">boost::program_options</a>
@@ -764,10 +817,21 @@ compdef <span class="org-string">'_files -g "*.cxx"'</span> parse_cpp_program_op
 </div>
 </div>
 </div>
+<div id="outline-container-unnumbered-25" class="outline-3">
+<h3 id="unnumbered-25">Completion system</h3>
+<div class="outline-text-3" id="text-unnumbered-25">
+<div class="org-src-container">
+
+<pre class="src src-sh">compdef _dpp_processing bxdpp_processing
+compdef _genbb_inspector bxgenbb_inspector
+</pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
-File under <i class="fa fa-github-alt"></i> version control - commit <a href="https://github.com/xgarrido/zsh-utilities/commit/6511cb0e54545f0e8312a0dc6552a90678b5dea4">6511cb0</a> - 2014-05-01
+File under <i class="fa fa-github-alt"></i> version control - commit <a href="https://github.com/xgarrido/zsh-utilities/commit/b7f7874ac2e22ead7c0cd912dec7d91f04df1951">b7f7874</a> - 2014-11-07
 </div>
 </body>
 </html>
