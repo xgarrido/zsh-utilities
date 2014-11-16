@@ -160,9 +160,7 @@ python code to cron syntax.
   cron = Plan()
 
   cron.command('DISPLAY=:0 /home/garrido/.config/openbox/scripts/change-wallpaper', every='15.minute')
+  cron.command('/home/garrido/Development/org-caldav/sync_calendar.sh', every='1.day', at='hour.12')
   if __name__ == '__main__':
       cron.run('update')
 #+END_SRC
-
-#+RESULTS:
-: [write] crontab file updated
