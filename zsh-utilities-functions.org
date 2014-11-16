@@ -970,12 +970,13 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
 #+BEGIN_SRC sh
   function t()
   {
+      arguments="$@"
       skip_ignore_files=0
-      if [[ $@ == *--skip-ignore-files* ]]; then
+      if [[ $arguments == *--skip-ignore-files* ]]; then
           skip_ignore_files=1
           arguments=${@/--skip-ignore-files/}
       fi
-      tree -ft $arguments | awk -v skip_ignore_files=$skip_ignore_files '{
+      tree -ft $(echo $arguments) | awk -v skip_ignore_files=$skip_ignore_files '{
     status=""
     marker=" "
     color="\033[0m"
