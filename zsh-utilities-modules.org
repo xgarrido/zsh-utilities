@@ -39,18 +39,19 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
 
 *** Initialization
 #+BEGIN_SRC sh
+  mkdir -p ${HOME}/.config/zsh/tmp
   cache_file="${HOME}/.config/zsh/tmp/fasd_cache.zsh"
   if [[ "${commands[fasd]}" -nt "$cache_file" || ! -s "$cache_file" ]]; then
-    # Set the base init arguments.
-    init_args=(zsh-hook)
+      # Set the base init arguments.
+      init_args=(zsh-hook)
 
-    # Set fasd completion init arguments, if applicable.
-#    if zstyle -t ':prezto:module:completion' loaded; then
+      # Set fasd completion init arguments, if applicable.
+      #    if zstyle -t ':prezto:module:completion' loaded; then
       init_args+=(zsh-ccomp zsh-ccomp-install zsh-wcomp zsh-wcomp-install)
-#    fi
+      #    fi
 
-    # Cache init code.
-    fasd --init "$init_args[@]" >! "$cache_file" 2> /dev/null
+      # Cache init code.
+      fasd --init "$init_args[@]" >! "$cache_file" 2> /dev/null
   fi
   source "$cache_file"
   unset cache_file init_args
@@ -160,7 +161,10 @@ python code to cron syntax.
   cron = Plan()
 
   cron.command('DISPLAY=:0 /home/garrido/.config/openbox/scripts/change-wallpaper', every='15.minute')
-  cron.command('/home/garrido/Development/org-caldav/sync_calendar.sh', every='1.day', at='hour.12')
+  cron.command('DISPLAY=:0 /home/garrido/Development/org-caldav/sync_calendar.sh', every='1.day', at='hour.12')
   if __name__ == '__main__':
       cron.run('update')
 #+END_SRC
+
+#+RESULTS:
+: [write] crontab file updated
