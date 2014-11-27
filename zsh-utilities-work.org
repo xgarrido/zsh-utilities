@@ -105,9 +105,9 @@ components.
 *** Aliases
 #+BEGIN_SRC sh
   if (( $+functions[cm] )); then
-      function snemo_event_browser ()
+      function flvisualize ()
       {
-          cm $(pkgtools__get_binary_path snemo_event_browser) $@
+          cm $(pkgtools__get_binary_path flvisualize) $@
       }
       function bxdpp_processing ()
       {
