@@ -111,6 +111,7 @@ components.
       }
       function bxdpp_processing ()
       {
+          mkdir -p /tmp/garrido/snemo.d
           cm $(pkgtools__get_binary_path bxdpp_processing) $@
       }
   fi
