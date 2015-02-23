@@ -1019,6 +1019,23 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
   alias ta='t -a -L 1'
   alias ti='t --skip-ignore-files'
 #+END_SRC
+** Countdown
+#+BEGIN_SRC sh
+  function countdown(){
+      date1=$((`date +%s` + $1));
+      while [ "$date1" -ne `date +%s` ]; do
+          echo -ne "$(date -u --date @$(($date1 - `date +%s`)) +%H:%M:%S)\r";
+          sleep 0.1
+      done
+  }
+  function stopwatch(){
+      date1=`date +%s`;
+      while true; do
+          echo -ne "$(date -u --date @$((`date +%s` - $date1)) +%H:%M:%S)\r";
+          sleep 0.1
+      done
+  }
+#+END_SRC
 ** Misc.
 *** Grabbing video from mms link
 #+BEGIN_SRC sh
