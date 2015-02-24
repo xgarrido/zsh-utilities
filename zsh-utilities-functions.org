@@ -633,7 +633,7 @@ Astrophysics Data System.
 #+BEGIN_SRC sh
   function usb_umount ()
   {
-      for d in /media/*; do
+      for d in /run/media/*; do
           sudo umount $d
       done
       sudo modprobe usb_storage
