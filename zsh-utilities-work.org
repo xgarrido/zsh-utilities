@@ -330,7 +330,7 @@ components.
               echo "\t@\$(BATCH) --visit \"\$<\" --funcall org-beamer-export-to-pdf"  >> ${make_file}
               echo "\t@cp \$@ pdf/\${@:.pdf=_${dirname}.pdf}"                         >> ${make_file}
               echo                                                                    >> ${make_file}
-              echo "tarball : clean"                                                  >> ${make_file}
+              echo "tar : clean"                                                      >> ${make_file}
               echo "\t@mkdir -p tar"                                                  >> ${make_file}
               echo "\t@cd tar && tar --exclude=\"../.git*\" --exclude=\"../tar\" -czvf talk_{dirname}.tar.gz .">> ${make_file}
               echo                                                                    >> ${make_file}
