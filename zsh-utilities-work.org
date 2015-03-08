@@ -79,19 +79,16 @@ components.
 
 *** =dpp_processing= shortcuts
 #+BEGIN_SRC sh
-  function do_snemo_chain ()
+  function mydpp_processing ()
   {
-      __pkgtools__at_function_enter do_snemo_chain
-      if [ -z $1 ]; then
-          pkgtools__msg_error "Missing module name !"
-          __pkgtools__at_function_exit
-          return 1
-      fi
+      __pkgtools__at_function_enter mydpp_processing
       if $(pkgtools__has_binary bxdpp_processing); then
-          cm bxdpp_processing -m $1 -c $SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/master/module_manager.conf \
-              --dlls-config $SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/master/dlls.conf \
-              --datatools::resource_path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-1.0.0/resources \
-              -M 100 --modulo 1 -P notice
+          _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
+          bxdpp_processing \
+              --module-manager-config ${_config}/module_manager.conf \
+              --dlls-config ${_config}/dlls.conf \
+              --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-1.0.0/resources \
+              $@
       else
           pkgtools__msg_error "SN@ilWare has not been set"
           __pkgtools__at_function_exit
@@ -99,6 +96,25 @@ components.
       fi
       __pkgtools__at_function_exit
       return 0
+  }
+  compdef _mydpp_processing mydpp_processing
+  function _mydpp_processing ()
+  {
+      _module_all () {
+          # we cache the list of repository
+          if (( ! $+modulelist )); then
+              _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
+              if [ ! -z "$_config" ]; then
+                  for f in $(eval echo ${_config})/*.conf; do
+                      line=$(cat $f | grep "\[.*type=.*_module.*\]")
+                      name=$(echo $line | sed 's@\[name="\(.*\)".*type.*@\1@')
+                      modulelist+=( $(echo $name) )
+                  done
+              fi
+          fi
+      }
+      _module_all
+      _dpp_processing
   }
 #+END_SRC
 
