@@ -853,7 +853,7 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
           if [[ $PER1[3] == "x" || $PER2[3] == "x" || $PER3[3] == "x" ]]; then IS_EXECUTABLE=1; fi
 
           # --- --- rwx warning
-          if [[ $PER3 == "rwx" && ! IS_SYMLINK ]]; then PERMISSIONS_OUTPUT=$'\e[30;41m'"$PERMISSIONS"$'\e[0m'; fi
+          if [[ $PER3 == "rwx" && IS_SYMLINK == 0 ]]; then PERMISSIONS_OUTPUT=$'\e[30;41m'"$PERMISSIONS"$'\e[0m'; fi
 
           # --------------------------------------------------------------------------
           # Colour the symlinks - TODO
