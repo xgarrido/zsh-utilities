@@ -614,7 +614,7 @@ db.
       {
           for i in $@; do
               if [ -f "$i" ]; then
-                  awk '{if (!match($0,"\\draw") || !seen[$0]++) print $0}' ${i} > ${i}.tmp
+                  awk '{if (!match($0,"\\draw") || !seen[$0]++) {if (match($0, "\\$\\$")) {sub("\\$", "",$0);print gensub("\\$", "", 3, $0);} else print $0}}' ${i} > ${i}.tmp
                   mv ${i}.tmp ${i}
               fi
           done
