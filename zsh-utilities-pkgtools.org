@@ -845,3 +845,20 @@ variable.
       return 0
   }
 #+END_SRC
+
+*** Quielty run a command
+#+BEGIN_SRC sh
+  function pkgtools__quietly_run ()
+  {
+      if $(pkgtools__msg_is_quiet); then
+          eval $1 > /dev/null 2>&1
+      else
+          eval $1
+      fi
+      if $(pkgtools__last_command_fails); then
+          return 1
+      else
+          return 0
+      fi
+  }
+#+END_SRC
