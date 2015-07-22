@@ -78,17 +78,35 @@ components.
 #+END_SRC
 
 *** =dpp_processing= shortcuts
+
+Wrapper arround =bxdpp_processing=
+
 #+BEGIN_SRC sh
   function mydpp_processing ()
   {
       __pkgtools__at_function_enter mydpp_processing
       if $(pkgtools__has_binary bxdpp_processing); then
           _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
+          opt=
+          while [ -n "$1" ]; do
+              token="$1"
+              if [ "${token}" = "--event-generator" -o "${token}" = "-e" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=core:eg=$1 "
+              elif [ "${token}" = "--vertex-generator" -o "${token}" = "-v" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=core:vg=$1 "
+              else
+                  opt+="$token "
+              fi
+            shift 1
+          done
           bxdpp_processing \
               --module-manager-config ${_config}/module_manager.conf \
               --dlls-config ${_config}/dlls.conf \
+              --datatools::variant-config=${_config}/snvariant_manager.conf \
               --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-1.0.0/resources \
-              $@
+              $(echo ${opt})
       else
           pkgtools__msg_error "SN@ilWare has not been set"
           __pkgtools__at_function_exit
@@ -97,13 +115,17 @@ components.
       __pkgtools__at_function_exit
       return 0
   }
+#+END_SRC
+
+Completion function
+#+BEGIN_SRC shell
   compdef _mydpp_processing mydpp_processing
   function _mydpp_processing ()
   {
+      _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
       _module_all () {
           # we cache the list of repository
           if (( ! $+modulelist )); then
-              _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
               if [ ! -z "$_config" ]; then
                   for f in $(eval echo ${_config})/*.conf; do
                       line=$(cat $f | grep "\[.*type=.*_module.*\]")
@@ -113,8 +135,54 @@ components.
               fi
           fi
       }
-      _module_all
-      _dpp_processing
+      _arguments                                                                                              \
+          {-P,--logging-priority}'[set logging priority]:logging:->log'                                       \
+          {-l,--load-dll}'[set a DLL to be loaded]'                                                           \
+          {-L,--dlls-config}'[set the DLL loader configuration file]:file:_files -g \*.conf'                  \
+          {-%,--modulo}'[set the modulo print period for data record]:number'                                 \
+          {-M,--max-records}'[set the maximum number of data records to be processed]:number'                 \
+          {-X,--no-max-records}'[Do not limit the maximum number of data records to be processed]:number'     \
+          {-m,--module}'[add a module in the pipeline (optional)]:module:->module'                            \
+          {-c,--module-manager-config}'[set the module manager configuration file]:manager:_files -g \*.conf' \
+          {-i,--input-file}'[set an input file (optional)]:file:_files -g \*.{brio,xml,data.gz,txt}'          \
+          {-o,--output-file}'[set the output file (optional)]:file:_files -g \*.{brio,xml,data.gz,txt}'       \
+          {-O,--max-records-per-output-file}'[set the maximum number of data records per output file]:number' \
+          {-e,--event-generator}'[set event generator]:eg:->eg'                                                  \
+          {-v,--vertex-generator}'[set vertex generator]:vg:->vg'                                                  \
+          && ret=0
+      case $state in
+          log)
+              _logs=(
+                  "fatal"
+                  "critical"
+                  "error"
+                  "warning"
+                  "notice"
+                  "information"
+                  "debug"
+                  "trace"
+              )
+              _values 'Logging priority' $_logs
+              ;;
+          module)
+              _module_all
+              _describe -t modulelist 'module' modulelist && ret=0
+              ;;
+          args)
+              _path_files -/ && ret=0
+              ;;
+          eg)
+              _egs=( $(sed -n '/event_generator_name/, /^\[/ { /string.enumerated_/ p }' \
+                           ${_config}/snvariant_core_variants.def | awk -F \" '{print $2}') )
+              _values 'Event generator' $_egs
+              ;;
+          vg)
+  _vgs=( $(sed -n '/vertex_generator_name/, /^\[/ { /string.enumerated_/ p }' \
+               ${_config}/snvariant_core_variants.def | awk -F \" '{print $2}') )
+  _values 'Vertex generator' $_vgs
+  ;;
+  esac
+  return ret
   }
 #+END_SRC
 
