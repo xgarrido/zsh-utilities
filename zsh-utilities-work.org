@@ -95,9 +95,32 @@ Wrapper arround =bxdpp_processing=
                   opt+="--datatools::variant-set=core:eg=$1 "
               elif [ "${token}" = "--vertex-generator" -o "${token}" = "-v" ]; then
                   shift 1
-                  opt+="--datatools::variant-set=core:vg=$1 "
+                  opt+="--datatools::variant-set=core:vertex_generator=$1 "
+              elif [ "${token}" = "--source-material" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=core:bb_source_material=snemo::$1 "
+              elif [ "${token}" = "--bz-field" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=core:bz_magnitude=$1 "
+              elif [ "${token}" = "--calo-energy-resolution" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=core:calo_energy_resolution=$1 "
+              elif [ "${token}" = "--xcalo-energy-resolution" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=core:xcalo_energy_resolution=$1 "
+              elif [ "${token}" = "--gveto-energy-resolution" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=core:gveto_energy_resolution=$1 "
+              elif [ "${token}" = "--random-seeds" ]; then
+                  opt+="--datatools::variant-set=core:random_seed_flag=true "
+              elif [ "${token}" = "--output-path" ]; then
+                  shift 1
+                  if [ ! -d $1 ]; then
+                    mkdir -p $1
+                  fi
+                  opt+="--datatools::variant-set=core:output_path=$1 "
               else
-                  opt+="$token "
+                opt+="$token "
               fi
             shift 1
           done
@@ -112,6 +135,7 @@ Wrapper arround =bxdpp_processing=
           __pkgtools__at_function_exit
           return 1
       fi
+
       __pkgtools__at_function_exit
       return 0
   }
@@ -144,11 +168,20 @@ Completion function
           {-X,--no-max-records}'[Do not limit the maximum number of data records to be processed]:number'     \
           {-m,--module}'[add a module in the pipeline (optional)]:module:->module'                            \
           {-c,--module-manager-config}'[set the module manager configuration file]:manager:_files -g \*.conf' \
-          {-i,--input-file}'[set an input file (optional)]:file:_files -g \*.{brio,xml,data.gz,txt}'          \
+          {-i,--input-file}'[set an input file (optional)]:file:_files -g    \*.{brio,xml,data.gz,txt}'       \
           {-o,--output-file}'[set the output file (optional)]:file:_files -g \*.{brio,xml,data.gz,txt}'       \
           {-O,--max-records-per-output-file}'[set the maximum number of data records per output file]:number' \
-          {-e,--event-generator}'[set event generator]:eg:->eg'                                                  \
-          {-v,--vertex-generator}'[set vertex generator]:vg:->vg'                                                  \
+          {-e,--event-generator}'[set event generator]:eg:->eg'                                               \
+          {-v,--vertex-generator}'[set vertex generator]:vg:->vg'                                             \
+          '--bz-field[set Bz magnetic field]'                                                                 \
+          '--calo-energy-resolution[set main wall energy resolution]'                                         \
+          '--xcalo-energy-resolution[set X-wall energy resolution]'                                           \
+          '--gveto-energy-resolution[set gamma veto energy resolution]'                                       \
+          '--random-seeds[set all seeds to random values]'                                                    \
+          '--source-material[set the source foil material]:bbsm:->bbsm'                                       \
+          '--output-path[set the output directory of generated files]:file:_files'                            \
+          '--datatools\:\:variant-set=[Set the values of a variant]:vs:->vs'                                  \
+          '*: :->args'                                                                                        \
           && ret=0
       case $state in
           log)
@@ -177,11 +210,21 @@ Completion function
               _values 'Event generator' $_egs
               ;;
           vg)
-  _vgs=( $(sed -n '/vertex_generator_name/, /^\[/ { /string.enumerated_/ p }' \
-               ${_config}/snvariant_core_variants.def | awk -F \" '{print $2}') )
-  _values 'Vertex generator' $_vgs
-  ;;
-  esac
+              _vgs=( $(sed -n '/vertex_generator_name/, /^\[/ { /string.enumerated_/ p }' \
+                           ${_config}/snvariant_core_variants.def | awk -F \" '{print $2}') )
+              _values 'Vertex generator' $_vgs
+              ;;
+          bbsm)
+              _bbsms=( $(sed -n '/bb_source_material/, /^\[/ { /string.enumerated_/ p }' \
+                             ${_config}/snvariant_core_variants.def | awk -F \" '{print substr($2,8)}' ) )
+              _values 'Source materials' $_bbsms
+              ;;
+          vs)
+             _vss=( $(sed -n '/parameters\./ { s/....$//p }' \
+                          ${_config}/snvariant_core_variants.def | awk -F \" '{print $2}') )
+             _values 'Parameters' $_vss
+             ;;
+     esac
   return ret
   }
 #+END_SRC
