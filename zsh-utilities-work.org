@@ -10,7 +10,7 @@ This file contains some function/alias in relation with "work" topic.
 ** pkgtools aliases                                               :obsolete:
 =pkgtools= is used as wrapper for installation. It is a bash program which wraps
 =cmake= or some =Makefile= and is intensively used with SuperNEMO software.
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :tangle no
   alias pkg-notify='notify -t 2000 -i stock_dialog-info "pkgtools"'
 
   function pkgc ()
@@ -56,20 +56,20 @@ This file contains some function/alias in relation with "work" topic.
   alias do_aggregator_setup='aggregator setup all && mkdir -p /tmp/${USER}/snemo.d'
 #+END_SRC
 
-*** Working configuration
+*** Working configuration                                        :obsolete:
 Legacy configuration load the =legacy= svn branch to work with a full software
 installation. Bayeux components are ordered by dependency and since there is a
 change wrt to =geomtools= vs. =materials= dependency as well as =genbb_help=
 depending on =dpp= for programs, we have to set the full list of Bayeux
 components.
-#+BEGIN_SRC sh
-     alias build_snailware_legacy='do_nemo_setup && \
+#+BEGIN_SRC sh :tangle no
+  alias build_snailware_legacy='do_nemo_setup && \
      snailware git-branch --branch legacy datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
      snailware git-branch --branch legacy sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis && \
      snrebuild --no-ninja datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
      snrebuild channel && snailware setup channel && \
      snrebuild sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis'
-     alias build_snailware_master='do_nemo_setup && \
+  alias build_snailware_master='do_nemo_setup && \
      snailware git-branch --branch master bayeux sngeometry sncore snreconstruction snvisualization && \
      snailware git-branch --branch xg_devel snanalysis && \
      snrebuild bayeux channel && \
@@ -92,33 +92,54 @@ Wrapper arround =bxdpp_processing=
               token="$1"
               if [ "${token}" = "--event-generator" -o "${token}" = "-e" ]; then
                   shift 1
-                  opt+="--datatools::variant-set=core:eg=$1 "
+                  opt+="--datatools::variant-set=simulation:event_generator_name=$1 "
               elif [ "${token}" = "--vertex-generator" -o "${token}" = "-v" ]; then
                   shift 1
-                  opt+="--datatools::variant-set=core:vertex_generator=$1 "
+                  opt+="--datatools::variant-set=simulation:vertex_generator_name=$1 "
               elif [ "${token}" = "--source-material" ]; then
                   shift 1
-                  opt+="--datatools::variant-set=core:bb_source_material=snemo::$1 "
+                  opt+="--datatools::variant-set=detector:bb_source_material=snemo::$1 "
               elif [ "${token}" = "--bz-field" ]; then
                   shift 1
-                  opt+="--datatools::variant-set=core:bz_magnitude=$1 "
+                  opt+="--datatools::variant-set=detector:bz_magnitude=$1 "
               elif [ "${token}" = "--calo-energy-resolution" ]; then
                   shift 1
-                  opt+="--datatools::variant-set=core:calo_energy_resolution=$1 "
+                  opt+="--datatools::variant-set=detector:calo_energy_resolution=$1 "
               elif [ "${token}" = "--xcalo-energy-resolution" ]; then
                   shift 1
-                  opt+="--datatools::variant-set=core:xcalo_energy_resolution=$1 "
+                  opt+="--datatools::variant-set=detector:xcalo_energy_resolution=$1 "
               elif [ "${token}" = "--gveto-energy-resolution" ]; then
                   shift 1
-                  opt+="--datatools::variant-set=core:gveto_energy_resolution=$1 "
+                  opt+="--datatools::variant-set=detector:gveto_energy_resolution=$1 "
+              elif [ "${token}" = "--calo-high-energy-threshold" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=detector:calo_high_energy_threshold=$1 "
+              elif [ "${token}" = "--xcalo-high-energy-threshold" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=detector:xcalo_high_energy_threshold=$1 "
+              elif [ "${token}" = "--gveto-high-energy-threshold" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=detector:gveto_high_energy_threshold=$1 "
+              elif [ "${token}" = "--calo-low-energy-threshold" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=detector:calo_low_energy_threshold=$1 "
+              elif [ "${token}" = "--xcalo-low-energy-threshold" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=detector:xcalo_low_energy_threshold=$1 "
+              elif [ "${token}" = "--gveto-low-energy-threshold" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=detector:gveto_low_energy_threshold=$1 "
               elif [ "${token}" = "--random-seeds" ]; then
-                  opt+="--datatools::variant-set=core:random_seed_flag=true "
+                  opt+="--datatools::variant-set=simulation:random_seed_flag=true "
               elif [ "${token}" = "--output-path" ]; then
                   shift 1
                   if [ ! -d $1 ]; then
                     mkdir -p $1
                   fi
                   opt+="--datatools::variant-set=core:output_path=$1 "
+              elif [ "${token}" = "--dev-logging" ]; then
+                  shift 1
+                  opt+="--datatools::variant-set=core:logging_priority=$1 "
               else
                 opt+="$token "
               fi
@@ -129,6 +150,7 @@ Wrapper arround =bxdpp_processing=
               --dlls-config ${_config}/dlls.conf \
               --datatools::variant-config=${_config}/snvariant_manager.conf \
               --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-1.0.0/resources \
+              --datatools::resource-path=configuration@${_config} \
               $(echo ${opt})
       else
           pkgtools__msg_error "SN@ilWare has not been set"
@@ -177,10 +199,17 @@ Completion function
           '--calo-energy-resolution[set main wall energy resolution]'                                         \
           '--xcalo-energy-resolution[set X-wall energy resolution]'                                           \
           '--gveto-energy-resolution[set gamma veto energy resolution]'                                       \
+          '--calo-high-energy-threshold[set main wall high energy threshold]'                                 \
+          '--xcalo-high-energy-threshold[set X-wall high energy threshold]'                                   \
+          '--gveto-high-energy-threshold[set gamma veto high energy threshold]'                               \
+          '--calo-low-energy-threshold[set main wall low energy threshold]'                                   \
+          '--xcalo-low-energy-threshold[set X-wall low energy threshold]'                                     \
+          '--gveto-low-energy-threshold[set gamma low veto energy threshold]'                                 \
           '--random-seeds[set all seeds to random values]'                                                    \
           '--source-material[set the source foil material]:bbsm:->bbsm'                                       \
           '--output-path[set the output directory of generated files]:file:_files'                            \
-          '--datatools\:\:variant-set=[Set the values of a variant]:vs:->vs'                                  \
+          '--dev-logging[set the development logging priority]:logging:->log'                                 \
+          '--datatools\:\:variant-set=core\:[Set the values of a variant]:vs:->vs'                            \
           '*: :->args'                                                                                        \
           && ret=0
       case $state in
@@ -195,7 +224,7 @@ Completion function
                   "debug"
                   "trace"
               )
-              _values 'Logging priority' $_logs
+              _values 'Logging priority' $_logs && ret=0
               ;;
           module)
               _module_all
@@ -206,23 +235,23 @@ Completion function
               ;;
           eg)
               _egs=( $(sed -n '/event_generator_name/, /^\[/ { /string.enumerated_/ p }' \
-                           ${_config}/snvariant_core_variants.def | awk -F \" '{print $2}') )
-              _values 'Event generator' $_egs
+                           ${_config}/simulation_variants.def | awk -F \" '{print $2}') )
+              _values 'Event generator' $_egs && ret=0
               ;;
           vg)
               _vgs=( $(sed -n '/vertex_generator_name/, /^\[/ { /string.enumerated_/ p }' \
-                           ${_config}/snvariant_core_variants.def | awk -F \" '{print $2}') )
-              _values 'Vertex generator' $_vgs
+                           ${_config}/simulation_variants.def | awk -F \" '{print $2}') )
+              _values 'Vertex generator' $_vgs && ret=0
               ;;
           bbsm)
               _bbsms=( $(sed -n '/bb_source_material/, /^\[/ { /string.enumerated_/ p }' \
-                             ${_config}/snvariant_core_variants.def | awk -F \" '{print substr($2,8)}' ) )
-              _values 'Source materials' $_bbsms
+                             ${_config}/detector_variants.def | awk -F \" '{print substr($2,8)}' ) )
+              _values 'Source materials' $_bbsms && ret=0
               ;;
           vs)
              _vss=( $(sed -n '/parameters\./ { s/....$//p }' \
-                          ${_config}/snvariant_core_variants.def | awk -F \" '{print $2}') )
-             _values 'Parameters' $_vss
+                          ${_config}/*_variants.def | awk -F \" '{print $2}') )
+             _values 'Parameters' $_vss && ret=0
              ;;
      esac
   return ret
