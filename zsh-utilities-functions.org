@@ -35,7 +35,7 @@ generic function name given the linux system installed : "debian-like" system or
 #+END_SRC
 *** Implement generic function
 #+BEGIN_SRC sh
-  alias pkg-notify='notify -t 2000 -i stock_dialog-info "${__pkg_mgr}"'
+  alias pkg-notify='--notify -t 2000 -i stock_dialog-info "${__pkg_mgr}"'
   if __is_debian; then
 
       function install ()
@@ -209,7 +209,7 @@ generic function name given the linux system installed : "debian-like" system or
 ** Notification
 Base function for notification
 #+BEGIN_SRC sh
-  function notify ()
+  function --notify ()
   {
       if pkgtools__has_binary notify-send; then
           if [ "$HOSTNAME" = "garrido-laptop" ]; then
@@ -223,22 +223,16 @@ Base function for notification
 #+BEGIN_SRC sh
   function notify_success ()
   {
-      __pkgtools__at_function_enter notify_success
-      if [ $? -ne 0 ]; then
-          notify -t 2000 -i stock_dialog-info "Notice" "${PREEXEC_CMD:-Shell Command}"
-      fi
-      __pkgtools__at_function_exit
+      --notify -t 5000 -h "string:bgcolor:#859900" -i stock_dialog-info "notice" "${PREEXEC_CMD} $@"
       return 0
   }
+  alias notify=notify_success
 #+END_SRC
 *** Error
 #+BEGIN_SRC sh
   function notify_error ()
   {
-      if [ $? -ne 0 ]; then
-          notify -t 2000 -i stock_dialog-error " " "${PREEXEC_CMD:-Shell Command} $@"
-          return 1
-      fi
+      --notify -t 5000 -h "string:bgcolor:#DC322F" -i stock_dialog-error "error" "${PREEXEC_CMD:-Shell Command} $@"
       return 0
   }
 #+END_SRC
@@ -246,7 +240,7 @@ Base function for notification
 #+BEGIN_SRC sh
   function notify_warning ()
   {
-      notify -t 3000 -i stock_dialog-warning " " "${PREEXEC_CMD:-Shell Command} $@"
+      --notify -t 5000 -h "string:bgcolor:#DEB542" -i stock_dialog-warning "warning" "${PREEXEC_CMD:-Shell Command} $@"
       return 0
   }
 #+END_SRC
@@ -261,7 +255,9 @@ get warned when the command has finished or has failed.
   function precmd ()
   {
       # must be first
-      notify_error
+      if [ $? -ne 0 ]; then
+          notify_error
+      fi
 
       # BEGIN notify long running cmds
       stop=$(date +'%s')
