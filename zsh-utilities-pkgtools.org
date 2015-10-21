@@ -690,6 +690,17 @@ Use to print message requiring different level of attention.
  #+END_SRC
 
 ** Shell utilities
+*** Check if a environment variable is set
+#+BEGIN_SRC sh
+  function pkgtools__check_variable ()
+  {
+      if env | grep -q "^$1="; then
+        return 0
+      else
+        return 1
+      fi
+  }
+#+END_SRC
 *** Add path to environment variable
 This function add a directory to an environment variable such as =PATH= or
 =LD_LIBRARY_PATH=. It does it gently since it does not add the path if it is
@@ -754,8 +765,7 @@ relevant path.
 #+BEGIN_SRC sh
   function pkgtools__set_variable ()
   {
-      if env | grep -q "^$1="
-      then
+      if $(pkgtools__check_variable $1); then
           pkgtools__msg_warning "$1 is already set and exported"
       else
           export $1=$2
