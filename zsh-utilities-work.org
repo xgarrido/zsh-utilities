@@ -149,7 +149,7 @@ Wrapper arround =bxdpp_processing=
               --module-manager-config ${_config}/module_manager.conf \
               --dlls-config ${_config}/dlls.conf \
               --datatools::variant-config=${_config}/snvariant_manager.conf \
-              --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-1.0.0/resources \
+              --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-2.0.0/resources \
               --datatools::resource-path=configuration@${_config} \
               $(echo ${opt})
       else
