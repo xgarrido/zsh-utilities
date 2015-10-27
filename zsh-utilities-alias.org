@@ -92,7 +92,7 @@ Options for =less= program are the following
   export PAGER='less -M -N -X'
   alias more='less -M -N -X'
   if pkgtools__has_binary pygmentize; then
-      pkgtools__set_variable LESSOPEN "| pygmentize %s"
+      pkgtools__reset_variable LESSOPEN "| pygmentize %s"
   else
       pkgtools__unset_variable LESSOPEN
   fi
