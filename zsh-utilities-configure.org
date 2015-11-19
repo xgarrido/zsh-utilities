@@ -11,6 +11,16 @@ machine. Using org-mode's folding, each item contains the configuration for a
 given hostname. The function name must be =__configure_$(hostname)= in such a
 way it should be easy to add its own configuration.
 
+** Default configuration
+#+BEGIN_SRC sh
+  function __configure_default ()
+  {
+      __pkgtools__at_function_enter __configure_default
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
 ** Main configuration function
 #+BEGIN_SRC sh
   function __configure_machine ()
@@ -45,17 +55,6 @@ way it should be easy to add its own configuration.
       return 0
   }
 #+END_SRC
-
-** Default configuration
-#+BEGIN_SRC sh
-  function __configure_default ()
-  {
-      __pkgtools__at_function_enter __configure_default
-      umask 022
-      __pkgtools__at_function_exit
-      return 0
-  }
-#+END_SRC
 ** Laptop/server configuration
 #+BEGIN_SRC sh
   function __configure_laptop ()
@@ -84,7 +83,7 @@ way it should be easy to add its own configuration.
       pkgtools__reset_variable WORKDIR ${HOME}/Workdir/NEMO
 
       # Set EDITOR
-      pkgtools__reset_variable EDITOR "emacsclient"
+      pkgtools__reset_variable EDITOR "ec"
 
       __pkgtools__at_function_exit
       return 0
@@ -103,10 +102,6 @@ way it should be easy to add its own configuration.
 
       # Add emacs 24.3
       pkgtools__add_path_to_PATH ${EXPDIR}/software/bin
-      # Add TeXLive 2012
-      pkgtools__add_path_to_PATH ${EXPDIR}/software/texlive/2012/bin/x86_64-linux
-      pkgtools__unset_variable TEXMFCNF
-      pkgtools__unset_variable TETEXDIR
 
       __pkgtools__at_function_exit
       return 0
