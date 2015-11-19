@@ -1050,3 +1050,42 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
       return 0
   }
 #+END_SRC
+*** Create backup file or directory
+#+BEGIN_SRC sh
+  function bak ()
+  {
+      __pkgtools__at_function_enter bak
+      if [ -z $1 ]; then
+          pkgtools__msg_error "Missing file or directory name !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      [ -f $1 ] && cp $1 $1.bak
+      [ -d $1 ] && cp -r $1 $1.bak
+      __pkgtools__at_function_exit
+      return 0
+  }
+  function unbak ()
+  {
+      __pkgtools__at_function_enter unbak
+      if [ -z $1 ]; then
+          pkgtools__msg_error "Missing file or directory name !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      if  [[ ${1##*.} != "bak" ]]; then
+          pkgtools__msg_error "$1 is not a backup copy !"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      unbak_name=${1/.bak/}
+      if [[ -f ${unbak_name} || -d ${unbak_name} ]]; then
+        pkgtools__msg_warning "File or directory ${unbak_name} already exists !"
+        return 1
+      fi
+      [ -f $1 ] && mv $1 ${1/.bak/}
+      [ -d $1 ] && mv $1 ${1/.bak/}
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
