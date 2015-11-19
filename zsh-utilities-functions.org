@@ -1089,3 +1089,52 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
       return 0
   }
 #+END_SRC
+*** Grab picture of University Paris XI student
+#+BEGIN_SRC sh
+  function search_student ()
+  {
+      __pkgtools__at_function_enter search_student
+      if [ -z $1 ]; then
+          pkgtools__msg_error "Missing student name !"
+          __pkgtools__at_function_exit
+          return 1
+      elif [[ $1 == "--help" || $1 == "-h" ]]; then
+        pkgtools__msg_notice "Usage : search_student \"firstname lastname\""
+        __pkgtools__at_function_exit
+        return 0
+      fi
+
+      adonis_http="http://adonis.u-psud.fr/users"
+      adonis_pics_path="/tmp/adonis_pics"
+      mkdir -p ${adonis_pics_path}
+
+      names=$(echo $1 | sed 's/ /./g')
+      for name in ${names}
+      do
+          nname=$(echo $name | iconv -f utf8 -t ascii//TRANSLIT)
+          prefix="Getting picture for $nname"
+          if [ -f ${adonis_pics_path}/${nname}.jpg ]; then
+              pkgtools__msg_notice "${prefix} -> already downloaded"
+              xdg-open ${adonis_pics_path}/${nname}.jpg &
+              continue
+          fi
+          for i in 0 1 2 3
+          do
+              http_path=${adonis_http}/sl$i/${nname:0:1}/${nname}/
+              wget -r --no-parent -A "*.jpg" ${http_path} -P /tmp > /dev/null 2>&1
+              if [ $? -eq 0 ]; then
+                  pkgtools__msg_notice "${prefix} -> picture found"
+                  cp /tmp/${http_path/http:\/\//}/*.jpg ${adonis_pics_path}/${nname}.jpg
+                  xdg-open ${adonis_pics_path}/${nname}.jpg &
+                  break
+              elif [ $i -eq 3 ]; then
+                  pkgtools__msg_error "${prefix} -> picture not found"
+                  __pkgtools__at_function_exit
+                  return 1
+              fi
+          done
+      done
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
