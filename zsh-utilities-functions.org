@@ -130,7 +130,7 @@ generic function name given the linux system installed : "debian-like" system or
   fi
 #+END_SRC
 
-** Extract archive
+** Compress/extract archive
 #+BEGIN_SRC sh
   function extract ()
   {
@@ -203,6 +203,68 @@ generic function name given the linux system installed : "debian-like" system or
       done
       __pkgtools__at_function_exit
       return 0
+  }
+#+END_SRC
+
+#+BEGIN_SRC sh
+  function compress ()
+  {
+      __pkgtools__at_function_enter compress
+
+      if [[ "$1" == "" ]]; then
+          echo "Usage: compress [-option] dir[.tar.gz]"
+          echo
+      fi
+
+      while [ -n "$1" ]; do
+          local base="$(basename $1)"
+          local filename="${base%%.*}"
+          local file="${base%.*}"
+          local dir="$(dirname $1)/$filename"
+          local ext="${base#*.}"
+          if [[ ! -d "$dir" && ! -f "$file" ]]; then
+              pkgtools__msg_warning "'$dir' is not a valid directory/file"
+              shift
+              continue
+          fi
+
+          success=0
+          if [[ -d "$dir" ]]; then
+            (
+              cd $(dirname $1)
+              case "$ext" in
+                  (tar.gz|tgz) tar czf "$1" "$filename" ;;
+                  (tar.bz2|tbz|*.tbz2) tar cjf "$1" "$filename" ;;
+                  (tar.xz|txz) tar --xz -cvf "$1" "$filename" ;;
+                  (tar.zma|tlz) tar --lzma -cvf "$1" "$filename" ;;
+                  (tar) tar cvf "$1" "$filename" ;;
+                  (zip) zip "$dir" $dir/*;;
+                  (*)
+                      pkgtools__msg_error "'$dir' cannot be compressed!" 1>&2
+                      success=1
+                      ;;
+              esac
+            )
+          elif [[ -f "$file" ]]; then
+              ext="${base##*.}"
+              case "$ext" in
+                  (gz) gzip "$file" ;;
+                  (bz2) bzip2 "$file" ;;
+                  (xz) xz "$file"  ;;
+                  (lzma) lzma "$1"  ;;
+                  (7z) 7za x "$1" ;;
+                  (*)
+                      pkgtools__msg_error "'$file' $ext cannot be compressed!" 1>&2
+                      success=1
+                      ;;
+              esac
+          fi
+
+          (( success = $success > 0 ? $success : $? ))
+          shift
+      done
+      __pkgtools__at_function_exit
+      return success
   }
 #+END_SRC
 
@@ -649,7 +711,7 @@ Astrophysics Data System.
   }
 #+END_SRC
 *** Better SVN diff (needs code2color)
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :tangle no
   function svndiff ()
   {
       __pkgtools__at_function_enter svndiff
