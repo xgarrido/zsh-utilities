@@ -77,9 +77,9 @@ components.
   snrebuild falaise'
 #+END_SRC
 
-*** =dpp_processing= shortcuts
+*** =dpp_processing=
 
-Wrapper arround =bxdpp_processing=
+**** Wrapper arround =bxdpp_processing=
 
 #+BEGIN_SRC sh
   function mydpp_processing ()
@@ -163,7 +163,7 @@ Wrapper arround =bxdpp_processing=
   }
 #+END_SRC
 
-Completion function
+**** Completion function
 #+BEGIN_SRC shell
   compdef _mydpp_processing mydpp_processing
   function _mydpp_processing ()
@@ -258,6 +258,87 @@ Completion function
   }
 #+END_SRC
 
+*** =ocd_manual=
+**** Wrapper arround =bxocd_manual=
+#+BEGIN_SRC sh
+  function myocd_manual ()
+  {
+      __pkgtools__at_function_enter myocd_manual
+      if $(pkgtools__has_binary bxocd_manual); then
+          _lib_dir=$SNAILWARE_PRO_DIR/falaise/install/lib64
+          _libs=$(find ${_lib_dir} -type f -name "*.so")
+          libs=
+          for l in ${=_libs}; do
+              libs+=$(echo -n "--load-dll $(echo $l | sed 's/.*lib\(.*\)\.so/\1/')@$(dirname $l) ")
+          done
+          bxocd_manual $(echo $libs) $@
+      else
+          pkgtools__msg_error "SN@ilWare has not been set"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
+**** Completion function
+#+BEGIN_SRC shell
+  compdef _myocd_manual myocd_manual
+  function _myocd_manual ()
+  {
+      _ocd_all () {
+          # we cache the list of repository
+          if (( ! $+ocdlist )); then
+              ocdlist+=( $(myocd_manual --action list | tail -n +2 | sed 's/:/\\:/g') )
+          fi
+      }
+      _arguments                                                                             \
+          {-P,--logging-priority}'[set logging priority]:logging:->log'                      \
+          {-l,--load-dll}'[set a DLL to be loaded]'                                          \
+          {-L,--dlls-config}'[set the DLL loader configuration file]:file:_files -g \*.conf' \
+          {-c,--class-id}'[set the ID of the class to be investigated]:class:->class'        \
+          {-a,--action}'[define the action to be performed]:action:->action'                 \
+          {-i,--input-file}'[set an input file (optional)]:file:_files'                      \
+          {-o,--output-file}'[set the output file (optional)]:file:_files'                   \
+          '*: :->args'                                                                       \
+          && ret=0
+      case $state in
+          log)
+              _logs=(
+                  "fatal"
+                  "critical"
+                  "error"
+                  "warning"
+                  "notice"
+                  "information"
+                  "debug"
+                  "trace"
+              )
+              _values 'Logging priority' $_logs && ret=0
+              ;;
+          action)
+              _actions=(
+                  "list"
+                  "show"
+                  "skeleton"
+                  "validate"
+              )
+              _values 'Action list' $_actions && ret=0
+              ;;
+          class)
+              _ocd_all
+              _describe -t ocdlist 'OCD' ocdlist && ret=0
+              ;;
+          args)
+              #_path_files -/ && ret=0
+              ;;
+      esac
+  return ret
+  }
+#+END_SRC
+
 *** Aliases
 #+BEGIN_SRC sh
   if (( $+functions[cm] )); then
@@ -270,8 +351,11 @@ Completion function
           mkdir -p /tmp/garrido/snemo.d
           cm $(pkgtools__get_binary_path bxdpp_processing) $@
       }
+      function bxocd_manual ()
+      {
+          cm $(pkgtools__get_binary_path bxocd_manual) $@
+      }
   fi
-  #  compdef _snemo_event_browser snemo_toto
 #+END_SRC
 ** Lyon ccali aliases
 #+BEGIN_SRC sh
