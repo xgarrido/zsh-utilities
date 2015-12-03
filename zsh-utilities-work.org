@@ -50,37 +50,37 @@ This file contains some function/alias in relation with "work" topic.
   export SNAILWARE_SIMULATION_DIR=$WORKDIR/supernemo/simulations
 #+END_SRC
 
-*** Setup
+*** =Bayeux/Falaise= wrappers
+**** Private wrappers
 #+BEGIN_SRC sh
-  alias do_nemo_setup='aggregator setup cadfael'
-  alias do_aggregator_setup='aggregator setup all && mkdir -p /tmp/${USER}/snemo.d'
+  function --flvisualize ()
+  {
+      if (( $+functions[cm] )); then
+          cm $(pkgtools__get_binary_path flvisualize) $@
+      else
+        $(pkgtools__get_binary_path flvisualize) $@
+      fi
+  }
+  function --bxdpp_processing ()
+  {
+      mkdir -p /tmp/garrido/snemo.d
+      if (( $+functions[cm] )); then
+          cm $(pkgtools__get_binary_path bxdpp_processing) $@
+      else
+          $(pkgtools__get_binary_path bxdpp_processing) $@
+      fi
+  }
+  function --bxocd_manual ()
+  {
+      if (( $+functions[cm] )); then
+          cm $(pkgtools__get_binary_path bxocd_manual) $@ | colout -s rst
+      else
+          $(pkgtools__get_binary_path bxocd_manual) $@
+      fi
+  }
 #+END_SRC
-
-*** Working configuration                                        :obsolete:
-Legacy configuration load the =legacy= svn branch to work with a full software
-installation. Bayeux components are ordered by dependency and since there is a
-change wrt to =geomtools= vs. =materials= dependency as well as =genbb_help=
-depending on =dpp= for programs, we have to set the full list of Bayeux
-components.
-#+BEGIN_SRC sh :tangle no
-  alias build_snailware_legacy='do_nemo_setup && \
-     snailware git-branch --branch legacy datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
-     snailware git-branch --branch legacy sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis && \
-     snrebuild --no-ninja datatools mygsl geomtools materials brio cuts genbb_help genvtx trackfit emfield && \
-     snrebuild channel && snailware setup channel && \
-     snrebuild sngeometry sncore sngenvertex sngenbb sng4 snreconstruction snvisualization snanalysis'
-  alias build_snailware_master='do_nemo_setup && \
-     snailware git-branch --branch master bayeux sngeometry sncore snreconstruction snvisualization && \
-     snailware git-branch --branch xg_devel snanalysis && \
-     snrebuild bayeux channel && \
-     snailware setup channel && \
-  snrebuild falaise'
-#+END_SRC
-
-*** =dpp_processing=
-
-**** Wrapper arround =bxdpp_processing=
-
+**** =dpp_processing=
+***** Wrapper arround =bxdpp_processing=
 #+BEGIN_SRC sh
   function mydpp_processing ()
   {
@@ -145,7 +145,7 @@ components.
               fi
             shift 1
           done
-          bxdpp_processing \
+          --bxdpp_processing \
               --module-manager-config ${_config}/module_manager.conf \
               --dlls-config ${_config}/dlls.conf \
               --datatools::variant-config=${_config}/snvariant_manager.conf \
@@ -163,7 +163,7 @@ components.
   }
 #+END_SRC
 
-**** Completion function
+***** Completion function
 #+BEGIN_SRC shell
   compdef _mydpp_processing mydpp_processing
   function _mydpp_processing ()
@@ -258,8 +258,8 @@ components.
   }
 #+END_SRC
 
-*** =ocd_manual=
-**** Wrapper arround =bxocd_manual=
+**** =ocd_manual=
+***** Wrapper arround =bxocd_manual=
 #+BEGIN_SRC sh
   function myocd_manual ()
   {
@@ -271,7 +271,7 @@ components.
           for l in ${=_libs}; do
               libs+=$(echo -n "--load-dll $(echo $l | sed 's/.*lib\(.*\)\.so/\1/')@$(dirname $l) ")
           done
-          bxocd_manual $(echo $libs) $@
+          --bxocd_manual $(echo $libs) $@
       else
           pkgtools__msg_error "SN@ilWare has not been set"
           __pkgtools__at_function_exit
@@ -283,7 +283,7 @@ components.
   }
 #+END_SRC
 
-**** Completion function
+***** Completion function
 #+BEGIN_SRC shell
   compdef _myocd_manual myocd_manual
   function _myocd_manual ()
@@ -339,23 +339,38 @@ components.
   }
 #+END_SRC
 
-*** Aliases
+**** =visualize=
+***** Wrapper arround =flvisualize=
 #+BEGIN_SRC sh
-  if (( $+functions[cm] )); then
-      function flvisualize ()
-      {
-          cm $(pkgtools__get_binary_path flvisualize) $@
-      }
-      function bxdpp_processing ()
-      {
-          mkdir -p /tmp/garrido/snemo.d
-          cm $(pkgtools__get_binary_path bxdpp_processing) $@
-      }
-      function bxocd_manual ()
-      {
-          cm $(pkgtools__get_binary_path bxocd_manual) $@
-      }
-  fi
+  function myvisualize ()
+  {
+    __pkgtools__at_function_enter myvisualize
+    --flvisualize $@
+    __pkgtools__at_function_exit
+    return 0
+  }
+#+END_SRC
+***** Completion function
+#+BEGIN_SRC shell
+  compdef _flvisualize myvisualize
+#+END_SRC
+**** Completion system
+#+BEGIN_SRC sh
+  compdef _genbb_inspector bxgenbb_inspector
+#+END_SRC
+
+*** =brew= setup
+#+BEGIN_SRC sh
+  function set_brew ()
+  {
+      pkgtools__msg_notice "Setting brew installation"
+      pkgtools__add_path_to_PATH ~/Workdir/NEMO/supernemo/snware/brew/cadfaelbrew/bin
+  }
+  function unset_brew ()
+  {
+      pkgtools__msg_notice "Unsetting brew installation"
+      pkgtools__remove_path_to_PATH ~/Workdir/NEMO/supernemo/snware/brew/cadfaelbrew/bin
+  }
 #+END_SRC
 ** Lyon ccali aliases
 #+BEGIN_SRC sh
@@ -861,9 +876,4 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
       return 0
   }
   compdef '_files -g "*.cxx"' parse_cpp_program_options
-#+END_SRC
-** Completion system
-#+BEGIN_SRC sh
-  compdef _dpp_processing bxdpp_processing
-  compdef _genbb_inspector bxgenbb_inspector
 #+END_SRC
