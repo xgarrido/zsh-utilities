@@ -59,10 +59,11 @@ command.
   alias iemacs='--check-emacs -n $@'
   alias ve='--check-emacs -nw $@'
   alias relaunch_emacs='killall emacs; sleep 1; emacs'
+  alias stop_emacs='pkill -SIGUSR2 emacs'
 #+END_SRC
 
-*** Cask function to use it everywhere
-#+BEGIN_SRC sh
+*** Cask function to use it everywhere                           :obsolete:
+#+BEGIN_SRC sh :tangle no
   function cask ()
   {
       if pkgtools__has_binary cask; then
