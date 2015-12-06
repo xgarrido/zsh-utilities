@@ -122,6 +122,125 @@ be colored bold strings, for instance.
       colout "\[(?i)trace.*$|DEVEL:.*$" 28 normal
   }
 #+END_SRC
+*** Homemade themes
+**** =g++= theme
+#+BEGIN_SRC python :tangle colout_myg++.py
+  #encoding: utf-8
+
+  def theme():
+    import locale
+    section="blue"
+    # if the locale is unicode
+    enc = locale.getpreferredencoding()
+    if "UTF" in enc:
+      # gcc will use unicode quotes
+        qo = "[‘`]"
+        qc = "[’']"
+    else:
+      # rather than ascii ones
+        qo = "['`]"
+        qc = "'"
+
+    return [
+        [ ("error: |erreur: "), "red", "bold" ],
+        [ ("warning: |attention: "), "magenta", "bold" ],
+        [ ("undefined reference to "), "red", "bold" ],
+        # [-Wflag]
+        [ "\[-W.*\]", "magenta"],
+
+        # Highlight message start:
+        #   path   file   ext     : line   :  col     …
+        [ "(/.*?)/([^/:]+): (In .*)",
+          section,
+          "normal,normal,bold" ],
+
+        [ "(/.*?)/([^/:]+): (At .*)",
+          section,
+          "normal,normal,bold" ],
+
+        [ ("In file included from"), section ],
+
+        # Highlight locations:
+        #   path   file   ext     : line   :  col     …
+        [ "(/.*?)/([^/:]+):([0-9]+):*([0-9]*)(.*)",
+          "none,magenta,yellow,yellow,none",
+          "normal,normal,normal,normal" ],
+
+        # source code in single quotes
+        [ qo+"(.*?)"+qc, "green", "bold" ],
+
+        # # source code after a "note: candidate are/is:"
+        [ ("note: ")+"((?!.*(candidate|"+qo+"|"+qc+")).*)$", "none", "bold" ],
+        # after the code part, to avoid matching ANSI escape chars
+        [ ("note: "), "green", "normal" ]
+      ]
+#+END_SRC
+
+**** =ninja= theme
+#+BEGIN_SRC python :tangle colout_ninja.py
+  def theme():
+      # Ninja theme:
+      #  actions building
+      building="blue"
+      #  actions linking
+      linking="green"
+      #  actions generating
+      generating="blue"
+
+      return [
+          # Configure...
+          # [ "^--.*works", performed ],
+          # [ "^--.*done", performed ],
+          # [ "^-- Found.*NO", "red" ],
+          # [ "^-- Found.*", performed ],
+          # [ "^--.*broken", "red" ],
+          # [ "^-- Coult NOT find.*", "red" ],
+          # [ "^-- Configuring incomplete, errors occurred!", "red" ],
+          # [ "^--.*", performing ],
+          # # Errors
+          # [ "CMake Error:", "red" ],
+          # [ "CMake Warning", "yellow" ],
+          # # Scan
+          # [ "^(Scanning dependencies of target)(.*)$",
+          #   performing, "normal,bold" ],
+          # Linking
+          [ "\[.*\]\s(Linking .* )(library|executable) (.*/)*(.+(\.[aso]+)*)$",
+            linking, "normal,normal,bold" ],
+          # Building
+          [ "^\[.*\]\s(Building \w* object)(\s+.*/)([-\w]+.c.*)(.o)$",
+            "none,none,blue,none", "normal,normal,bold,normal"],
+          # [percent] Generating
+          [ "^\[.*\]\s(Generating)(\s+.*)$",
+            generating, "normal,bold"],
+          # # make errors
+          # [ "make\[[0-9]+\].*", "yellow"],
+          # [ "(make: \*\*\* \[.+\] )(.* [0-9]+)", "red", "normal,bold"],
+          # Ninja stop
+          [ ".*build stopped.*", "red", "bold" ],
+          # progress percentage
+          [ "^(\[.*\])", "yellow" ]
+      ]
+#+END_SRC
+
+*** Wrapping some functions arround =colout=
+**** =cmake=
+#+BEGIN_SRC sh
+  if (( $+commands[cmake] )); then
+      function cmake ()
+      {
+          $(pkgtools__get_binary_path cmake) $@ | colout -t cmake
+      }
+  fi
+#+END_SRC
+**** =ninja=
+#+BEGIN_SRC sh
+  if (( $+commands[ninja] )); then
+      function ninja ()
+      {
+          $(pkgtools__get_binary_path ninja) $@ | colout -t cmake | colout -t myg++ -T ${zsh_utilities_dir} | colout -t ninja -T ${zsh_utilities_dir}
+      }
+  fi
+#+END_SRC
 *** Postamble
 #+BEGIN_SRC sh
   fi
