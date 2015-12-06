@@ -268,6 +268,36 @@ generic function name given the linux system installed : "debian-like" system or
   }
 #+END_SRC
 
+** Manage dotfiles
+Previous method was using [[https://pypi.python.org/pypi/dotfiles]], since there are
+still some uncontrolled things (like managing =~/.config= directory), I change it
+by using a classical =Makefile=
+#+BEGIN_SRC sh
+  function dotfiles ()
+  {
+      __pkgtools__at_function_enter dotfiles
+      cd ~/Development/github.com/xgarrido/dotfiles
+      make $@
+      __pkgtools__at_function_exit
+      return 0
+  }
+  # Connect completion system
+  compdef _dotfiles dotfiles
+
+  function _dotfiles ()
+  {
+      local -a _actions
+      _actions=(
+          help:'show help'
+          list:'show dot files'
+          deploy:'create symlink to home directory'
+          update:'fetch changes'
+          install:'run update and deploy command'
+          clean:'remove the dot files'
+      )
+      _describe -t _actions 'Actions' _actions && ret=0
+  }
+#+END_SRC
 ** Notification
 Base function for notification
 #+BEGIN_SRC sh

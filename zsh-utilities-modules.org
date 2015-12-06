@@ -20,8 +20,8 @@ allowing you to keep all your dotfiles in a single directory.
 #+END_SRC
 
 *** Aliases
-#+BEGIN_SRC sh
-  alias dotfiles='dotfiles -R ~/Development/dotfiles'
+#+BEGIN_SRC sh :tangle no
+  alias dotfiles='dotfiles -R ~/Development/github.com/xgarrido/dotfiles'
 #+END_SRC
 *** Postamble
 #+BEGIN_SRC sh
