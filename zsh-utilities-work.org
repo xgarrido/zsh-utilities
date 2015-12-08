@@ -82,11 +82,10 @@ This file contains some function/alias in relation with "work" topic.
 **** =dpp_processing=
 ***** Wrapper arround =bxdpp_processing=
 #+BEGIN_SRC sh
-  function mydpp_processing ()
+  \function mydpp_processing ()
   {
       __pkgtools__at_function_enter mydpp_processing
       if $(pkgtools__has_binary bxdpp_processing); then
-          _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
           opt=
           while [ -n "$1" ]; do
               token="$1"
@@ -145,12 +144,15 @@ This file contains some function/alias in relation with "work" topic.
               fi
             shift 1
           done
-          --bxdpp_processing \
-              --module-manager-config ${_config}/module_manager.conf \
-              --dlls-config ${_config}/dlls.conf \
-              --datatools::variant-config=${_config}/snvariant_manager.conf \
-              --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-2.0.0/resources \
-              --datatools::resource-path=configuration@${_config} \
+          _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
+          _falaise_version=2.0.0
+          --bxdpp_processing                                                                                                    \
+              --module-manager-config ${_config}/module_manager.conf                                                            \
+              --dlls-config ${_config}/dlls.conf                                                                                \
+              --datatools::variant-config=${_config}/snvariant_manager.conf                                                     \
+              --datatools::resource-path=snware@$SNAILWARE_PRO_DIR                                                              \
+              --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-${_falaise_version}/resources \
+              --datatools::resource-path=configuration@${_config}                                                               \
               $(echo ${opt})
       else
           pkgtools__msg_error "SN@ilWare has not been set"
