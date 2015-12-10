@@ -1216,7 +1216,7 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
               wget -r --no-parent -A "*.jpg" ${http_path} -P /tmp > /dev/null 2>&1
               if [ $? -eq 0 ]; then
                   pkgtools__msg_notice "${prefix} -> picture found"
-                  cp /tmp/${http_path/http:\/\//}/*.jpg ${adonis_pics_path}/${nname}.jpg
+                  ls -1 /tmp/${http_path/http:\/\//}/*.jpg | tail -n1 | xargs -i cp {} ${adonis_pics_path}/${nname}.jpg
                   xdg-open ${adonis_pics_path}/${nname}.jpg &
                   break
               elif [ $i -eq 3 ]; then
