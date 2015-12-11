@@ -116,8 +116,8 @@ way it should be easy to add its own configuration.
       pkgtools__reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
       pkgtools__reset_variable WORKDIR ${SCRATCH_DIR}/workdir
       pkgtools__add_path_to_PATH /usr/local/cmake/3.2.2/bin
-      pkgtools__add_path_to_PATH /usr/local/gcc/4.8.5/bin
-      pkgtools__add_path_to_LD_LIBRARY_PATH /usr/local/gcc/4.8.5/lib64
+      pkgtools__add_path_to_PATH /usr/local/gcc/5.2.0/bin
+      pkgtools__add_path_to_LD_LIBRARY_PATH /usr/local/gcc/5.2.0/lib
 
       __pkgtools__at_function_exit
       return 0
