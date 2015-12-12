@@ -823,7 +823,8 @@ variable.
 #+BEGIN_SRC sh
   function pkgtools__get_binary_path ()
   {
-      echo $(whereis $1 | cut -d' ' -f2)
+      # echo $(whereis $1 | cut -d' ' -f2)
+      echo $(which $1)
       return 0
   }
 #+END_SRC
