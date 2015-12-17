@@ -374,3 +374,9 @@ fzf is a general-purpose command-line fuzzy finder. See
 #+BEGIN_SRC sh
   fi
 #+END_SRC
+
+
+# Local Variables:
+# firestarter-mode: t
+# firestarter: (org-babel-tangle)
+# End:
