@@ -231,6 +231,29 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
           [ "(^\[trace]:|^\[trace.*\])(.*$)", trace, "bold,normal" ],
     ]
 #+END_SRC
+**** =org-mode= theme
+
+#+BEGIN_SRC python :tangle colout_orgmode.py
+  #encoding: utf-8
+
+  def theme():
+      return [
+          [ "(=[^\"].*?=[^\"])", "cyan" ],
+          [ "^\*{1}\s.*$", "red", "bold" ],
+          [ "^\*{2}\s.*$", "green", "bold" ],
+          [ "^\*{3}\s.*$", "blue", "bold" ],
+          [ "^\*{4}\s.*$", "yellow", "bold" ],
+          [ "^\*{5}\s.*$", "cyan", "bold" ],
+          [ ("((?i)^#\+)(title|date|author|email):(.*)"), "blue", "bold,bold,normal" ],
+          [ "#\+.*$", "250" ],
+          [ "^:.*:.*$", "250" ],
+          [ "\[\w\]", "magenta" ],
+          [ "\[\[.*\]\]", "yellow" ],
+          [ "^[\||+-].*", "blue" ],
+    ]
+#+END_SRC
+
+#+RESULTS:
 
 *** Wrapping some functions arround =colout=
 **** =cmake=
