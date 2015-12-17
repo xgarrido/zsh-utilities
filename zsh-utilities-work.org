@@ -55,25 +55,25 @@ This file contains some function/alias in relation with "work" topic.
 #+BEGIN_SRC sh
   function --flvisualize ()
   {
-      if (( $+functions[cm] )); then
-          cm $(pkgtools__get_binary_path flvisualize) $@
+      if (( $+commands[colout] )); then
+          $(pkgtools__get_binary_path flvisualize) $@ 2>&1 | colout -t mylogging -T ${zsh_utilities_dir}
       else
-        $(pkgtools__get_binary_path flvisualize) $@
+          $(pkgtools__get_binary_path flvisualize) $@
       fi
   }
   function --bxdpp_processing ()
   {
       mkdir -p /tmp/garrido/snemo.d
-      if (( $+functions[cm] )); then
-          cm $(pkgtools__get_binary_path bxdpp_processing) $@
+      if (( $+commands[colout] )); then
+          $(pkgtools__get_binary_path bxdpp_processing) $@ 2>&1 | colout -t mylogging -T ${zsh_utilities_dir}
       else
           $(pkgtools__get_binary_path bxdpp_processing) $@
       fi
   }
   function --bxocd_manual ()
   {
-      if (( $+functions[cm] )); then
-          cm $(pkgtools__get_binary_path bxocd_manual) $@ | colout -s rst
+      if (( $+commands[cm] )); then
+          $(pkgtools__get_binary_path bxocd_manual) $@ | colout -t mylogging -T ${zsh_utilities_dir} | colout -s rst
       else
           $(pkgtools__get_binary_path bxocd_manual) $@
       fi
@@ -82,7 +82,7 @@ This file contains some function/alias in relation with "work" topic.
 **** =dpp_processing=
 ***** Wrapper arround =bxdpp_processing=
 #+BEGIN_SRC sh
-  \function mydpp_processing ()
+  function mydpp_processing ()
   {
       __pkgtools__at_function_enter mydpp_processing
       if $(pkgtools__has_binary bxdpp_processing); then

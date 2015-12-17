@@ -111,17 +111,6 @@ be colored bold strings, for instance.
 #+BEGIN_SRC sh
   if (( $+commands[colout] )); then
 #+END_SRC
-*** Function
-#+BEGIN_SRC sh
-  function cm ()
-  {
-      $@ 2>&1 | colout "\[(?i)notice.*$|\[information.*$|\[INFO.*$" 4 \ |
-      colout "\[(?i)error.*$|\[fatal.*$|erreur.*$|FAILED.*$" 1 \ |
-      colout "\[(?i)warning.*$|attention.*$" 5 \ |
-      colout "\[(?i)debug.*$" 2 normal |
-      colout "\[(?i)trace.*$|DEVEL:.*$" 28 normal
-  }
-#+END_SRC
 *** Homemade themes
 **** =g++= theme
 #+BEGIN_SRC python :tangle colout_myg++.py
@@ -220,6 +209,27 @@ be colored bold strings, for instance.
           # progress percentage
           [ "^(\[.*\])", "yellow" ]
       ]
+#+END_SRC
+
+**** Logging theme
+Theme used to color output from SN@ilWare software. Syntax used is defined in
+this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatools/logger.h
+#+BEGIN_SRC python :tangle colout_mylogging.py
+  #encoding: utf-8
+
+  def theme():
+      error="red"
+      warning="magenta"
+      notice="blue"
+      debug="green"
+      trace="yellow"
+      return [
+          [ "(^\[error]:|^\[error.*\])(.*$)", error, "bold,normal" ],
+          [ "(^\[warning]:|^\[warning.*\])(.*$)", warning, "bold,normal" ],
+          [ "(^\[notice]:|^\[notice.*\])(.*$)", notice, "bold,normal" ],
+          [ "(^\[debug]:|^\[debug.*\])(.*$)", debug, "bold,normal" ],
+          [ "(^\[trace]:|^\[trace.*\])(.*$)", trace, "bold,normal" ],
+    ]
 #+END_SRC
 
 *** Wrapping some functions arround =colout=
