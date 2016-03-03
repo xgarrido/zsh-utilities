@@ -48,6 +48,8 @@ This file contains some function/alias in relation with "work" topic.
 *** Environment variable
 #+BEGIN_SRC sh
   export SNAILWARE_SIMULATION_DIR=$WORKDIR/supernemo/simulations
+  export BAYEUX_VERSION=2.1.0
+  export FALAISE_VERSION=2.1.0
 #+END_SRC
 
 *** =Bayeux/Falaise= wrappers
