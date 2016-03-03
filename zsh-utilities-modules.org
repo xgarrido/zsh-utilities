@@ -177,33 +177,15 @@ be colored bold strings, for instance.
       generating="blue"
 
       return [
-          # Configure...
-          # [ "^--.*works", performed ],
-          # [ "^--.*done", performed ],
-          # [ "^-- Found.*NO", "red" ],
-          # [ "^-- Found.*", performed ],
-          # [ "^--.*broken", "red" ],
-          # [ "^-- Coult NOT find.*", "red" ],
-          # [ "^-- Configuring incomplete, errors occurred!", "red" ],
-          # [ "^--.*", performing ],
-          # # Errors
-          # [ "CMake Error:", "red" ],
-          # [ "CMake Warning", "yellow" ],
-          # # Scan
-          # [ "^(Scanning dependencies of target)(.*)$",
-          #   performing, "normal,bold" ],
           # Linking
           [ "\[.*\]\s(Linking .* )(library|executable) (.*/)*(.+(\.[aso]+)*)$",
-            linking, "normal,normal,bold" ],
+            linking, "normal,normal,normal,bold" ],
           # Building
           [ "^\[.*\]\s(Building \w* object)(\s+.*/)([-\w]+.c.*)(.o)$",
-            "none,none,blue,none", "normal,normal,bold,normal"],
+            building, "normal,normal,bold,normal"],
           # [percent] Generating
           [ "^\[.*\]\s(Generating)(\s+.*)$",
             generating, "normal,bold"],
-          # # make errors
-          # [ "make\[[0-9]+\].*", "yellow"],
-          # [ "(make: \*\*\* \[.+\] )(.* [0-9]+)", "red", "normal,bold"],
           # Ninja stop
           [ ".*build stopped.*", "red", "bold" ],
           # progress percentage
@@ -224,6 +206,7 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
       debug="green"
       trace="yellow"
       return [
+          [ "(^\[fatal]:|^\[fatal.*\])(.*$)", error, "bold,normal" ],
           [ "(^\[error]:|^\[error.*\])(.*$)", error, "bold,normal" ],
           [ "(^\[warning]:|^\[warning.*\])(.*$)", warning, "bold,normal" ],
           [ "(^\[notice]:|^\[notice.*\])(.*$)", notice, "bold,normal" ],
@@ -231,6 +214,7 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
           [ "(^\[trace]:|^\[trace.*\])(.*$)", trace, "bold,normal" ],
     ]
 #+END_SRC
+
 **** =org-mode= theme
 
 #+BEGIN_SRC python :tangle colout_orgmode.py
