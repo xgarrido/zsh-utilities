@@ -67,7 +67,9 @@ This file contains some function/alias in relation with "work" topic.
   {
       mkdir -p /tmp/garrido/snemo.d
       if (( $+commands[colout] )); then
-          $(pkgtools__get_binary_path bxdpp_processing) $@ 2>&1 | colout -t mylogging -T ${zsh_utilities_dir}
+          $(pkgtools__get_binary_path bxdpp_processing) $@ 2>&1 | \
+              colout -t mylogging -T ${zsh_utilities_dir} | \
+              colout "([0-9]+) (pro.*:)(.*\))(.*\))" blue,blue,green,red bold,normal,bold,bold
       else
           $(pkgtools__get_binary_path bxdpp_processing) $@
       fi
@@ -81,7 +83,7 @@ This file contains some function/alias in relation with "work" topic.
       fi
   }
 #+END_SRC
-**** =dpp_processing=
+**** =mydpp_processing=
 ***** Wrapper arround =bxdpp_processing=
 #+BEGIN_SRC sh
   function mydpp_processing ()
@@ -147,7 +149,7 @@ This file contains some function/alias in relation with "work" topic.
             shift 1
           done
           _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
-          _falaise_version=2.0.0
+          _falaise_version=${FALAISE_VERSION}
           --bxdpp_processing                                                                                                    \
               --module-manager-config ${_config}/module_manager.conf                                                            \
               --dlls-config ${_config}/dlls.conf                                                                                \
@@ -262,7 +264,103 @@ This file contains some function/alias in relation with "work" topic.
   }
 #+END_SRC
 
-**** =ocd_manual=
+**** =mydpp_analysis=
+***** Wrapper arround =bxdpp_processing=
+#+BEGIN_SRC sh
+  function mydpp_analysis ()
+  {
+      __pkgtools__at_function_enter mydpp_analysis
+      if $(pkgtools__has_binary bxdpp_processing); then
+          opt=
+          while [ -n "$1" ]; do
+              token="$1"
+          #     if [ "${token}" = "--event-generator" -o "${token}" = "-e" ]; then
+          #         shift 1
+          #         opt+="--datatools::variant-set=simulation:event_generator_name=$1 "
+          #     else
+              opt+="$token "
+          #     fi
+            shift 1
+          done
+          _config=$SNAILWARE_SIMULATION_DIR/snemo_analysis_modules/config
+          _falaise_version=${FALAISE_VERSION}
+          --bxdpp_processing                                         \
+              --module-manager-config ${_config}/module_manager.conf \
+              --dlls-config ${_config}/dlls.conf                     \
+              $(echo ${opt})
+              # --datatools::variant-config=${_config}/snvariant_manager.conf                                                     \
+              # --datatools::resource-path=snware@$SNAILWARE_PRO_DIR                                                              \
+              # --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-${_falaise_version}/resources \
+              # --datatools::resource-path=configuration@${_config}                                                               \
+      else
+          pkgtools__msg_error "SN@ilWare has not been set"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+
+***** Completion function
+#+BEGIN_SRC shell
+  compdef _mydpp_analysis mydpp_analysis
+  function _mydpp_analysis ()
+  {
+      _config=$SNAILWARE_SIMULATION_DIR/snemo_analysis_modules/config
+      _module_all () {
+          # we cache the list of repository
+          if (( ! $+ana_modulelist )); then
+              if [ ! -z "$_config" ]; then
+                  for f in $(eval echo ${_config})/*.conf; do
+                      line=$(cat $f | grep "\[.*type=.*_module.*\]")
+                      name=$(echo $line | sed 's@\[name="\(.*\)".*type.*@\1@')
+                      ana_modulelist+=( $(echo $name) )
+                  done
+              fi
+          fi
+      }
+      _arguments                                                                                              \
+          {-P,--logging-priority}'[set logging priority]:logging:->log'                                       \
+          {-l,--load-dll}'[set a DLL to be loaded]'                                                           \
+          {-L,--dlls-config}'[set the DLL loader configuration file]:file:_files -g \*.conf'                  \
+          {-%,--modulo}'[set the modulo print period for data record]:number'                                 \
+          {-M,--max-records}'[set the maximum number of data records to be processed]:number'                 \
+          {-X,--no-max-records}'[Do not limit the maximum number of data records to be processed]:number'     \
+          {-m,--module}'[add a module in the pipeline (optional)]:module:->module'                            \
+          {-c,--module-manager-config}'[set the module manager configuration file]:manager:_files -g \*.conf' \
+          {-i,--input-file}'[set an input file (optional)]:file:_files -g    \*.{brio,xml,data.gz,txt}'       \
+          {-o,--output-file}'[set the output file (optional)]:file:_files -g \*.{brio,xml,data.gz,txt}'       \
+          '*: :->args'                                                                                        \
+          && ret=0
+      case $state in
+          log)
+              _logs=(
+                  "fatal"
+                  "critical"
+                  "error"
+                  "warning"
+                  "notice"
+                  "information"
+                  "debug"
+                  "trace"
+              )
+              _values 'Logging priority' $_logs && ret=0
+              ;;
+          module)
+              _module_all
+              _describe -t ana_modulelist 'module' ana_modulelist && ret=0
+              ;;
+          args)
+              _path_files -/ && ret=0
+              ;;
+     esac
+  return ret
+  }
+#+END_SRC
+
+**** =myocd_manual=
 ***** Wrapper arround =bxocd_manual=
 #+BEGIN_SRC sh
   function myocd_manual ()
@@ -343,7 +441,7 @@ This file contains some function/alias in relation with "work" topic.
   }
 #+END_SRC
 
-**** =visualize=
+**** =myvisualize=
 ***** Wrapper arround =flvisualize=
 #+BEGIN_SRC sh
   function myvisualize ()
@@ -358,7 +456,7 @@ This file contains some function/alias in relation with "work" topic.
 #+BEGIN_SRC shell
   compdef _flvisualize myvisualize
 #+END_SRC
-**** Completion system
+**** Other completion system
 #+BEGIN_SRC sh
   compdef _genbb_inspector bxgenbb_inspector
 #+END_SRC
