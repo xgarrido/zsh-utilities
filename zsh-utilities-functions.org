@@ -127,6 +127,14 @@ generic function name given the linux system installed : "debian-like" system or
           __pkgtools__at_function_exit
           return 0
       }
+      function autoremove ()
+      {
+          __pkgtools__at_function_enter autoremove
+          ${__pkg_mgr} -Sc && pkg-notify "Autoremove done"
+          __pkgtools__at_function_exit
+          return 0
+      }
+
   fi
 #+END_SRC
 
