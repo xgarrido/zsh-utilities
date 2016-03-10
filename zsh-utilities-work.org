@@ -39,11 +39,29 @@ This file contains some function/alias in relation with "work" topic.
   }
 #+END_SRC
 
-** ROOT aliases
+** ROOT aliases & functions
 #+BEGIN_SRC sh
   alias root='root -l'
 #+END_SRC
 
+*** Initialize with a =TBrowser=
+#+BEGIN_SRC sh
+  function root/tbrowser () {
+      local file_list=
+      while [ -n "$1" ]; do
+          file="$1"
+          if [ ! -f $file ]; then
+              pkgtools__msg_error "Could not find file $file"
+          else
+              file_list+="$file "
+          fi
+          shift 1
+      done
+      root -l $(echo ${file_list}) ~/.config/root/macros/newBrowser.C
+      return 0;
+  }
+  alias rb="root/tbrowser"
+#+END_SRC
 ** SN@ilWare setup
 *** Environment variable
 #+BEGIN_SRC sh
