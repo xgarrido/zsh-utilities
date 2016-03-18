@@ -107,80 +107,95 @@ This file contains some function/alias in relation with "work" topic.
   function mydpp_processing ()
   {
       __pkgtools__at_function_enter mydpp_processing
-      if $(pkgtools__has_binary bxdpp_processing); then
-          opt=
-          while [ -n "$1" ]; do
-              token="$1"
-              if [ "${token}" = "--event-generator" -o "${token}" = "-e" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=simulation:event_generator_name=$1 "
-              elif [ "${token}" = "--vertex-generator" -o "${token}" = "-v" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=simulation:vertex_generator_name=$1 "
-              elif [ "${token}" = "--source-material" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:bb_source_material=snemo::$1 "
-              elif [ "${token}" = "--bz-field" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:bz_magnitude=$1 "
-              elif [ "${token}" = "--calo-energy-resolution" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:calo_energy_resolution=$1 "
-              elif [ "${token}" = "--xcalo-energy-resolution" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:xcalo_energy_resolution=$1 "
-              elif [ "${token}" = "--gveto-energy-resolution" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:gveto_energy_resolution=$1 "
-              elif [ "${token}" = "--calo-high-energy-threshold" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:calo_high_energy_threshold=$1 "
-              elif [ "${token}" = "--xcalo-high-energy-threshold" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:xcalo_high_energy_threshold=$1 "
-              elif [ "${token}" = "--gveto-high-energy-threshold" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:gveto_high_energy_threshold=$1 "
-              elif [ "${token}" = "--calo-low-energy-threshold" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:calo_low_energy_threshold=$1 "
-              elif [ "${token}" = "--xcalo-low-energy-threshold" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:xcalo_low_energy_threshold=$1 "
-              elif [ "${token}" = "--gveto-low-energy-threshold" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=detector:gveto_low_energy_threshold=$1 "
-              elif [ "${token}" = "--random-seeds" ]; then
-                  opt+="--datatools::variant-set=simulation:random_seed_flag=true "
-              elif [ "${token}" = "--output-path" ]; then
-                  shift 1
-                  if [ ! -d $1 ]; then
-                    mkdir -p $1
-                  fi
-                  opt+="--datatools::variant-set=core:output_path=$1 "
-              elif [ "${token}" = "--dev-logging" ]; then
-                  shift 1
-                  opt+="--datatools::variant-set=core:logging_priority=$1 "
-              else
-                opt+="$token "
-              fi
-            shift 1
-          done
-          _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
-          _falaise_version=${FALAISE_VERSION}
-          --bxdpp_processing                                                                                                    \
-              --module-manager-config ${_config}/module_manager.conf                                                            \
-              --dlls-config ${_config}/dlls.conf                                                                                \
-              --datatools::variant-config=${_config}/snvariant_manager.conf                                                     \
-              --datatools::resource-path=snware@$SNAILWARE_PRO_DIR                                                              \
-              --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-${_falaise_version}/resources \
-              --datatools::resource-path=configuration@${_config}                                                               \
-              $(echo ${opt})
-      else
+      if ! $(pkgtools__has_binary bxdpp_processing); then
           pkgtools__msg_error "SN@ilWare has not been set"
           __pkgtools__at_function_exit
           return 1
       fi
+      local opt=
+      while [ -n "$1" ]; do
+          token="$1"
+          case "$token" in
+              --*-generator)
+                  shift 1
+                  local parameter=${token:2}
+                  opt+="--datatools::variant-set=simulation:${parameter//-/_}_name=$1 "
+                  ;;
+              --source-material)
+                  shift 1
+                  opt+="--datatools::variant-set=detector:bb_source_material=snemo::$1 "
+                  ;;
+              --bz-field)
+                  shift 1
+                  opt+="--datatools::variant-set=detector:bz_magnitude=$1 "
+                  ;;
+              --*-energy-resolution | --*-*-energy-threshold)
+                  shift 1
+                  local parameter=${token:2}
+                  opt+="--datatools::variant-set=detector:${parameter//-/_}=$1 "
+                  ;;
+              --random-seeds)
+                  opt+="--datatools::variant-set=simulation:random_seed_flag=true "
+                  ;;
+              --spg-*)
+                  shift 1
+                  local parameter=${token:2}
+                  opt+="--datatools::variant-set=simulation:${parameter//-/_}=$1 "
+                  ;;
+              --output-path)
+                  shift 1
+                  if [ ! -d $1 ]; then
+                      mkdir -p $1
+                  fi
+                  opt+="--datatools::variant-set=core:output_path=$1 "
+                  ;;
+              --dev-logging)
+                  shift 1
+                  opt+="--datatools::variant-set=core:logging_priority=$1 "
+                  ;;
+              *)
+                  opt+="$token "
+                  ;;
+          esac
+          shift 1
+      done
+      _dump () {
+          local header="[notice: mydpp_processing:"
+          local trailer="]"
+          declare -A db
+          local variants=( $(echo ${opt} | tr " " "\n" | grep 'variant-set') )
+          for i in ${variants}; do
+              local registry=$(echo $i | awk -F'[=:]' '{print $4}')
+              local parameter=$(echo $i | awk -F'[=:]' '{print $5}')
+              local value=$(echo $i | awk -F'[=:]' '{print $6}')
+              db[$registry]+="$header$trailer ↳ Parameter '$parameter': $value\n"
+          done
+          if [ ! -n "${variants}" ]; then
+              echo "$header Variants set to their default values !$trailer"
+          else
+              echo "$header Variants dump:$trailer"
+          fi
+
+          for k in "${(@k)db}"; do
+              echo "$header$trailer Registry '$k'"
+              for i in ${db[$k]}; do
+                  echo "$i"
+              done
+          done
+      }
+      if (( $+commands[colout] )); then
+          _dump | colout -t mylogging -T ${zsh_utilities_dir}
+      fi
+      _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
+      _falaise_version=${FALAISE_VERSION}
+      --bxdpp_processing                                                                                                    \
+          --module-manager-config ${_config}/module_manager.conf                                                            \
+          --dlls-config ${_config}/dlls.conf                                                                                \
+          --datatools::variant-config=${_config}/snvariant_manager.conf                                                     \
+          --datatools::resource-path=snware@$SNAILWARE_PRO_DIR                                                              \
+          --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-${_falaise_version}/resources \
+          --datatools::resource-path=configuration@${_config}                                                               \
+          $(echo ${opt})
 
       __pkgtools__at_function_exit
       return 0
@@ -217,8 +232,8 @@ This file contains some function/alias in relation with "work" topic.
           {-i,--input-file}'[set an input file (optional)]:file:_files -g    \*.{brio,xml,data.gz,txt}'       \
           {-o,--output-file}'[set the output file (optional)]:file:_files -g \*.{brio,xml,data.gz,txt}'       \
           {-O,--max-records-per-output-file}'[set the maximum number of data records per output file]:number' \
-          {-e,--event-generator}'[set event generator]:eg:->eg'                                               \
-          {-v,--vertex-generator}'[set vertex generator]:vg:->vg'                                             \
+          '--event-generator}[set event generator]:eg:->eg'                                                   \
+          '--vertex-generator[set vertex generator]:vg:->vg'                                                  \
           '--bz-field[set Bz magnetic field]'                                                                 \
           '--calo-energy-resolution[set main wall energy resolution]'                                         \
           '--xcalo-energy-resolution[set X-wall energy resolution]'                                           \
@@ -229,6 +244,12 @@ This file contains some function/alias in relation with "work" topic.
           '--calo-low-energy-threshold[set main wall low energy threshold]'                                   \
           '--xcalo-low-energy-threshold[set X-wall low energy threshold]'                                     \
           '--gveto-low-energy-threshold[set gamma low veto energy threshold]'                                 \
+          '--spg-name[set particle name for single particle generator (spg)]:spgname:->spgname'               \
+          '--spg-monokinetic-energy[set the monokinetic energy for single particle generator (spg)]'          \
+          '--spg-flat-energy-min[set the minimal energy for single particle generator (spg)]'                 \
+          '--spg-flat-energy-max[set the maximal energy for single particle generator (spg)]'                 \
+          '--spg-gaussian-energy-mean[set the mean energy for single particle generator (spg)]'               \
+          '--spg-gaussian-energy-sigma[set the sigma energy for single particle generator (spg)]'             \
           '--random-seeds[set all seeds to random values]'                                                    \
           '--source-material[set the source foil material]:bbsm:->bbsm'                                       \
           '--output-path[set the output directory of generated files]:file:_files'                            \
@@ -262,23 +283,28 @@ This file contains some function/alias in relation with "work" topic.
                            ${_config}/simulation_variants.def | awk -F \" '{print $2}') )
               _values 'Event generator' $_egs && ret=0
               ;;
+          spgname)
+              _spgs=( $(sed -n '/spg_name/, /^\[/ { /string.enumerated_/ p }' \
+                            ${_config}/simulation_variants.def | awk -F \" '{print $2}') )
+              _values 'Single particle generator name' $_spgs && ret=0
+              ;;
           vg)
-              _vgs=( $(sed -n '/vertex_generator_name/, /^\[/ { /string.enumerated_/ p }' \
-                           ${_config}/simulation_variants.def | awk -F \" '{print $2}') )
-              _values 'Vertex generator' $_vgs && ret=0
-              ;;
+             _vgs=( $(sed -n '/vertex_generator_name/, /^\[/ { /string.enumerated_/ p }' \
+                          ${_config}/simulation_variants.def | awk -F \" '{print $2}') )
+             _values 'Vertex generator' $_vgs && ret=0
+             ;;
           bbsm)
-              _bbsms=( $(sed -n '/bb_source_material/, /^\[/ { /string.enumerated_/ p }' \
-                             ${_config}/detector_variants.def | awk -F \" '{print substr($2,8)}' ) )
-              _values 'Source materials' $_bbsms && ret=0
-              ;;
+               _bbsms=( $(sed -n '/bb_source_material/, /^\[/ { /string.enumerated_/ p }' \
+                              ${_config}/detector_variants.def | awk -F \" '{print substr($2,8)}' ) )
+               _values 'Source materials' $_bbsms && ret=0
+               ;;
           vs)
              _vss=( $(sed -n '/parameters\./ { s/....$//p }' \
                           ${_config}/*_variants.def | awk -F \" '{print $2}') )
              _values 'Parameters' $_vss && ret=0
              ;;
-     esac
-  return ret
+       esac
+       return ret
   }
 #+END_SRC
 
