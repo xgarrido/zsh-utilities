@@ -160,32 +160,29 @@ This file contains some function/alias in relation with "work" topic.
           shift 1
       done
       _dump () {
-          local header="[notice: mydpp_processing:"
-          local trailer="]"
+          local prefix="[notice]:"
           declare -A db
           local variants=( $(echo ${opt} | tr " " "\n" | grep 'variant-set') )
           for i in ${variants}; do
               local registry=$(echo $i | awk -F'[=:]' '{print $4}')
               local parameter=$(echo $i | awk -F'[=:]' '{print $5}')
               local value=$(echo $i | awk -F'[=:]' '{print $6}')
-              db[$registry]+="$header$trailer ↳ Parameter '$parameter': $value\n"
+              db[$registry]+="$prefix ↳ Parameter '$parameter': $value\n"
           done
+          echo
           if [ ! -n "${variants}" ]; then
-              echo "$header Variants set to their default values !$trailer"
+              echo "$prefix Variants set to their default values !"
           else
-              echo "$header Variants dump:$trailer"
+              echo "$prefix Variants dump:"
           fi
 
           for k in "${(@k)db}"; do
-              echo "$header$trailer Registry '$k'"
+              echo "$prefix Registry '$k'"
               for i in ${db[$k]}; do
                   echo "$i"
               done
           done
       }
-      if (( $+commands[colout] )); then
-          _dump | colout -t mylogging -T ${zsh_utilities_dir}
-      fi
       _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
       _falaise_version=${FALAISE_VERSION}
       --bxdpp_processing                                                                                                    \
@@ -196,7 +193,9 @@ This file contains some function/alias in relation with "work" topic.
           --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-${_falaise_version}/resources \
           --datatools::resource-path=configuration@${_config}                                                               \
           $(echo ${opt})
-
+      if (( $+commands[colout] )); then
+          _dump | colout -t mylogging -T ${zsh_utilities_dir}
+      fi
       __pkgtools__at_function_exit
       return 0
   }
