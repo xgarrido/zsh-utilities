@@ -46,7 +46,7 @@ This file contains some function/alias in relation with "work" topic.
 
 *** Initialize with a =TBrowser=
 #+BEGIN_SRC sh
-  function root/tbrowser () {
+  function root/newBrowser () {
       local file_list=
       while [ -n "$1" ]; do
           file="$1"
@@ -60,7 +60,12 @@ This file contains some function/alias in relation with "work" topic.
       root -l $(echo ${file_list}) ~/.config/root/macros/newBrowser.C
       return 0;
   }
-  alias rb="root/tbrowser"
+  alias rb="root/newBrowser"
+#+END_SRC
+*** Merge =TTree=
+#+BEGIN_SRC sh
+function root/mergeTree () {
+}
 #+END_SRC
 ** SN@ilWare setup
 *** Environment variable
@@ -231,7 +236,7 @@ This file contains some function/alias in relation with "work" topic.
           {-i,--input-file}'[set an input file (optional)]:file:_files -g    \*.{brio,xml,data.gz,txt}'       \
           {-o,--output-file}'[set the output file (optional)]:file:_files -g \*.{brio,xml,data.gz,txt}'       \
           {-O,--max-records-per-output-file}'[set the maximum number of data records per output file]:number' \
-          '--event-generator}[set event generator]:eg:->eg'                                                   \
+          '--event-generator[set event generator]:eg:->eg'                                                   \
           '--vertex-generator[set vertex generator]:vg:->vg'                                                  \
           '--bz-field[set Bz magnetic field]'                                                                 \
           '--calo-energy-resolution[set main wall energy resolution]'                                         \
