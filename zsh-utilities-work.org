@@ -335,10 +335,10 @@ function root/mergeTree () {
           --bxdpp_processing                                         \
               --module-manager-config ${_config}/module_manager.conf \
               --dlls-config ${_config}/dlls.conf                     \
+              --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-${_falaise_version}/resources \
               $(echo ${opt})
               # --datatools::variant-config=${_config}/snvariant_manager.conf                                                     \
               # --datatools::resource-path=snware@$SNAILWARE_PRO_DIR                                                              \
-              # --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-${_falaise_version}/resources \
               # --datatools::resource-path=configuration@${_config}                                                               \
       else
           pkgtools__msg_error "SN@ilWare has not been set"
@@ -495,7 +495,10 @@ function root/mergeTree () {
   function myvisualize ()
   {
     __pkgtools__at_function_enter myvisualize
-    --flvisualize $@
+    _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
+    --flvisualize                                       \
+    --datatools::resource-path=configuration@${_config} \
+    $@
     __pkgtools__at_function_exit
     return 0
   }
