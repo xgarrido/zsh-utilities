@@ -4,3 +4,5 @@ zsh-utilities-*.zsh
 
 ## documentation
 doc/
+__pycache__
+/*.py*
