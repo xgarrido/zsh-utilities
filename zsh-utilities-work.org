@@ -193,18 +193,20 @@ function root/mergeTree () {
           done
       }
       _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
-      _falaise_version=${FALAISE_VERSION}
-      --bxdpp_processing                                                                                                    \
-          --module-manager-config ${_config}/module_manager.conf                                                            \
-          --dlls-config ${_config}/dlls.conf                                                                                \
-          --datatools::variant-config=${_config}/snvariant_manager.conf                                                     \
-          --datatools::resource-path=snware@$SNAILWARE_PRO_DIR                                                              \
-          --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-${_falaise_version}/resources \
-          --datatools::resource-path=configuration@${_config}                                                               \
+      _snware=$(flquery --prefix | tr -d '\n')/../..
+      _falaise=$(flquery --resourcedir | tr -d '\n')
+      --bxdpp_processing                                                \
+          --module-manager-config ${_config}/module_manager.conf        \
+          --dlls-config ${_config}/dlls.conf                            \
+          --datatools::variant-config=${_config}/snvariant_manager.conf \
+          --datatools::resource-path=snware@${_snware}                  \
+          --datatools::resource-path=falaise@${_falaise}                \
+          --datatools::resource-path=configuration@${_config}           \
           $(echo ${opt})
       if (( $+commands[colout] )); then
           _dump | colout -t mylogging -T ${zsh_utilities_dir}
       fi
+      unset _config _snware _falaise
       __pkgtools__at_function_exit
       return 0
   }
@@ -240,9 +242,10 @@ function root/mergeTree () {
           {-i,--input-file}'[set an input file (optional)]:file:_files -g    \*.{brio,xml,data.gz,txt}'       \
           {-o,--output-file}'[set the output file (optional)]:file:_files -g \*.{brio,xml,data.gz,txt}'       \
           {-O,--max-records-per-output-file}'[set the maximum number of data records per output file]:number' \
-          '--event-generator[set event generator]:eg:->eg'                                                   \
+          '--event-generator[set event generator]:eg:->eg'                                                    \
           '--vertex-generator[set vertex generator]:vg:->vg'                                                  \
-          '--bz-field[set Bz magnetic field]'                                                                 \
+          '--magnetic-field-type[set the magnetic field type]:mft:->mft'                                      \
+          '--Bz-magnitude[set Bz magnetic field magnitude]'                                                   \
           '--calo-energy-resolution[set main wall energy resolution]'                                         \
           '--xcalo-energy-resolution[set X-wall energy resolution]'                                           \
           '--gveto-energy-resolution[set gamma veto energy resolution]'                                       \
@@ -266,8 +269,15 @@ function root/mergeTree () {
           '*: :->args'                                                                                        \
           && ret=0
       case $state in
+          module)
+              _module_all
+              _describe -t modulelist 'module' modulelist && ret=0
+              ;;
+          args)
+              _path_files -/ && ret=0
+              ;;
           log)
-              _logs=(
+              _logss=(
                   "fatal"
                   "critical"
                   "error"
@@ -279,12 +289,13 @@ function root/mergeTree () {
               )
               _values 'Logging priority' $_logs && ret=0
               ;;
-          module)
-              _module_all
-              _describe -t modulelist 'module' modulelist && ret=0
-              ;;
-          args)
-              _path_files -/ && ret=0
+          mft)
+              _mfts=(
+                  "Bz_uniform"
+                  "Bz_polynomial"
+                  "B_mapped"
+              )
+              _values 'Magnetic field type' $_mfts && ret=0
               ;;
           eg)
               _egs=( $(sed -n '/event_generator_name/, /^\[/ { /string.enumerated_/ p }' \
@@ -335,11 +346,10 @@ function root/mergeTree () {
             shift 1
           done
           _config=$SNAILWARE_SIMULATION_DIR/snemo_analysis_modules/config
-          _falaise_version=${FALAISE_VERSION}
-          --bxdpp_processing                                         \
-              --module-manager-config ${_config}/module_manager.conf \
-              --dlls-config ${_config}/dlls.conf                     \
-              --datatools::resource-path=falaise@$SNAILWARE_PRO_DIR/falaise/install/share/Falaise-${_falaise_version}/resources \
+          --bxdpp_processing                                              \
+              --module-manager-config ${_config}/module_manager.conf      \
+              --dlls-config ${_config}/dlls.conf                          \
+              --datatools::resource-path=falaise@$(flquery --resourcedir | tr -d '\n') \
               $(echo ${opt})
               # --datatools::variant-config=${_config}/snvariant_manager.conf                                                     \
               # --datatools::resource-path=snware@$SNAILWARE_PRO_DIR                                                              \
