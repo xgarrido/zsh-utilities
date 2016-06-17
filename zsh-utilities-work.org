@@ -130,9 +130,13 @@ function root/mergeTree () {
                   shift 1
                   opt+="--datatools::variant-set=detector:bb_source_material=snemo::$1 "
                   ;;
-              --bz-field)
+              --Bz-magnitude)
                   shift 1
-                  opt+="--datatools::variant-set=detector:bz_magnitude=$1 "
+                  opt+="--datatools::variant-set=detector:Bz_magnitude=$1 "
+                  ;;
+              --magnetic-field-type)
+                  shift 1
+                  opt+="--datatools::variant-set=detector:magnetic_field_type=$1 "
                   ;;
               --*-energy-resolution | --*-*-energy-threshold)
                   shift 1
