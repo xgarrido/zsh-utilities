@@ -37,7 +37,7 @@ way it should be easy to add its own configuration.
           lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
               __configure_lal_machines
               ;;
-          ccige*|ccage*)
+          ccige*|ccage*|cc*)
               __configure_lyon_machines
               ;;
           *)
