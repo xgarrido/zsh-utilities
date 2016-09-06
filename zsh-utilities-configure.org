@@ -72,11 +72,11 @@ way it should be easy to add its own configuration.
       pkgtools__reset_variable GOPATH ${HOME}/Development/go
       pkgtools__add_path_to_PATH ${GOPATH}/bin
 
-      # Adding also /usr/local/lib to LD_LIBRARY_PATH
-      pkgtools__add_path_to_LD_LIBRARY_PATH /usr/local/lib
-
       # Adding utilities path
       pkgtools__add_path_to_PATH ${HOME}/.bin
+
+      # Reset LD_LIBRARY_PATH
+      unset LD_LIBRARY_PATH
 
       # Set HOST
       pkgtools__reset_variable HOST ${HOSTNAME}
@@ -115,10 +115,12 @@ way it should be easy to add its own configuration.
 
       pkgtools__reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
       pkgtools__reset_variable WORKDIR ${SCRATCH_DIR}/workdir
-      pkgtools__add_path_to_PATH /usr/local/cmake/3.2.2/bin
+      # pkgtools__add_path_to_PATH /usr/local/cmake/3.2.2/bin
       pkgtools__add_path_to_PATH /usr/local/gcc/5.2.0/bin
       pkgtools__add_path_to_LD_LIBRARY_PATH /usr/local/gcc/5.2.0/lib64
 
+      pkgtools__reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.cache
+      pkgtools__add_path_to_PATH ${SCRATCH_DIR}/workdir/supernemo/snware/brew/bin
       __pkgtools__at_function_exit
       return 0
   }
