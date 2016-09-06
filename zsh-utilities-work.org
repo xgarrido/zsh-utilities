@@ -277,7 +277,7 @@ function root/mergeTree () {
               _path_files -/ && ret=0
               ;;
           log)
-              _logss=(
+              _logs=(
                   "fatal"
                   "critical"
                   "error"
@@ -510,9 +510,9 @@ function root/mergeTree () {
   {
     __pkgtools__at_function_enter myvisualize
     _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
-    --flvisualize                                       \
-    --datatools::resource-path=configuration@${_config} \
-    $@
+    --flvisualize $@
+    # --datatools::resource-path=configuration@${_config} \
+    # $@
     __pkgtools__at_function_exit
     return 0
   }
