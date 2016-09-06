@@ -203,6 +203,7 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
       error="red"
       warning="magenta"
       notice="blue"
+      information="cyan"
       debug="green"
       trace="yellow"
       return [
@@ -210,6 +211,7 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
           [ "(^\[error]:|^\[error.*\])(.*$)", error, "bold,normal" ],
           [ "(^\[warning]:|^\[warning.*\])(.*$)", warning, "bold,normal" ],
           [ "(^\[notice]:|^\[notice.*\])(.*$)", notice, "bold,normal" ],
+          [ "(^\[information]:|^\[information.*\])(.*$)", information, "bold,normal" ],
           [ "(^\[debug]:|^\[debug.*\])(.*$)", debug, "bold,normal" ],
           [ "(^\[trace]:|^\[trace.*\])(.*$)", trace, "bold,normal" ],
     ]
@@ -300,11 +302,13 @@ python code to cron syntax.
   cron.command('cp /home/garrido/.emacs.d/tmp/session/emacs.desktop /home/garrido/.emacs.d/tmp/session/emacs-`date +\%Y-\%m-\%d`.desktop', every='monthly')
   cron.command('DISPLAY=:0 /home/garrido/.bin/mybackup --profile lal', every='1.day', at='13:00')
   cron.command('DISPLAY=:0 /home/garrido/.bin/mybackup --profile usb', every='1.day', at='13:00')
+  cron.command('DISPLAY=:0 /home/garrido/.config/openbox/scripts/change-wallpaper fade', every='hourly')
   if __name__ == '__main__':
       cron.run('update')
 #+END_SRC
 
 #+RESULTS:
+: [write] crontab file updated
 
 ** fzf
 fzf is a general-purpose command-line fuzzy finder. See
