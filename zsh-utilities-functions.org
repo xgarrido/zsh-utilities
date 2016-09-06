@@ -444,6 +444,8 @@ db.
               server_name="garrido@xgarrido.synology.me"
               # elif [[ "$1" == "debian" ]]; then
               #     server_name="debian@xgarrido.dyndns.org"
+          elif [[ "$1" == "rpi" ]]; then
+              server_name="osmc@192.168.0.15"
           elif [[ "$1" == "lx3" ]]; then
               server_name="garrido@lx3.lal.in2p3.fr"
           elif [[ "$1" == "daq-nemo" ]]; then
@@ -499,6 +501,7 @@ db.
           laptop:'Laptop machine'
           mac:'iMac machine'
           syno:'Synology server @ home'
+          rpi:'Raspberry Pi'
           lx3:'lxplus machine @ LAL'
           nemo3:'nemo3 machine @ LAL'
           nemo4:'nemo4 machine @ LAL'
