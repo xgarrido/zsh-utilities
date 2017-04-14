@@ -456,6 +456,8 @@ db.
               server_name="nemo@$1"
           elif [[ $1 == pc-91089 ]]; then
               server_name="garrido@$1"
+          elif [[ $1 == pc-mag ]]; then
+              server_name="xavier.garrido@tp-ssh1.dep-informatique.u-psud.fr"
           elif [[ $1 == nemo* ]]; then
               server_name="garrido@$1.lal.in2p3.fr"
               # else
@@ -510,6 +512,7 @@ db.
           pc-nemo5:'H. Gomez machine'
           pc-nemo6:'Student machine'
           pc-nemo8:'G. Eurin machine'
+          pc-mag:'Magistère machine'
       )
       _describe -t _machines 'SSH machines' _machines && ret=0
   }
