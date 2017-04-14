@@ -762,11 +762,57 @@ Astrophysics Data System.
   }
 #+END_SRC
 
+*** Wrapper arround =tikz2pdf=
+#+BEGIN_SRC shell
+  function plot2pdf()
+  {
+      local dirs
+      local files
+      local options
+      for i in $@
+      do
+          if [ -f $i ]; then
+              files+="$i "
+          elif [ -d $i ]; then
+              dirs+="$i "
+          else
+              options+="$i "
+          fi
+      done
+      if [[ -z ${dirs} && -z ${files} ]]; then
+        pkgtools__msg_notice "Adding current directory"
+        dirs="."
+      fi
+      for d in ${=dirs}
+      do
+          for f in $(find $d -name "*.pgf" -o -name "*.tikz")
+          do
+            files+="$f "
+          done
+      done
+      for f in ${=files}
+      do
+          file=$(echo $f)
+          base=${f%.*}
+          pdf=$base.pdf
+
+          if [[ ! -a $pdf || $file -nt $pdf ]]; then
+              # Remove 'Dimension too large'
+              sed -i -e 's/\(.*pgfqpoint{.*}{\)\(-[2-9][0-9][0-9]\)\(.*in}.*\)/\1-200\3/g' $file
+              eval $(echo tikz2pdf ${options} ${file})
+          else
+            pkgtools__msg_notice "File '$file' already processed"
+          fi
+      done
+  }
+  compdef _tikz2pdf plot2pdf
+#+END_SRC
+
 ** Mounting/unmounting USB drives
 #+BEGIN_SRC sh
-  function usb_umount ()
+  function usb_umount()
   {
-      for d in /media/*; do
+      for d in /run/media/*; do
           sudo umount $d
       done
       sudo modprobe usb_storage
