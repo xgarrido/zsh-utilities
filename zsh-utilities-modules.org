@@ -166,7 +166,7 @@ be colored bold strings, for instance.
 #+END_SRC
 
 **** =ninja= theme
-#+BEGIN_SRC python :tangle colout_ninja.py
+#+BEGIN_SRC python :tangle colout_myninja.py
   def theme():
       # Ninja theme:
       #  actions building
@@ -256,7 +256,7 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
   if (( $+commands[ninja] )); then
       function ninja ()
       {
-          $(pkgtools__get_binary_path ninja) $@ | colout -t cmake | colout -t myg++ -T ${zsh_utilities_dir} | colout -t ninja -T ${zsh_utilities_dir}
+          $(pkgtools__get_binary_path ninja) $@ | colout -t cmake | colout -t myg++ -T ${zsh_utilities_dir} | colout -t myninja -T ${zsh_utilities_dir}
       }
   fi
 #+END_SRC
