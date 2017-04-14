@@ -763,7 +763,7 @@ Astrophysics Data System.
 #+END_SRC
 
 *** Wrapper arround =tikz2pdf=
-#+BEGIN_SRC shell
+#+BEGIN_SRC sh
   function plot2pdf()
   {
       local dirs
