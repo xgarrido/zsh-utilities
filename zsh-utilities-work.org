@@ -90,11 +90,12 @@ function root/mergeTree () {
   {
       mkdir -p /tmp/garrido/snemo.d
       if (( $+commands[colout] )); then
-          $(pkgtools__get_binary_path bxdpp_processing) $@ 2>&1 | \
+          TIMEFMT="$terminfo[bold]$fg[blue][notice]:${reset_color}$fg[blue] %U user %S system %P cpu %*E total";\
+              time $(pkgtools__get_binary_path bxdpp_processing) $@ 2>&1 | \
               colout -t mylogging -T ${zsh_utilities_dir} | \
               colout "([0-9]+) (pro.*:)(.*\))(.*\))" blue,blue,green,red bold,normal,bold,bold
       else
-          $(pkgtools__get_binary_path bxdpp_processing) $@
+          time $(pkgtools__get_binary_path bxdpp_processing) $@
       fi
   }
   function --bxocd_manual ()
