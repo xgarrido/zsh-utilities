@@ -103,3 +103,8 @@ Options for =less= program are the following
 #+BEGIN_SRC sh
   alias start_server='python -m http.server 8888'
 #+END_SRC
+
+** Raspeberry pi transmission
+#+BEGIN_SRC sh
+  alias transmission-rpi="transmission-remote-gtk"
+#+END_SRC
