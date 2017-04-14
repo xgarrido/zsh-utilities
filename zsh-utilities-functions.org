@@ -1321,3 +1321,13 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
       return 0
   }
 #+END_SRC
+*** Kill =offlineimap=
+#+BEGIN_SRC shell
+  function kill_offlineimap()
+  {
+      pids=$(psgrep offlineimap | awk '{print $2}')
+      for pid in ${=pids}; do
+          kill -9 $pid
+      done
+  }
+#+END_SRC
