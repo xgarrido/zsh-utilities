@@ -215,6 +215,8 @@ function root/mergeTree () {
 
 ***** Completion function
 #+BEGIN_SRC shell
+  autoload -Uz compinit
+  compinit -C -d "$ANTIGEN_COMPDUMP"
   compdef _mydpp_processing mydpp_processing
   function _mydpp_processing ()
   {
@@ -309,22 +311,22 @@ function root/mergeTree () {
               _values 'Single particle generator name' $_spgs && ret=0
               ;;
           vg)
-             _vgs=( $(sed -n '/vertex_generator_name/, /^\[/ { /string.enumerated_/ p }' \
-                          ${_config}/simulation_variants.def | awk -F \" '{print $2}') )
-             _values 'Vertex generator' $_vgs && ret=0
-             ;;
+              _vgs=( $(sed -n '/vertex_generator_name/, /^\[/ { /string.enumerated_/ p }' \
+                           ${_config}/simulation_variants.def | awk -F \" '{print $2}') )
+              _values 'Vertex generator' $_vgs && ret=0
+              ;;
           bbsm)
-               _bbsms=( $(sed -n '/bb_source_material/, /^\[/ { /string.enumerated_/ p }' \
-                              ${_config}/detector_variants.def | awk -F \" '{print substr($2,8)}' ) )
-               _values 'Source materials' $_bbsms && ret=0
-               ;;
+              _bbsms=( $(sed -n '/bb_source_material/, /^\[/ { /string.enumerated_/ p }' \
+                             ${_config}/detector_variants.def | awk -F \" '{print substr($2,8)}' ) )
+              _values 'Source materials' $_bbsms && ret=0
+              ;;
           vs)
-             _vss=( $(sed -n '/parameters\./ { s/....$//p }' \
-                          ${_config}/*_variants.def | awk -F \" '{print $2}') )
-             _values 'Parameters' $_vss && ret=0
-             ;;
-       esac
-       return ret
+              _vss=( $(sed -n '/parameters\./ { s/....$//p }' \
+                           ${_config}/*_variants.def | awk -F \" '{print $2}') )
+              _values 'Parameters' $_vss && ret=0
+              ;;
+      esac
+      return ret
   }
 #+END_SRC
 

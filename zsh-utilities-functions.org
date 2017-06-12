@@ -492,6 +492,8 @@ db.
       return 0
   }
   # Connect completion system
+  autoload -Uz compinit
+  compinit -C -d "$ANTIGEN_COMPDUMP"
   compdef _connect connect
 
   function _connect ()
