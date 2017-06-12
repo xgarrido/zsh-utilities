@@ -196,13 +196,13 @@ function root/mergeTree () {
       _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
       _snware=$(flquery --prefix | tr -d '\n')/../..
       _falaise=$(flquery --resourcedir | tr -d '\n')
-      --bxdpp_processing                                                \
-          --module-manager-config ${_config}/module_manager.conf        \
-          --dlls-config ${_config}/dlls.conf                            \
-          --datatools::variant-config=${_config}/snvariant_manager.conf \
-          --datatools::resource-path=snware@${_snware}                  \
-          --datatools::resource-path=falaise@${_falaise}                \
-          --datatools::resource-path=configuration@${_config}           \
+      --bxdpp_processing                                         \
+          --module-manager-config ${_config}/module_manager.conf \
+          --dlls-config ${_config}/dlls.conf                     \
+          --variant-config ${_config}/snvariant_manager.conf     \
+          --datatools::resource-path=snware@${_snware}           \
+          --datatools::resource-path=falaise@${_falaise}         \
+          --datatools::resource-path=configuration@${_config}    \
           $(echo ${opt})
       if (( $+commands[colout] )); then
           _dump | colout -t mylogging -T ${zsh_utilities_dir}
