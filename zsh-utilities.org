@@ -91,17 +91,6 @@ order* since there are some dependencies.
     source ${zsh_utilities_dir}/zsh-utilities-pkgtools.zsh
   #+END_SRC
 
-- Machine configuration in [[file:zsh-utilities-configure.org][zsh-utilities-configure]]
-  #+BEGIN_SRC sh
-    source ${zsh_utilities_dir}/zsh-utilities-configure.zsh
-  #+END_SRC
-
-  After "sourcing", we must run the private function =__configure_machine= to
-  get defined environment variable related to local machine.
-  #+BEGIN_SRC sh
-    __configure_machine
-  #+END_SRC
-
 - Some =zsh= default and custom settings in [[file:zsh-utilities-settings.org][zsh-utilities-settings]]
   #+BEGIN_SRC sh
     source ${zsh_utilities_dir}/zsh-utilities-settings.zsh
@@ -120,6 +109,17 @@ order* since there are some dependencies.
 - Work (mainly SuperNEMO software) related functions in [[file:zsh-utilities-work.org][zsh-utilities-work]]
   #+BEGIN_SRC sh
     source ${zsh_utilities_dir}/zsh-utilities-work.zsh
+  #+END_SRC
+
+- Machine configuration in [[file:zsh-utilities-configure.org][zsh-utilities-configure]]
+  #+BEGIN_SRC sh
+    source ${zsh_utilities_dir}/zsh-utilities-configure.zsh
+  #+END_SRC
+
+  After "sourcing", we must run the private function =__configure_machine= to
+  get defined environment variable related to local machine.
+  #+BEGIN_SRC sh
+    __configure_machine
   #+END_SRC
 
 ** Custom plugins

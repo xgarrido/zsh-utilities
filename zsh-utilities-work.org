@@ -543,12 +543,65 @@ function root/mergeTree () {
   }
 #+END_SRC
 ** Lyon ccali aliases
+*** Preamble
 #+BEGIN_SRC sh
-  if [[ $HOSTNAME = ccage* ]]; then
+  if [[ $HOSTNAME = cc* ]]; then
+#+END_SRC
+
+*** =qsub= aliases
+#+BEGIN_SRC sh
+  alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
+  alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
+#+END_SRC
+*** SuperNEMO configuration
+#+BEGIN_SRC sh
+  function do_nemo_setup()
+  {
       alias qjob_nemo_user='echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| tail -n+3 | grep nemo | awk "{print \$5}" | sort | uniq -c'
-      alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
-      alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
       alias qjob_summary='qjob_my_total; qjob_my_run; qjob_nemo_user'
+
+      pkgtools__add_path_to_PATH /usr/local/gcc/5.2.0/bin
+      pkgtools__reset_variable LD_LIBRARY_PATH /usr/local/gcc/5.2.0/lib64
+
+      pkgtools__reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.cache
+      # pkgtools__reset_variable HOMEBREW_TEMP ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.tmp
+      pkgtools__reset_variable HOMEBREW_MAKE_JOBS 4
+      pkgtools__add_path_to_PATH ${SCRATCH_DIR}/workdir/supernemo/snware/brew/bin
+  }
+#+END_SRC
+*** CMB configuration
+#+BEGIN_SRC sh
+  function do_cmb_setup()
+  {
+      alias qjob_planck_user='echo "Number of jobs run by Planck users"; qstat -u \* -ext -s r| tail -n+3 | grep planck | awk "{print \$5}" | sort | uniq -c'
+      alias qjob_summary='qjob_my_total; qjob_my_run; qjob_planck_user'
+
+      # CMB data
+      pkgtools__reset_variable CAMEL /sps/planck/camel
+      pkgtools__reset_variable CAMEL_DATA ${CAMEL}/camel_data
+      pkgtools__reset_variable PLANCK_DATA ${CAMEL}/planck_data
+
+      # PICO
+      pkgtools__reset_variable PYTHONHOME /sps/planck/camel/Anaconda2/${SYSNAME}
+      pkgtools__reset_variable PICO_CODE ${PYTHONHOME}/lib/python2.7/site-packages/pypico
+      pkgtools__reset_variable PICO_DATA ${CAMEL}/pico3_tailmonty_v34.dat
+      pkgtools__add_path_to_LD_LIBRARY_PATH ${PYTHONHOME}/lib
+
+      # CLIK
+      pkgtools__reset_variable CLIKDIR ${CAMEL}/plc-2.0
+
+      # CMT setup
+      pkgtools__reset_variable CMTCLASS ${CAMEL}
+      # camelroot=$WORKDIR/cmb/CAMEL/HEAD
+      camelroot=/sps/planck/Temp/garrido.d/CAMEL/HEAD
+      cd ${camelroot}/cmt
+      source camel_setup.sh > /dev/null 2>&1
+      pkgtools__add_path_to_PATH ${camelroot}/Linux-x86_64
+      cd ${camelroot}/../..
+  }
+#+END_SRC
+*** Postamble
+#+BEGIN_SRC sh
   fi
 #+END_SRC
 
