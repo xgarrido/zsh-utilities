@@ -125,43 +125,43 @@ function root/mergeTree () {
               --*-generator)
                   shift 1
                   local parameter=${token:2}
-                  opt+="--datatools::variant-set=simulation:${parameter//-/_}_name=$1 "
+                  opt+="--variant-set=simulation:${parameter//-/_}_name=$1 "
                   ;;
               --source-material)
                   shift 1
-                  opt+="--datatools::variant-set=detector:bb_source_material=snemo::$1 "
+                  opt+="--variant-set=detector:bb_source_material=snemo::$1 "
                   ;;
               --Bz-magnitude)
                   shift 1
-                  opt+="--datatools::variant-set=detector:Bz_magnitude=$1 "
+                  opt+="--variant-set=detector:Bz_magnitude=$1 "
                   ;;
               --magnetic-field-type)
                   shift 1
-                  opt+="--datatools::variant-set=detector:magnetic_field_type=$1 "
+                  opt+="--variant-set=detector:magnetic_field_type=$1 "
                   ;;
               --*-energy-resolution | --*-*-energy-threshold)
                   shift 1
                   local parameter=${token:2}
-                  opt+="--datatools::variant-set=detector:${parameter//-/_}=$1 "
+                  opt+="--variant-set=detector:${parameter//-/_}=$1 "
                   ;;
               --random-seeds)
-                  opt+="--datatools::variant-set=simulation:random_seed_flag=true "
+                  opt+="--variant-set=simulation:random_seed_flag=true "
                   ;;
               --spg-*)
                   shift 1
                   local parameter=${token:2}
-                  opt+="--datatools::variant-set=simulation:${parameter//-/_}=$1 "
+                  opt+="--variant-set=simulation:${parameter//-/_}=$1 "
                   ;;
               --output-path)
                   shift 1
                   if [ ! -d $1 ]; then
                       mkdir -p $1
                   fi
-                  opt+="--datatools::variant-set=core:output_path=$1 "
+                  opt+="--variant-set=core:output_path=$1 "
                   ;;
               --dev-logging)
                   shift 1
-                  opt+="--datatools::variant-set=core:logging_priority=$1 "
+                  opt+="--variant-set=core:logging_priority=$1 "
                   ;;
               *)
                   opt+="$token "
@@ -174,9 +174,9 @@ function root/mergeTree () {
           declare -A db
           local variants=( $(echo ${opt} | tr " " "\n" | grep 'variant-set') )
           for i in ${variants}; do
-              local registry=$(echo $i | awk -F'[=:]' '{print $4}')
-              local parameter=$(echo $i | awk -F'[=:]' '{print $5}')
-              local value=$(echo $i | awk -F'[=:]' '{print $6}')
+              local registry=$(echo $i | awk -F'[=:]' '{print $2}')
+              local parameter=$(echo $i | awk -F'[=:]' '{print $3}')
+              local value=$(echo $i | awk -F'[=:]' '{print $4}')
               db[$registry]+="$prefix ↳ Parameter '$parameter': $value\n"
           done
           echo
