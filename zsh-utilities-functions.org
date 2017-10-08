@@ -445,7 +445,7 @@ db.
               # elif [[ "$1" == "debian" ]]; then
               #     server_name="debian@xgarrido.dyndns.org"
           elif [[ "$1" == "rpi" ]]; then
-              server_name="osmc@192.168.0.14"
+              server_name="osmc@88.170.236.68"
           elif [[ "$1" == "lx3" ]]; then
               server_name="garrido@lx3.lal.in2p3.fr"
           elif [[ "$1" == "daq-nemo" ]]; then
