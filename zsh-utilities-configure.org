@@ -45,7 +45,7 @@ way it should be easy to add its own configuration.
               if [ $? -eq 0 ]; then
                   __configure_$(hostname)
               else
-                  pkgtools__msg_warning "No configuration for machine '$(hostname)' has been found ! Use default one"
+                  pkgtools__msg_debug "No configuration for machine '$(hostname)' has been found ! Use default one"
                   __configure_default
               fi
               ;;
