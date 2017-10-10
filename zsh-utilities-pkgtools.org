@@ -29,6 +29,7 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
       __pkgtools__ui_gui=0
       __pkgtools__os=$(uname -s)
       __pkgtools__arch=$(uname -m | sed 's/ //g')
+      __pkgtools__answer_is_yes=false
       return 0
   }
   __pkgtools__default_values
@@ -375,7 +376,7 @@ Use to print message requiring different level of attention.
               nlines=6
           fi
           ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
-              --colors --msgbox "\Z4NOTICE:\n\Zn ${message}" ${nlines} ${max_ncols}
+                                       --colors --msgbox "\Z4NOTICE:\n\Zn ${message}" ${nlines} ${max_ncols}
           return 0
       fi
       return 0
@@ -396,7 +397,7 @@ Use to print message requiring different level of attention.
       if [ $? -eq 0 ]; then
           message="$@"
           ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
-              --colors --msgbox "\Z4\ZbNOTICE:\n\Zn ${message}" 10 40
+                                       --colors --msgbox "\Z4\ZbNOTICE:\n\Zn ${message}" 10 40
           return 0
       fi
       return 0
@@ -428,7 +429,7 @@ Use to print message requiring different level of attention.
       if [ $? -eq 0 ]; then
           message="$@"
           ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
-              --colors --msgbox "\Z4\ZbINFO:\n\Zn ${message}" 10 40
+                                       --colors --msgbox "\Z4\ZbINFO:\n\Zn ${message}" 10 40
           return 0
       fi
       return 0
@@ -515,7 +516,7 @@ Use to print message requiring different level of attention.
       if [ $? -eq 0 ]; then
           message="$@"
           ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
-              --colors --msgbox "\Z5WARNING:\n\Zn ${message}" 10 40
+                                       --colors --msgbox "\Z5WARNING:\n\Zn ${message}" 10 40
           return 0
       fi
       return 0
@@ -538,7 +539,7 @@ Use to print message requiring different level of attention.
       if [ $? -eq 0 ]; then
           message="$@"
           ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
-              --colors --msgbox "\Z1ERROR:\n\Zn ${message}" 10 40
+                                       --colors --msgbox "\Z1ERROR:\n\Zn ${message}" 10 40
           return 0
       fi
       return 0
@@ -640,54 +641,54 @@ Use to print message requiring different level of attention.
   }
 #+END_SRC
 *** Misc.
-  #+BEGIN_SRC sh
-    function __pkgtools__base_msg_prefix ()
-    {
-        local log_file=
-        if [ "x${PKGTOOLS_LOG_FILE}" != "x" ]; then
-            log_file=${PKGTOOLS_LOG_FILE}
-        else
-            log_file=/dev/null
-        fi
-        local msg_prefix="$1"
-        (
-            (
-                echo -n "${msg_prefix}: "
-            ) | tee -a ${log_file}
-        ) 1>&2
-        return 0
-    }
+#+BEGIN_SRC sh
+  function __pkgtools__base_msg_prefix ()
+  {
+      local log_file=
+      if [ "x${PKGTOOLS_LOG_FILE}" != "x" ]; then
+          log_file=${PKGTOOLS_LOG_FILE}
+      else
+          log_file=/dev/null
+      fi
+      local msg_prefix="$1"
+      (
+          (
+              echo -n "${msg_prefix}: "
+          ) | tee -a ${log_file}
+      ) 1>&2
+      return 0
+  }
 
-    function __pkgtools__base_msg ()
-    {
-        local log_file=
-        if [ "x${PKGTOOLS_LOG_FILE}" != "x" ]; then
-            log_file=${PKGTOOLS_LOG_FILE}
-        else
-            log_file=/dev/null
-        fi
-        (
-            (
-                if [ ${__pkgtools__msg_use_date} -eq 1 ]; then
-                    date +%F-%T | tr -d '\n'
-                    echo -n " @ "
-                fi
-                if [ "x${appname}" != "x" ]; then
-                    echo -n "${appname}: "
-                fi
-                if [ "x${__pkgtools__msg_funcname}" != "x" ]; then
-                    echo -n "${__pkgtools__msg_funcname}: "
-                fi
-                if [ ${__pkgtools__msg_split_lines} -eq 1 ]; then
-                    echo ""
-                    echo -n "  "
-                fi
-                echo "$@"
-            ) | tee -a ${log_file}
-        ) 1>&2
-        return 0;
-    }
- #+END_SRC
+  function __pkgtools__base_msg ()
+  {
+      local log_file=
+      if [ "x${PKGTOOLS_LOG_FILE}" != "x" ]; then
+          log_file=${PKGTOOLS_LOG_FILE}
+      else
+          log_file=/dev/null
+      fi
+      (
+          (
+              if [ ${__pkgtools__msg_use_date} -eq 1 ]; then
+                  date +%F-%T | tr -d '\n'
+                  echo -n " @ "
+              fi
+              if [ "x${appname}" != "x" ]; then
+                  echo -n "${appname}: "
+              fi
+              if [ "x${__pkgtools__msg_funcname}" != "x" ]; then
+                  echo -n "${__pkgtools__msg_funcname}: "
+              fi
+              if [ ${__pkgtools__msg_split_lines} -eq 1 ]; then
+                  echo ""
+                  echo -n "  "
+              fi
+              echo "$@"
+          ) | tee -a ${log_file}
+      ) 1>&2
+      return 0;
+  }
+#+END_SRC
 
 ** Shell utilities
 *** Check if a environment variable is set
@@ -695,9 +696,9 @@ Use to print message requiring different level of attention.
   function pkgtools__check_variable ()
   {
       if env | grep -q "^$1="; then
-        return 0
+          return 0
       else
-        return 1
+          return 1
       fi
   }
 #+END_SRC
@@ -717,8 +718,8 @@ already present. In such way, it prevents cumbersome of environment variables.
       # Export it if empty
       [[ ! -n ${_path} ]] && export $1
       case ":$_path:" in
-          *":$2:"*) :;; # already there
-          *) eval $(echo $1="$2${_path:+":$_path"}");;
+          ,*":$2:"*) :;; # already there
+          ,*) eval $(echo $1="$2${_path:+":$_path"}");;
       esac
       return 0
   }
@@ -870,6 +871,42 @@ variable.
           eval $1
       fi
       if $(pkgtools__last_command_fails); then
+          return 1
+      else
+          return 0
+      fi
+  }
+#+END_SRC
+*** Yes/No question
+#+BEGIN_SRC sh
+  function pkgtools__yesno_question ()
+  {
+      yesno=("yes" "no")
+      select ans in "${yesno[@]}"
+      do
+          case $ans in
+              [Yy]*)
+                  __pkgtools_answer_is_yes=true
+                  break
+                  ;;
+              [Nn]*)
+                  __pkgtools_answer_is_yes=false
+                  break
+                  ;;
+          esac
+      done
+  }
+  function pkgtools__answer_is_yes ()
+  {
+      if ${__pkgtools_answer_is_yes}; then
+          return 0
+      else
+          return 1
+      fi
+  }
+  function pkgtools__answer_is_no ()
+  {
+      if ${__pkgtools_answer_is_yes}; then
           return 1
       else
           return 0
