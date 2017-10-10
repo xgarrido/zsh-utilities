@@ -25,9 +25,9 @@ This file defines some basic but nevertheless fundamental aliases.
 #+END_SRC
 
 ** Alias =cp= to =gcp=
-[[http://wiki.goffi.org/wiki/Gcp][=gcp= ]] is a python script to provide a user friendly frontend to =cp= unix
+[[http://wiki.goffi.org/wiki/Gcp][=gcp=]] is a python script to provide a user friendly frontend to =cp= unix
 command.
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :tangle no
   if (( $+commands[gcp] )); then
       alias cp='/usr/bin/gcp -f'
       compdef _files gcp
