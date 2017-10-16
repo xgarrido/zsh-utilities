@@ -346,10 +346,10 @@ Use to print message requiring different level of attention.
 #+BEGIN_SRC sh
   function pkgtools__msg_notice ()
   {
-      pkgtools__msg_is_quiet
-      if [ $? -eq 0 ]; then
-          return 0
-      fi
+      # pkgtools__msg_is_quiet
+      # if [ $? -eq 0 ]; then
+      #     return 0
+      # fi
 
       pkgtools__msg_color_blue
       __pkgtools__base_msg_prefix "NOTICE"
@@ -718,8 +718,8 @@ already present. In such way, it prevents cumbersome of environment variables.
       # Export it if empty
       [[ ! -n ${_path} ]] && export $1
       case ":$_path:" in
-          ,*":$2:"*) :;; # already there
-          ,*) eval $(echo $1="$2${_path:+":$_path"}");;
+          *":$2:"*) :;; # already there
+          *) eval $(echo $1="$2${_path:+":$_path"}");;
       esac
       return 0
   }
