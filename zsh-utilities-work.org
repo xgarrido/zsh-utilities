@@ -588,8 +588,11 @@ function root/mergeTree () {
       pkgtools__add_path_to_PATH /usr/local/python/python-2.7/bin
 
       # MKL
-      pkgtools__add_path_to_PATH /usr/local/intel/compilers_and_libraries_2017/linux/bin/intel64
-      pkgtools__add_path_to_LD_LIBRARY_PATH /usr/local/intel/compilers_and_libraries_2017/linux/mkl/lib/intel64_lin
+      local intel_compiler_library=/usr/local/intel/compilers_and_libraries_2017/linux
+      pkgtools__add_path_to_PATH ${intel_compiler_library}/bin/intel64
+      pkgtools__add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
+      pkgtools__reset_variable MKLROOT ${intel_compiler_library}/mkl
+      pkgtools__add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
 
 
       # # CAMEL
