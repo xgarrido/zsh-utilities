@@ -867,10 +867,8 @@ variable.
           fi
       else
           if eval "$@"; then
-            echo "fine"
               return 0
           else
-            echo "not fine"
               return 1
           fi
       fi
