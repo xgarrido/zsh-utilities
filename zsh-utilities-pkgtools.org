@@ -19,7 +19,6 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
       __pkgtools__msg_use_date=0
       __pkgtools__msg_split_lines=0
       __pkgtools__msg_quiet=0
-      __pkgtools__msg_verbose=0
       __pkgtools__msg_warning=1
       __pkgtools__msg_debug=0
       __pkgtools__msg_devel=0
@@ -30,6 +29,7 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
       __pkgtools__os=$(uname -s)
       __pkgtools__arch=$(uname -m | sed 's/ //g')
       __pkgtools__answer_is_yes=false
+      __pkgtools__stored_pwd=
       return 0
   }
   __pkgtools__default_values
@@ -412,10 +412,6 @@ Use to print message requiring different level of attention.
           return 0
       fi
 
-      if [ ${__pkgtools__msg_verbose} -eq 0 ]; then
-          return 0
-      fi
-
       pkgtools__msg_color_blue
       __pkgtools__base_msg_prefix "INFO"
       __pkgtools__base_msg  $@
@@ -439,13 +435,13 @@ Use to print message requiring different level of attention.
 #+BEGIN_SRC sh
   function pkgtools__msg_using_verbose ()
   {
-      __pkgtools__msg_verbose=1
+      __pkgtools__msg_quiet=0
       return 0
   }
 
   function pkgtools__msg_not_using_verbose ()
   {
-      __pkgtools__msg_verbose=0
+      __pkgtools__msg_quiet=1
       return 0
   }
 
@@ -585,7 +581,6 @@ Use to print message requiring different level of attention.
 #+BEGIN_SRC sh
   function pkgtools__msg_using_quiet ()
   {
-      pkgtools__msg_using_verbose
       __pkgtools__msg_quiet=1
       return 0
   }
@@ -598,17 +593,16 @@ Use to print message requiring different level of attention.
 
   function pkgtools__msg_is_quiet ()
   {
-      local quiet_ret=1 # false
       if [ "x${PKGTOOLS_MSG_QUIET}" != "x" ]; then
           if [ "x${PKGTOOLS_MSG_QUIET}" != "x0" ]; then
-              quiet_ret=0 # false
+              return 0 # false
           fi
       else
           if [ ${__pkgtools__msg_quiet} -eq 1  ]; then
-              quiet_ret=0 # true
+              return 0 # true
           fi
       fi
-      return ${quiet_ret}
+      return 1
   }
 #+END_SRC
 *** Print date
@@ -866,14 +860,19 @@ variable.
   function pkgtools__quietly_run ()
   {
       if $(pkgtools__msg_is_quiet); then
-          eval $1 > /dev/null 2>&1
+          if eval "$@" > /dev/null 2>&1; then
+              return 0
+          else
+              return 1
+          fi
       else
-          eval $1
-      fi
-      if $(pkgtools__last_command_fails); then
-          return 1
-      else
-          return 0
+          if eval "$@"; then
+            echo "fine"
+              return 0
+          else
+            echo "not fine"
+              return 1
+          fi
       fi
   }
 #+END_SRC
@@ -911,5 +910,34 @@ variable.
       else
           return 0
       fi
+  }
+#+END_SRC
+*** Enter directory and store PWD
+#+BEGIN_SRC sh
+  function pkgtools__enter_directory ()
+  {
+      local dir=$1
+      if [[ -z $dir ]]; then
+          pkgtools__msg_error "Empty directory !"
+          return 1
+      elif [[ ! -d $dir ]]; then
+          pkgtools__msg_devel "Creating directory '${dir}'"
+          mkdir -p $dir
+      fi
+      __pkgtools__stored_pwd="$PWD"
+      cd $dir
+      return 0
+  }
+#+END_SRC
+*** Leave directory and get back to PWD
+#+BEGIN_SRC sh
+  function pkgtools__exit_directory ()
+  {
+      if [[ -z ${__pkgtools__stored_pwd} ]]; then
+          pkgtools__msg_error "No stacked directory!"
+          return 1
+      fi
+      cd ${__pkgtools__stored_pwd}
+      return 0
   }
 #+END_SRC
