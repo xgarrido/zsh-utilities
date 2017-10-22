@@ -322,13 +322,15 @@ fzf is a general-purpose command-line fuzzy finder. See
 #+BEGIN_SRC sh
   if (( $+commands[fzf] )); then
 #+END_SRC
+*** Use =ag=
+#+BEGIN_SRC sh
+  if (( $+commands[ag] )); then
+      export FZF_DEFAULT_COMMAND='ag -g ""'
+  fi
+#+END_SRC
 *** Color scheme
 #+BEGIN_SRC sh
   export FZF_DEFAULT_OPTS='--color=16,info:4,pointer:3,bg+:15'
-#+END_SRC
-*** alias
-#+BEGIN_SRC sh
-  alias f='fzf'
 #+END_SRC
 *** =fj= - changing directory with fasd
 #+BEGIN_SRC sh
@@ -340,21 +342,27 @@ fzf is a general-purpose command-line fuzzy finder. See
 *** =fo= - open file
 #+BEGIN_SRC sh
   fo() {
-      local out file key
-      out=$(fzf --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
-      key=$(head -1 <<< "$out")
-      file=$(head -2 <<< "$out" | tail -1)
-      if [ -n "$file" ]; then
-          [ "$key" = ctrl-o ] && xdg-open "$file" || ec "$file"
-      fi
+      (
+          cd ~
+          local out file key
+          IFS=$'\n' out=$(fzf --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
+          key=$(head -1 <<< "$out")
+          file=$(head -2 <<< "$out" | tail -1)
+          if [ -n "$file" ]; then
+              [ "$key" = ctrl-e ] && ec "$file" || xdg-open "$file"
+          fi
+      )
   }
 #+END_SRC
-*** =cdf= - go to the directory where the file is
+*** =fd= - go to the directory where the file is
 #+BEGIN_SRC sh
-  cdf() {
+  fd() {
+    (
+      cd ~
       local file
       local dir
       file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
+    )
   }
 #+END_SRC
 
