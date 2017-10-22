@@ -80,7 +80,7 @@ way it should be easy to add its own configuration.
 
       # Set HOST
       pkgtools__reset_variable HOST ${HOSTNAME}
-      pkgtools__reset_variable WORKDIR ${HOME}/Workdir/NEMO
+      pkgtools__reset_variable WORKDIR ${HOME}/Workdir
 
       # Set EDITOR
       pkgtools__reset_variable EDITOR "ec"
@@ -132,7 +132,7 @@ way it should be easy to add its own configuration.
       done
 
       # Homemade software for everybody
-      pkgtools__add_path_to_PATH /sps/nemo/scratch/garrido/software/bin
+      pkgtools__add_path_to_PATH ${SCRATCH_DIR}/software/bin
 
       __pkgtools__at_function_exit
       return 0

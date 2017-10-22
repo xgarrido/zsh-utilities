@@ -70,9 +70,7 @@ function root/mergeTree () {
 ** SN@ilWare setup
 *** Environment variable
 #+BEGIN_SRC sh
-  export SNAILWARE_SIMULATION_DIR=$WORKDIR/supernemo/simulations
-  export BAYEUX_VERSION=2.1.0
-  export FALAISE_VERSION=2.1.0
+  pkgtools__reset_variable SNAILWARE_SIMULATION_DIR $WORKDIR/NEMO/supernemo/simulations
 #+END_SRC
 
 *** =Bayeux/Falaise= wrappers
@@ -566,7 +564,6 @@ function root/mergeTree () {
       pkgtools__reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.cache
       # pkgtools__reset_variable HOMEBREW_TEMP ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.tmp
       pkgtools__reset_variable HOMEBREW_MAKE_JOBS 4
-      pkgtools__add_path_to_PATH ${SCRATCH_DIR}/workdir/supernemo/snware/brew/bin
   }
 #+END_SRC
 *** CMB configuration
@@ -593,38 +590,6 @@ function root/mergeTree () {
       pkgtools__add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
       pkgtools__reset_variable MKLROOT ${intel_compiler_library}/mkl
       pkgtools__add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
-
-
-      # # CAMEL
-      # pkgtools__reset_variable CAMEL /sps/planck/camel
-
-      # # CMB data
-      # pkgtools__reset_variable CAMEL_DATA ${CAMEL}/camel_data
-      # pkgtools__reset_variable PLANCK_DATA ${CAMEL}/planck_data
-
-      # # CLIK
-      # pkgtools__reset_variable CLIKDIR ${CAMEL}/plc-2.0
-
-      # # PYTHON
-      # pkgtools__reset_variable PYTHONHOME /sps/planck/camel/Anaconda2/${SYSNAME}
-      # pkgtools__add_path_to_LD_LIBRARY_PATH ${PYTHONHOME}/lib
-      # pkgtools__add_path_to_PATH ${PYTHONHOME}/bin
-
-      # # PICO
-      # # source ${CAMEL}/anaconda_setup.sh
-      # pkgtools__reset_variable PICO_CODE ${PYTHONHOME}/lib/python2.7/site-packages/pypico
-      # pkgtools__reset_variable PICO_DATA ${CAMEL}/pico3_tailmonty_v34.dat
-
-      # # CMT setup
-      # pkgtools__reset_variable CMTCLASS ${CAMEL}
-      # pkgtools__reset_variable CMTCONFIG ${CMTBIN}
-
-      # # camelroot=$WORKDIR/cmb/CAMEL/HEAD
-      # camelroot=/sps/planck/Temp/garrido.d/CAMEL/HEAD
-      # cd ${camelroot}/cmt
-      # source camel_setup.sh > /dev/null 2>&1
-      # cd ${camelroot}/../..
-      # pkgtools__add_path_to_PATH ${camelroot}/Linux-x86_64
   }
 #+END_SRC
 *** Postamble
