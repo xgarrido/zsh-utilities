@@ -830,7 +830,7 @@ variable.
 #+BEGIN_SRC sh
   function pkgtools__at_LAL ()
   {
-      ping -c 1 pc-nemo9 > /dev/null 2>&1
+      ping -c 1 nemo4 > /dev/null 2>&1
       return $?
   }
 #+END_SRC
