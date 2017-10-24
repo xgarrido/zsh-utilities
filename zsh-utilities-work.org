@@ -191,15 +191,17 @@ function root/mergeTree () {
               done
           done
       }
-      _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
-      _snware=$(flquery --prefix | tr -d '\n')/../..
-      _falaise=$(flquery --resourcedir | tr -d '\n')
+      local _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
+      local _flressource=$(flquery --resourcedir | tr -d '\n')
+      local _bxdll=$(bxquery --libdir | tr -d '\n')
+      local _fldll=$(flquery --libdir | tr -d '\n')
       --bxdpp_processing                                         \
           --module-manager-config ${_config}/module_manager.conf \
           --dlls-config ${_config}/dlls.conf                     \
           --variant-config ${_config}/snvariant_manager.conf     \
-          --datatools::resource-path=snware@${_snware}           \
-          --datatools::resource-path=falaise@${_falaise}         \
+          --datatools::resource-path=bxdll@${_bxdll}             \
+          --datatools::resource-path=fldll@${_fldll}             \
+          --datatools::resource-path=falaise@${_flressource}     \
           --datatools::resource-path=configuration@${_config}    \
           $(echo ${opt})
       if (( $+commands[colout] )); then
