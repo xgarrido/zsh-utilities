@@ -334,9 +334,10 @@ fzf is a general-purpose command-line fuzzy finder. See
 #+END_SRC
 *** =fj= - changing directory with fasd
 #+BEGIN_SRC sh
-  fj() {
+  z() {
+      [ $# -gt 0 ] && fasd_cd -d "$*" && return
       local dir
-      dir=$(fasd -Rdl | fzf --no-sort +m) && cd "$dir"
+      dir="$(fasd -Rdl "$1" | fzf -1 -0 --no-sort +m)" && cd "${dir}" || return 1
   }
 #+END_SRC
 *** =fo= - open file
@@ -349,7 +350,7 @@ fzf is a general-purpose command-line fuzzy finder. See
           key=$(head -1 <<< "$out")
           file=$(head -2 <<< "$out" | tail -1)
           if [ -n "$file" ]; then
-              [ "$key" = ctrl-e ] && ec "$file" || xdg-open "$file"
+              [ "$key" = ctrl-e ] && ec "$file" || xdg-open "$file" &
           fi
       )
   }
@@ -399,7 +400,7 @@ From https://lebkowski.name/docker-volumes/
           ) | xargs -r rm -fr
   }
 #+END_SRC
-function
+
 *** Postamble
 #+BEGIN_SRC sh
   fi
