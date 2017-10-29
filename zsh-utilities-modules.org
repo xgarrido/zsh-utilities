@@ -332,7 +332,7 @@ fzf is a general-purpose command-line fuzzy finder. See
 #+BEGIN_SRC sh
   export FZF_DEFAULT_OPTS='--color=16,info:4,pointer:3,bg+:15'
 #+END_SRC
-*** =fj= - changing directory with fasd
+*** =z= - changing directory with fasd
 #+BEGIN_SRC sh
   z() {
       [ $# -gt 0 ] && fasd_cd -d "$*" && return
@@ -358,12 +358,17 @@ fzf is a general-purpose command-line fuzzy finder. See
 *** =fd= - go to the directory where the file is
 #+BEGIN_SRC sh
   fd() {
-    (
-      cd ~
+      pkgtools__enter_directory $HOME
       local file
       local dir
-      file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
-    )
+      file=$(fzf +m -q "$1") && dir=$(dirname "$file")
+      if [ -d "$dir" ]; then
+        cd "$dir"
+      else
+        pkgtools__exit_directory
+        return 1
+      fi
+      return 0
   }
 #+END_SRC
 
