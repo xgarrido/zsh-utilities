@@ -239,7 +239,23 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
     ]
 #+END_SRC
 
-#+RESULTS:
+**** =rsync= theme
+#+BEGIN_SRC python :tangle colout_rsync.py
+  #encoding: utf-8
+
+  def theme():
+        return [
+              ["^sending.*", "red", "bold"],
+              ["(^sent.*bytes.*)(received.*bytes) (.*/sec)",
+               "blue,magenta,yellow", "bold,bold,normal"],
+              ["(^total.*) (speedup.*)",
+               "green,cyan", "bold,normal"],
+              [ "^[a-zA-Z].*", "yellow", "normal"],
+              [ "(^.*) (.*%)(.*/s)(.*:.*:.*).*(\(xfr#.*\))",
+                "blue,green,magenta,green",
+                "bold,conceal,normal,normal,conceal"],
+        ]
+#+END_SRC
 
 *** Wrapping some functions arround =colout=
 **** =cmake=
