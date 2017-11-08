@@ -569,29 +569,38 @@ function root/mergeTree () {
   }
 #+END_SRC
 *** CMB configuration
+**** Preamble
 #+BEGIN_SRC sh
   function do_cmb_setup()
   {
-      alias qjob_planck_user='echo "Number of jobs run by Planck users"; qstat -u \* -ext -s r| tail -n+3 | grep planck | awk "{print \$5}" | sort | uniq -c'
-      alias qjob_summary='qjob_my_total; qjob_my_run; qjob_planck_user'
+#+END_SRC
+**** Aliases
+#+BEGIN_SRC  sh
+  alias qjob_planck_user='echo "Number of jobs run by Planck users"; qstat -u \* -ext -s r| tail -n+3 | grep planck | awk "{print \$5}" | sort | uniq -c'
+  alias qjob_summary='qjob_my_total; qjob_my_run; qjob_planck_user'
+#+END_SRC
+**** Environment variables
+#+BEGIN_SRC sh
+  # Unset to start from fresh config.
+  pkgtools__unset_variable LD_LIBRARY_PATH
+  pkgtools__unset_variable PATH
 
-      # Unset to start from fresh config.
-      pkgtools__unset_variable LD_LIBRARY_PATH
-      pkgtools__unset_variable PATH
+  # bin directories
+  pkgtools__add_path_to_PATH /usr/bin
+  pkgtools__add_path_to_PATH /bin
 
-      # bin directories
-      pkgtools__add_path_to_PATH /usr/bin
-      pkgtools__add_path_to_PATH /bin
+  # Python 2.7
+  pkgtools__add_path_to_PATH /usr/local/python/python-2.7/bin
 
-      # Python 2.7
-      pkgtools__add_path_to_PATH /usr/local/python/python-2.7/bin
-
-      # MKL
-      local intel_compiler_library=/usr/local/intel/compilers_and_libraries_2017/linux
-      pkgtools__add_path_to_PATH ${intel_compiler_library}/bin/intel64
-      pkgtools__add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
-      pkgtools__reset_variable MKLROOT ${intel_compiler_library}/mkl
-      pkgtools__add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
+  # MKL
+  local intel_compiler_library=/usr/local/intel/compilers_and_libraries_2017/linux
+  pkgtools__add_path_to_PATH ${intel_compiler_library}/bin/intel64
+  pkgtools__add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
+  pkgtools__reset_variable MKLROOT ${intel_compiler_library}/mkl
+  pkgtools__add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
+#+END_SRC
+**** Postamble
+#+BEGIN_SRC sh
   }
 #+END_SRC
 *** Postamble
