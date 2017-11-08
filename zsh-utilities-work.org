@@ -601,131 +601,156 @@ function root/mergeTree () {
 #+END_SRC
 **** Run MCMC jobs
 #+BEGIN_SRC sh
-      function run_cmb_mcmc()
-      {
-          __pkgtools__default_values
-          __pkgtools__at_function_enter pkgman
+  function run_cmb_mcmc()
+  {
+      __pkgtools__default_values
+      __pkgtools__at_function_enter run_cmb_mcmc
 
-          if ! $(pkgtools__check_variable CAMELROOT); then
-              pkgtools__msg_error "Missing CAMELROOT env. variable!"
-              __pkgtools__at_function_exit
-              return 1
-          fi
-
-          local mcmc=$CAMELROOT/$CMTCONFIG/mcmc
-          local parfile
-          local nsamples=500000
-          local nchain=4
-          local ncore=8
-          local queue=mc_long
-          local project=P_planck
-          while [ -n "$1" ]; do
-              local token="$1"
-              if [ ${token[0,1]} = - ]; then
-	          local opt=${token}
-	          if [[ ${opt} = -h || ${opt} = --help ]]; then
-                      echo "Usage:\n run_cmb_mcmc [options] parfile"
-                      echo "Options:"
-                      echo " -h [--help]  print this help message"
-                      echo " -d [--debug] debug mode"
-                      echo " -D [--devel] devel mode"
-                      echo " --nsamples   set number of MCMC samples"
-                      echo " --nchain     set number of qjob chains"
-                      echo " --ncore      set number of qjob cores"
-                      return 0
-	          elif [[ ${opt} = -d || ${opt} = --debug ]]; then
-	              pkgtools__msg_using_debug
-	          elif [[ ${opt} = -D || ${opt} = --devel ]]; then
-	              pkgtools__msg_using_devel
-	          elif [[ ${opt} = --nsamples ]]; then
-                      shift 1
-                      nsamples="$1"
-	          elif [[ ${opt} = --nchain ]]; then
-                      shift 1
-                      nchain="$1"
-	          elif [[ ${opt} = --ncore ]]; then
-                      shift 1
-                      ncore="$1"
-                  fi
-              else
-	          parfile="${token}"
-              fi
-              shift 1
-          done
-
-          if [ -z ${parfile} ]; then
-              pkgtools__msg_error "Missing parameter file!"
-              __pkgtools__at_function_exit
-              return 1
-          elif [ ! -f ${parfile} ]; then
-              pkgtools__msg_error "Parameter file '${parfile}' does not exist!"
-              __pkgtools__at_function_exit
-              return 1
-          fi
-          # Make sure PWD is added
-          local parfile_dir=$(dirname ${parfile})
-          if [[ ${parfile_dir} = . ]]; then
-              parfile_dir=$PWD
-              parfile=$PWD/${parfile}
-          fi
-          local parfile_base=$(basename ${parfile})
-          local parfile_name=${parfile_base%.*}
-
-          # Get total number of MCMC parameters
-          local ndim=$(awk '$1=="par"{n++} END{print n}' ${parfile})
-          pkgtools__msg_notice "Number of parameters : ${ndim}"
-
-          # Get covariance file
-          local covfile=${parfile/.par/.cov}
-          if [ ! -f ${covfile} ]; then
-              pkgtools__msg_error "Missing associated covariance file!"
-              __pkgtools__at_function_exit
-              return 1
-          fi
-
-          # Create output directory
-          local mcmc_dir=${parfile_dir}/${parfile_name}_MCMC
-          if [ -d ${mcmc_dir} ]; then
-              pkgtools__msg_warning "Directory '${mcmc_dir}' already exist!"
-              pkgtools__yesno_question "Do you want to continue ?"
-              if $(pkgtools__answer_is_no); then
-                  __pkgtools__at_function_exit
-                  return 0
-              fi
-          fi
-          mkdir -p ${mcmc_dir}; cd ${mcmc_dir}
-
-          # Setup MCMC
-          cp ${covfile} .
-          # Remove precision from parfile
-          grep -v precision ${parfile} > ${parfile_base}
-          cat >> ${parfile_base} <<EOF
-  dim=$ndim
-  algo=ada
-  length=$nsample
-  proposal_cov=$PWD/$(basename ${covfile})
-  ts=10000
-  t0=2000
-  scale=0.001
-  do_move=false
-  EOF
-
-          pkgtools__msg_notice "Parameter file  : ${parfile}"
-          pkgtools__msg_notice "Covariance file : ${covfile}"
-          pkgtools__msg_notice "MCMC directory  : ${mcmc_dir}"
-          pkgtools__msg_notice "CC jobs setup :"
-          pkgtools__msg_notice " - Number of chains : ${nchain}"
-          pkgtools__msg_notice " - Number of cores  : ${ncore}"
-          pkgtools__msg_notice " - Queue type       : ${queue}"
-          pkgtools__msg_notice " - Project type     : ${project}"
-          pkgtools__yesno_question "Start jobs ?"
-          if $(pkgtools__answer_is_yes); then
-          fi
-
-          cd -
+      if ! $(pkgtools__check_variable CAMELROOT); then
+          pkgtools__msg_error "Missing CAMELROOT env. variable!"
           __pkgtools__at_function_exit
-          return 0
-      }
+          return 1
+      fi
+
+      local mcmc=$CAMELROOT/$CMTCONFIG/mcmc
+      local parfile
+      local nsamples=500000
+      local nchain=4
+      local ncore=8
+      local queue=mc_long
+      local project=P_planck
+      while [ -n "$1" ]; do
+          local token="$1"
+          if [ ${token[0,1]} = - ]; then
+	      local opt=${token}
+	      if [[ ${opt} = -h || ${opt} = --help ]]; then
+                  echo "Usage:\n run_cmb_mcmc [options] parfile"
+                  echo "Options:"
+                  echo " -h [--help]  print this help message"
+                  echo " -d [--debug] debug mode"
+                  echo " -D [--devel] devel mode"
+                  echo " --nsamples   set number of MCMC samples"
+                  echo " --nchain     set number of qjob chains"
+                  echo " --ncore      set number of qjob cores"
+                  return 0
+	      elif [[ ${opt} = -d || ${opt} = --debug ]]; then
+	          pkgtools__msg_using_debug
+	      elif [[ ${opt} = -D || ${opt} = --devel ]]; then
+	          pkgtools__msg_using_devel
+	      elif [[ ${opt} = --nsamples ]]; then
+                  shift 1
+                  nsamples="$1"
+	      elif [[ ${opt} = --nchain ]]; then
+                  shift 1
+                  nchain="$1"
+	      elif [[ ${opt} = --ncore ]]; then
+                  shift 1
+                  ncore="$1"
+              fi
+          else
+	      parfile="${token}"
+          fi
+          shift 1
+      done
+
+      if [ -z ${parfile} ]; then
+          pkgtools__msg_error "Missing parameter file!"
+          __pkgtools__at_function_exit
+          return 1
+      elif [ ! -f ${parfile} ]; then
+          pkgtools__msg_error "Parameter file '${parfile}' does not exist!"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      # Make sure PWD is added
+      local parfile_dir=$(dirname ${parfile})
+      if [[ ${parfile_dir} = . ]]; then
+          parfile_dir=$PWD
+          parfile=$PWD/${parfile}
+      fi
+      local parfile_base=$(basename ${parfile})
+      local parfile_name=${parfile_base%.*}
+
+      # Get total number of MCMC parameters
+      local ndim=$(awk '$1=="par"{n++} END{print n}' ${parfile})
+      pkgtools__msg_notice "Number of parameters : ${ndim}"
+
+      # Get covariance file
+      local covfile=${parfile/.par/.cov}
+      if [ ! -f ${covfile} ]; then
+          pkgtools__msg_error "Missing associated covariance file!"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+
+      # Create output directory
+      local mcmc_dir=${parfile_dir}/${parfile_name}_MCMC
+      if [ -d ${mcmc_dir} ]; then
+          pkgtools__msg_warning "Directory '${mcmc_dir}' already exist!"
+          pkgtools__yesno_question "Do you want to continue ?"
+          if $(pkgtools__answer_is_no); then
+              __pkgtools__at_function_exit
+              return 0
+          fi
+      fi
+      mkdir -p ${mcmc_dir}; cd ${mcmc_dir}
+
+      # Setup MCMC
+      cp ${covfile} .
+      # Remove precision from parfile
+      grep -v precision ${parfile} > ${parfile_base}
+      cat >> ${parfile_base} <<EOF
+dim=$ndim
+algo=ada
+length=$nsample
+proposal_cov=$PWD/$(basename ${covfile})
+ts=10000
+t0=2000
+scale=0.001
+do_move=false
+EOF
+
+      # Create job script
+      cat > ${parfile_name}.sh << EOF
+echo "running on : \$(uname -a)"
+export OMP_NUM_THREADS=$ncore
+cd \$TMPDIR
+cp ${mcmc} .
+cp $PWD/${parfile_base} mcmc\${SGE_TASK_ID}.par
+cp $PWD/${covfile} .
+RANDOM=\${SGE_TASK_ID}
+echo "seed=\$RANDOM" >>  mcmc\${SGE_TASK_ID}.par
+
+cp mcmc\${SGE_TASK_ID}.par $PWD
+
+./mcmc mcmc\${SGE_TASK_ID}.par $PWD/samples\${SGE_TASK_ID}.txt
+
+cp ar_vs_length.txt $PWD/ar_vs_length\${SGE_TASK_ID}.txt
+cp scale_vs_length.txt $PWD/scale_vs_length\${SGE_TASK_ID}.txt
+cp corr.txt $PWD/corr\${SGE_TASK_ID}.txt
+
+qstat -j \${JOB_ID} -nenv
+EOF
+
+      pkgtools__msg_notice "Parameter file  : ${parfile}"
+      pkgtools__msg_notice "Covariance file : ${covfile}"
+      pkgtools__msg_notice "MCMC directory  : ${mcmc_dir}"
+      pkgtools__msg_notice "CC jobs setup :"
+      pkgtools__msg_notice " - Number of chains : ${nchain}"
+      pkgtools__msg_notice " - Number of cores  : ${ncore}"
+      pkgtools__msg_notice " - Queue type       : ${queue}"
+      pkgtools__msg_notice " - Project type     : ${project}"
+      pkgtools__yesno_question "Start jobs ?"
+      if $(pkgtools__answer_is_yes); then
+          local qsub_args="-l sps=1 -R y -j y -o $PWD -e $PWD"
+          local queue_args="-P ${project} -pe multicores ${ncore}"
+          qsub ${queue_args} -q ${queue} ${qsub_args} -t 1-${nchain} -N ${parfile_name} ${parfile_name}.sh
+      fi
+
+      pkgtools__
+      __pkgtools__at_function_exit
+      return 0
+  }
 #+END_SRC
 
 **** Postamble
