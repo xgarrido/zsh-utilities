@@ -878,7 +878,7 @@ variable.
 #+BEGIN_SRC sh
   function pkgtools__yesno_question ()
   {
-      PS3="$@"
+      PS3="$@ "
       yesno=("yes" "no")
       select ans in "${yesno[@]}"
       do
