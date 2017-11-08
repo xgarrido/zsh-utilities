@@ -134,6 +134,9 @@ way it should be easy to add its own configuration.
       # Homemade software for everybody
       pkgtools__add_path_to_PATH ${SCRATCH_DIR}/software/bin
 
+      # qjob/qstat for everybody
+      pkgtools__add_path_to_PATH /opt/sge/bin/lx-amd64
+
       __pkgtools__at_function_exit
       return 0
   }
