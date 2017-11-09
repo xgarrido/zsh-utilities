@@ -687,50 +687,52 @@ function root/mergeTree () {
       local mcmc_dir=${parfile_dir}/${parfile_name}_MCMC
       if [ -d ${mcmc_dir} ]; then
           pkgtools__msg_warning "Directory '${mcmc_dir}' already exist!"
-          pkgtools__yesno_question "Do you want to continue ?"
+          pkgtools__yesno_question "Do you want to remove it ?"
           if $(pkgtools__answer_is_no); then
               __pkgtools__at_function_exit
               return 0
           fi
+          rm -rf ${mcmc_dir}
       fi
-      mkdir -p ${mcmc_dir}; cd ${mcmc_dir}
+      mkdir -p ${mcmc_dir}
+      pkgtools__enter_directory ${mcmc_dir}
 
       # Setup MCMC
       cp ${covfile} .
       # Remove precision from parfile
       grep -v precision ${parfile} > ${parfile_base}
-      cat >> ${parfile_base} <<EOF
-dim=$ndim
-algo=ada
-length=$nsample
-proposal_cov=$PWD/$(basename ${covfile})
-ts=10000
-t0=2000
-scale=0.001
-do_move=false
-EOF
+      {
+          echo "dim=$ndim"
+          echo "algo=ada"
+          echo "length=$nsample"
+          echo "proposal_cov=$PWD/$(basename ${covfile})"
+          echo "ts=10000"
+          echo "t0=2000"
+          echo "scale=0.001"
+          echo "do_move=false"
+      } >> ${parfile_base}
 
       # Create job script
-      cat > ${parfile_name}.sh << EOF
-echo "running on : \$(uname -a)"
-export OMP_NUM_THREADS=$ncore
-cd \$TMPDIR
-cp ${mcmc} .
-cp $PWD/${parfile_base} mcmc\${SGE_TASK_ID}.par
-cp $PWD/${covfile} .
-RANDOM=\${SGE_TASK_ID}
-echo "seed=\$RANDOM" >>  mcmc\${SGE_TASK_ID}.par
-
-cp mcmc\${SGE_TASK_ID}.par $PWD
-
-./mcmc mcmc\${SGE_TASK_ID}.par $PWD/samples\${SGE_TASK_ID}.txt
-
-cp ar_vs_length.txt $PWD/ar_vs_length\${SGE_TASK_ID}.txt
-cp scale_vs_length.txt $PWD/scale_vs_length\${SGE_TASK_ID}.txt
-cp corr.txt $PWD/corr\${SGE_TASK_ID}.txt
-
-qstat -j \${JOB_ID} -nenv
-EOF
+      {
+          echo "echo \"running on : \$(uname -a)\""
+          echo "export OMP_NUM_THREADS=$ncore"
+          echo "cd \$TMPDIR"
+          echo "cp ${mcmc} ."
+          echo "cp $PWD/${parfile_base} mcmc\${SGE_TASK_ID}.par"
+          echo "cp $PWD/${parfile_base/.par/.cov} ."
+          echo "RANDOM=\${SGE_TASK_ID}"
+          echo "echo "seed=\$RANDOM" >> mcmc\${SGE_TASK_ID}.par"
+          echo
+          echo "cp mcmc\${SGE_TASK_ID}.par $PWD"
+          echo
+          echo "./mcmc mcmc\${SGE_TASK_ID}.par $PWD/samples\${SGE_TASK_ID}.txt"
+          echo
+          echo "cp ar_vs_length.txt $PWD/ar_vs_length\${SGE_TASK_ID}.txt"
+          echo "cp scale_vs_length.txt $PWD/scale_vs_length\${SGE_TASK_ID}.txt"
+          echo "cp corr.txt $PWD/corr\${SGE_TASK_ID}.txt"
+          echo
+          echo "qstat -j \${JOB_ID} -nenv"
+      } >> ${parfile_name}.sh
 
       pkgtools__msg_notice "Parameter file  : ${parfile}"
       pkgtools__msg_notice "Covariance file : ${covfile}"
@@ -742,12 +744,13 @@ EOF
       pkgtools__msg_notice " - Project type     : ${project}"
       pkgtools__yesno_question "Start jobs ?"
       if $(pkgtools__answer_is_yes); then
+          local sge_env="export SGE_ROOT=/opt/sge; export SGE_CELL=ccin2p3;"
           local qsub_args="-l sps=1 -R y -j y -o $PWD -e $PWD"
           local queue_args="-P ${project} -pe multicores ${ncore}"
-          qsub ${queue_args} -q ${queue} ${qsub_args} -t 1-${nchain} -N ${parfile_name} ${parfile_name}.sh
+          #qsub ${queue_args} -q ${queue} ${qsub_args} -t 1-${nchain} -N ${parfile_name} ${parfile_name}.sh
       fi
 
-      pkgtools__
+      pkgtools__exit_directory
       __pkgtools__at_function_exit
       return 0
   }
