@@ -605,8 +605,8 @@ function root/mergeTree () {
       __pkgtools__default_values
       __pkgtools__at_function_enter run_cmb_mcmc
 
-      if ! $(pkgtools__check_variable CAMELROOT); then
-          pkgtools__msg_error "Missing CAMELROOT env. variable!"
+      if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
+          pkgtools__msg_error "CMB configuration not setup!"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -703,7 +703,7 @@ function root/mergeTree () {
       {
           echo "dim=$ndim"
           echo "algo=ada"
-          echo "length=$nsample"
+          echo "length=$nsamples"
           echo "proposal_cov=$PWD/$(basename ${covfile})"
           echo "ts=10000"
           echo "t0=2000"
@@ -714,13 +714,13 @@ function root/mergeTree () {
       # Create job script
       {
           echo "echo \"running on : \$(uname -a)\""
+          echo "source $(dirname $(which python))/activate"
           echo "export OMP_NUM_THREADS=$ncore"
           echo "cd \$TMPDIR"
           echo "cp ${mcmc} ."
           echo "cp $PWD/${parfile_base} mcmc\${SGE_TASK_ID}.par"
           echo "cp $PWD/${parfile_base/.par/.cov} ."
-          echo "RANDOM=\${SGE_TASK_ID}"
-          echo "echo "seed=\$RANDOM" >> mcmc\${SGE_TASK_ID}.par"
+          echo "echo \"seed=\$RANDOM\" >> mcmc\${SGE_TASK_ID}.par"
           echo
           echo "cp mcmc\${SGE_TASK_ID}.par $PWD"
           echo
@@ -746,7 +746,7 @@ function root/mergeTree () {
           local sge_env="export SGE_ROOT=/opt/sge; export SGE_CELL=ccin2p3;"
           local qsub_args="-l sps=1 -R y -j y -o $PWD -e $PWD"
           local queue_args="-P ${project} -pe multicores ${ncore}"
-          #qsub ${queue_args} -q ${queue} ${qsub_args} -t 1-${nchain} -N ${parfile_name} ${parfile_name}.sh
+          qsub ${queue_args} -q ${queue} ${qsub_args} -t 1-${nchain} -N ${parfile_name} ${parfile_name}.sh
       fi
 
       pkgtools__exit_directory
