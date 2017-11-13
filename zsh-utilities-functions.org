@@ -312,9 +312,11 @@ Base function for notification
   function --notify ()
   {
       if pkgtools__has_binary notify-send; then
-          if [ "$HOSTNAME" = "garrido-laptop" ]; then
-              notify-send $@ > /dev/null 2>&1
-          fi
+          case $HOSTNAME in
+              garrido-laptop|nb-garrido)
+                  notify-send $@ > /dev/null 2>&1
+                  ;;
+          esac
       fi
       return 0
   }
