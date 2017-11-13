@@ -88,15 +88,22 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
 
 *** Aliases
 #+BEGIN_SRC sh
-  alias rsync='noglob rsync'
-  _rsync_cmd='rsync --verbose --progress --human-readable --compress --archive --hard-links --one-file-system'
+  function --rsync ()
+  {
+      if (( $+commands[colout] )); then
+          $(pkgtools__get_binary_path rsync) $@ 2>&1 | colout -t rsync -T ${zsh_utilities_dir}
+      else
+          $(pkgtools__get_binary_path rsync) $@
+      fi
+  }
+
+  alias rsync='noglob --rsync'
+  local _rsync_cmd='--rsync --verbose --progress --human-readable --compress --archive --hard-links --one-file-system'
 
   alias rsync-copy="${_rsync_cmd}"
   alias rsync-move="${_rsync_cmd} --remove-source-files"
   alias rsync-update="${_rsync_cmd} --update"
   alias rsync-synchronize="${_rsync_cmd} --update --delete"
-
-  unset _rsync_cmd
 #+END_SRC
 
 *** Postamble
@@ -116,7 +123,7 @@ be colored bold strings, for instance.
 #+BEGIN_SRC python :tangle colout_myg++.py
   #encoding: utf-8
 
-  def theme():
+  def theme(context):
     import locale
     section="blue"
     # if the locale is unicode
@@ -130,7 +137,7 @@ be colored bold strings, for instance.
         qo = "['`]"
         qc = "'"
 
-    return [
+    return context, [
         [ ("error: |erreur: "), "red", "bold" ],
         [ ("warning: |attention: "), "magenta", "bold" ],
         [ ("undefined reference to "), "red", "bold" ],
@@ -167,7 +174,7 @@ be colored bold strings, for instance.
 
 **** =ninja= theme
 #+BEGIN_SRC python :tangle colout_myninja.py
-  def theme():
+  def theme(context):
       # Ninja theme:
       #  actions building
       building="blue"
@@ -176,7 +183,7 @@ be colored bold strings, for instance.
       #  actions generating
       generating="blue"
 
-      return [
+      return context, [
           # Linking
           [ "\[.*\]\s(Linking .* )(library|executable) (.*/)*(.+(\.[aso]+)*)$",
             linking, "normal,normal,normal,bold" ],
@@ -199,14 +206,14 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
 #+BEGIN_SRC python :tangle colout_mylogging.py
   #encoding: utf-8
 
-  def theme():
+  def theme(context):
       error="red"
       warning="magenta"
       notice="blue"
       information="cyan"
       debug="green"
       trace="yellow"
-      return [
+      return context, [
           [ "(^\[fatal]:|^\[fatal.*\])(.*$)", error, "bold,normal" ],
           [ "(^\[error]:|^\[error.*\])(.*$)", error, "bold,normal" ],
           [ "(^\[warning]:|^\[warning.*\])(.*$)", warning, "bold,normal" ],
@@ -222,8 +229,8 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
 #+BEGIN_SRC python :tangle colout_orgmode.py
   #encoding: utf-8
 
-  def theme():
-      return [
+  def theme(context):
+      return context, [
           [ "(=[^\"].*?=[^\"])", "cyan" ],
           [ "^\*{1}\s.*$", "red", "bold" ],
           [ "^\*{2}\s.*$", "green", "bold" ],
@@ -243,8 +250,8 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
 #+BEGIN_SRC python :tangle colout_rsync.py
   #encoding: utf-8
 
-  def theme():
-        return [
+  def theme(context):
+        return context, [
               ["^sending.*", "red", "bold"],
               ["(^sent.*bytes.*)(received.*bytes) (.*/sec)",
                "blue,magenta,yellow", "bold,bold,normal"],
