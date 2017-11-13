@@ -215,8 +215,6 @@ function root/mergeTree () {
 
 ***** Completion function
 #+BEGIN_SRC shell
-  autoload -Uz compinit
-  compinit -C -d "$ANTIGEN_COMPDUMP"
   compdef _mydpp_processing mydpp_processing
   function _mydpp_processing ()
   {
