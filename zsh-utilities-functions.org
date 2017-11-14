@@ -325,7 +325,7 @@ Base function for notification
 #+BEGIN_SRC sh
   function notify_success ()
   {
-      --notify -t 5000 -h "string:bgcolor:#859900" -i stock_dialog-info "notice" "${PREEXEC_CMD} $@"
+      --notify -t 5000 -h "string:bgcolor:#859900" -i gtk-info "notice" "${PREEXEC_CMD} $@"
       return 0
   }
   alias notify=notify_success
@@ -334,19 +334,10 @@ Base function for notification
 #+BEGIN_SRC sh
   function notify_error ()
   {
-      --notify -t 5000 -h "string:bgcolor:#DC322F" -i stock_dialog-error "error" "${PREEXEC_CMD:-Shell Command} $@"
+      --notify -t 5000 -h "string:bgcolor:#DC322F" -i gtk-stop "error" "${PREEXEC_CMD:-Shell Command} $@"
       return 0
   }
 #+END_SRC
-*** Warning
-#+BEGIN_SRC sh
-  function notify_warning ()
-  {
-      --notify -t 5000 -h "string:bgcolor:#DEB542" -i stock_dialog-warning "warning" "${PREEXEC_CMD:-Shell Command} $@"
-      return 0
-  }
-#+END_SRC
-
 ** Zsh =precmd= and =preexec=
 These two functions are only available for =zsh= shell. There are run at every
 shell command and trigger notification events in case of long time command or
@@ -375,7 +366,7 @@ get warned when the command has finished or has failed.
       done
 
       if [ $elapsed -gt $max ]; then
-          notify_warning "finished ($elapsed secs)"
+          notify_success "finished ($elapsed secs)"
       fi
       # END notify long running cmds
 
