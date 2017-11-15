@@ -197,7 +197,35 @@ be colored bold strings, for instance.
           [ "^(\[.*\])", "yellow" ]
       ]
 #+END_SRC
+**** =cmake= theme
+#+BEGIN_SRC python :tangle colout_mycmake.py
+def theme(context):
+    # CMake theme:
+    #  actions performing in cyan
+    performing="yellow"
+    #  actions performed in green
+    performed="green"
+    #  actions taking an unknown time
+    untimed="blue"
 
+    return context,[
+        # Configure...
+        [ "^--.*works", performed ],
+        [ "^--.*done", performed ],
+        [ "^-- Found.*NO", "red" ],
+        [ "^-- Found.*", performed ],
+        [ "^--.*broken", "red" ],
+        [ "^-- Coult NOT find.*", "red" ],
+        [ "^-- Configuring incomplete, errors occurred!", "red" ],
+        [ "^--.*", performing ],
+        # Errors
+        [ "CMake .*Error:", "red" ],
+        [ "CMake .*Warning", "magenta" ],
+        # Scan
+        [ "^(Scanning dependencies of target)(.*)$",
+          performing, "normal,bold" ],
+    ]
+#+END_SRC
 **** Logging theme
 Theme used to color output from SN@ilWare software. Syntax used is defined in
 this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatools/logger.h
@@ -277,7 +305,7 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
   if (( $+commands[ninja] )); then
       function ninja ()
       {
-          $(pkgtools__get_binary_path ninja) $@ | colout -t cmake | colout -t myg++ -T ${zsh_utilities_dir} | colout -t myninja -T ${zsh_utilities_dir}
+          $(pkgtools__get_binary_path ninja) $@ | colout -t mycmake -T ${zsh_utilities_dir} | colout -t myg++ -T ${zsh_utilities_dir} | colout -t myninja -T ${zsh_utilities_dir}
       }
   fi
 #+END_SRC
