@@ -35,7 +35,7 @@ generic function name given the linux system installed : "debian-like" system or
 #+END_SRC
 *** Implement generic function
 #+BEGIN_SRC sh
-  alias pkg-notify='--notify -t 2000 -i stock_dialog-info "${__pkg_mgr}"'
+  alias pkg-notify='--notify -t 2000 -i gtk-info  "${__pkg_mgr}"'
   if __is_debian; then
 
       function install ()
