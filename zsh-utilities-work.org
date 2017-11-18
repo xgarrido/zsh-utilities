@@ -68,11 +68,6 @@ function root/mergeTree () {
 }
 #+END_SRC
 ** SN@ilWare setup
-*** Environment variable
-#+BEGIN_SRC sh
-  pkgtools__reset_variable SNAILWARE_SIMULATION_DIR $WORKDIR/NEMO/supernemo/simulations
-#+END_SRC
-
 *** =Bayeux/Falaise= wrappers
 **** Private wrappers
 #+BEGIN_SRC sh
