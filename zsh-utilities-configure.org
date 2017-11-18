@@ -82,6 +82,9 @@ way it should be easy to add its own configuration.
       pkgtools__reset_variable HOST ${HOSTNAME}
       pkgtools__reset_variable WORKDIR ${HOME}/Workdir
 
+      # SuperNEMO variable
+      pkgtools__reset_variable SNAILWARE_SIMULATION_DIR $WORKDIR/NEMO/supernemo/simulations
+
       # Set EDITOR
       pkgtools__reset_variable EDITOR "ec"
 
