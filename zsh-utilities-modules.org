@@ -454,7 +454,27 @@ From https://lebkowski.name/docker-volumes/
           ) | xargs -r rm -fr
   }
 #+END_SRC
-
+*** Aliases
+#+BEGIN_SRC sh
+  function acroread ()
+  {
+      if [ -z $1 ]; then
+          pkgtools__msg_error "Missing pdf file!"
+          return 1
+      fi
+      local _path=$(dirname $1)
+      [[ $_path = . ]] && _path=$PWD
+      local _file=$(basename $1)
+      docker run  -v $_path:/home/acroread/Documents:rw \
+             -v /tmp/.X11-unix:/tmp/.X11-unix \
+             -e uid=$(id -u) \
+             -e gid=$(id -g) \
+             -e DISPLAY=unix$DISPLAY \
+             -e FILE='/home/acroread/Documents/'$_file \
+             --name acroread \
+             chrisdaish/acroread
+  }
+#+END_SRC
 *** Postamble
 #+BEGIN_SRC sh
   fi
