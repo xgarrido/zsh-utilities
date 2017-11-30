@@ -677,7 +677,7 @@ function root/mergeTree () {
       fi
 
       # Create output directory
-      local mcmc_dir=${parfile_dir}/${parfile_name}_MCMC
+      local mcmc_dir=${parfile_dir}/${parfile_name}_MC
       if [ -d ${mcmc_dir} ]; then
           pkgtools__msg_warning "Directory '${mcmc_dir}' already exist!"
           pkgtools__yesno_question "Do you want to remove it ?"
