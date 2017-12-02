@@ -405,8 +405,7 @@ db.
       local append_command=
 
       if [[ "$1" == "" ]]; then
-          echo "Missing the name of machine to connect !"
-          echo ""
+          pkgtools__msg_error "Missing the name of machine to connect !"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -485,8 +484,6 @@ db.
       return 0
   }
   # Connect completion system
-  autoload -Uz compinit
-  compinit -C -d "$ANTIGEN_COMPDUMP"
   compdef _connect connect
 
   function _connect ()

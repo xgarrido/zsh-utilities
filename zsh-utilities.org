@@ -74,6 +74,12 @@ The only "core" thing is to know where the files are.
   zsh_utilities_dir=$(dirname $0)
 #+END_SRC
 
+Make sure to load completion @ =$ANTIGEN_COMPDUMP=
+#+BEGIN_SRC sh
+  autoload -Uz compinit
+  compinit -C -d "$ANTIGEN_COMPDUMP"
+#+END_SRC
+
 ** Modules
 Modules are defined in [[file:zsh-utilities-modules.org][zsh-utilities-modules]] files. This file provides some
 configuration for external resources.
