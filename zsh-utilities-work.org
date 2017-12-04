@@ -535,7 +535,7 @@ function root/mergeTree () {
       pkgtools__remove_path_to_PATH ~/Workdir/NEMO/supernemo/snware/brew/cadfaelbrew/bin
   }
 #+END_SRC
-** Lyon ccali aliases
+** Lyon ccali setup
 *** Preamble
 #+BEGIN_SRC sh
   if [[ $HOSTNAME = cc* ]]; then
@@ -579,8 +579,8 @@ function root/mergeTree () {
   pkgtools__unset_variable PATH
 
   # bin directories
-  pkgtools__add_path_to_PATH /usr/bin
   pkgtools__add_path_to_PATH /bin
+  pkgtools__add_path_to_PATH /usr/bin
 
   # Python 2.7
   pkgtools__add_path_to_PATH /usr/local/python/python-2.7/bin
