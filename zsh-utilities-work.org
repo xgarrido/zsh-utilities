@@ -553,12 +553,18 @@ function root/mergeTree () {
       alias qjob_nemo_user='echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| tail -n+3 | grep nemo | awk "{print \$5}" | sort | uniq -c'
       alias qjob_summary='qjob_my_total; qjob_my_run; qjob_nemo_user'
 
+      # Use up-to-date gcc
       pkgtools__add_path_to_PATH /usr/local/gcc/5.2.0/bin
       pkgtools__reset_variable LD_LIBRARY_PATH /usr/local/gcc/5.2.0/lib64
 
+      # Set brew cache directory (default ~/.cache)
       pkgtools__reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/software/brew/.cache
       # pkgtools__reset_variable HOMEBREW_TEMP ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.tmp
       pkgtools__reset_variable HOMEBREW_MAKE_JOBS 4
+
+      # Set pip cache directory
+      mkdir /tmp/garrido.d
+      pkgtools__reset_variable PIP_DOWNLOAD_CACHE /tmp/garrido.d
   }
 #+END_SRC
 *** CMB configuration
