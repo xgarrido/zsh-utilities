@@ -465,7 +465,7 @@ From https://lebkowski.name/docker-volumes/
       local _path=$(dirname $1)
       [[ $_path = . ]] && _path=$PWD
       local _file=$(basename $1)
-      docker run  -v $_path:/home/acroread/Documents:rw \
+      docker run --rm  -v $_path:/home/acroread/Documents:rw \
              -v /tmp/.X11-unix:/tmp/.X11-unix \
              -e uid=$(id -u) \
              -e gid=$(id -g) \
