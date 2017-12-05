@@ -556,7 +556,7 @@ function root/mergeTree () {
       pkgtools__add_path_to_PATH /usr/local/gcc/5.2.0/bin
       pkgtools__reset_variable LD_LIBRARY_PATH /usr/local/gcc/5.2.0/lib64
 
-      pkgtools__reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.cache
+      pkgtools__reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/software/brew/.cache
       # pkgtools__reset_variable HOMEBREW_TEMP ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.tmp
       pkgtools__reset_variable HOMEBREW_MAKE_JOBS 4
   }
