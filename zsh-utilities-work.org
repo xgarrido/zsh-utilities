@@ -713,6 +713,13 @@ function root/mergeTree () {
 
       # Create job script
       {
+          echo "#$ -l sps=1"
+          echo "#$ -j y"
+          echo "#$ -R y"
+          echo "#$ -t 1-$nchain"
+          echo "#$ -N ${parfile_name}"
+          echo "#$ -m be"
+          echo
           echo "echo \"running on : \$(uname -a)\""
           echo "source $(dirname $(which python))/activate"
           echo "export OMP_NUM_THREADS=$ncore"
@@ -724,7 +731,7 @@ function root/mergeTree () {
           echo
           echo "cp mcmc\${SGE_TASK_ID}.par $PWD"
           echo
-          echo "./mcmc mcmc\${SGE_TASK_ID}.par $PWD/samples\${SGE_TASK_ID}.txt"
+          echo "./mcmc mcmc\${SGE_TASK_ID}.par $PWD/samples\${SGE_TASK_ID}.txt > $PWD/output\${SGE_TASK_ID}.log 2>&1"
           echo
           echo "cp ar_vs_length.txt $PWD/ar_vs_length\${SGE_TASK_ID}.txt"
           echo "cp scale_vs_length.txt $PWD/scale_vs_length\${SGE_TASK_ID}.txt"
@@ -743,10 +750,7 @@ function root/mergeTree () {
       pkgtools__msg_notice " - Project type     : ${project}"
       pkgtools__yesno_question "Start jobs ?"
       if $(pkgtools__answer_is_yes); then
-          local sge_env="export SGE_ROOT=/opt/sge; export SGE_CELL=ccin2p3;"
-          local qsub_args="-l sps=1 -R y -j y -o $PWD -e $PWD"
-          local queue_args="-P ${project} -pe multicores ${ncore}"
-          qsub ${queue_args} -q ${queue} ${qsub_args} -t 1-${nchain} -N ${parfile_name} ${parfile_name}.sh
+          qsub -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD ${parfile_name}.sh
       fi
 
       pkgtools__exit_directory
