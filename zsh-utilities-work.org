@@ -588,8 +588,13 @@ function root/mergeTree () {
   pkgtools__add_path_to_PATH /bin
   pkgtools__add_path_to_PATH /usr/bin
 
-  # Python 2.7
-  pkgtools__add_path_to_PATH /usr/local/python/python-2.7/bin
+  # Unset planck PYHTONHOME
+  unset PYTHONHOME
+  unset CFLAGS
+
+  # Set pip cache directory
+  mkdir -p /tmp/garrido.d
+  pkgtools__reset_variable PIP_DOWNLOAD_CACHE /tmp/garrido.d
 
   # MKL
   local intel_compiler_library=/usr/local/intel/compilers_and_libraries_2017/linux
