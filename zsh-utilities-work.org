@@ -413,8 +413,8 @@ function root/mergeTree () {
           args)
               _path_files -/ && ret=0
               ;;
-     esac
-  return ret
+      esac
+      return ret
   }
 #+END_SRC
 
