@@ -783,6 +783,206 @@ function root/mergeTree () {
       return ret
   }
 #+END_SRC
+**** Run profile jobs
+***** Wrapper
+#+BEGIN_SRC sh
+  function run_cmb_profile()
+  {
+      __pkgtools__default_values
+      __pkgtools__at_function_enter run_cmb_profile
+
+      if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
+          pkgtools__msg_error "CMB configuration not setup!"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+
+      local dry_run=false
+      local profile_exe=$CAMELROOT/$CMTCONFIG/Profile
+      local parfile
+      local parameter_name
+      local -a parameter_range
+      local nchain=10
+      local ncore=8
+      local queue=mc_long
+      local project=P_planck
+      while [ -n "$1" ]; do
+          local token="$1"
+          if [ ${token[0,1]} = - ]; then
+              local opt=${token}
+              if [[ ${opt} = -h || ${opt} = --help ]]; then
+                  echo "Usage:\n run_cmb_mcmc [options] parfile"
+                  echo "Options:"
+                  echo " -h [--help]  print this help message"
+                  echo " -d [--debug] debug mode"
+                  echo " -D [--devel] devel mode"
+                  echo " --dry-run do not start qsub jobs"
+                  echo " --parameter-name set the name of the parameter to profile"
+                  echo " --parameter-range set the parameter's range to profile"
+                  echo " --nchain     set number of qjob chains"
+                  echo " --ncore      set number of qjob cores"
+                  return 0
+              elif [[ ${opt} = -d || ${opt} = --debug ]]; then
+                  pkgtools__msg_using_debug
+              elif [[ ${opt} = -D || ${opt} = --devel ]]; then
+                  pkgtools__msg_using_devel
+              elif [[ ${opt} = --dry-run ]]; then
+                  dry_run=true
+              elif [[ ${opt} = --parameter-name ]]; then
+                  shift 1
+                  parameter_name="$1"
+              elif [[ ${opt} = --parameter-range ]]; then
+                  shift 1
+                  local pars=$1
+                  parameter_range=( ${=pars} )
+              elif [[ ${opt} = --nchain ]]; then
+                  shift 1
+                  nchain="$1"
+              elif [[ ${opt} = --ncore ]]; then
+                  shift 1
+                  ncore="$1"
+              fi
+          else
+              parfile="${token}"
+          fi
+          shift 1
+      done
+
+      if [ -z "${parfile}" ]; then
+          pkgtools__msg_error "Missing parameter file!"
+          __pkgtools__at_function_exit
+          return 1
+      elif [ ! -f "${parfile}" ]; then
+          pkgtools__msg_error "Parameter file '${parfile}' does not exist!"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      # Make sure PWD is added
+      local parfile_dir=$(dirname ${parfile})
+      if [[ ${parfile_dir} = . ]]; then
+          parfile_dir=$PWD
+          parfile=$PWD/${parfile}
+      fi
+      local parfile_base=$(basename ${parfile})
+      local parfile_name=${parfile_base%.*}
+
+      if [ -z "${parameter_name}" ]; then
+          pkgtools__msg_error "Missing parameter name!"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+      if [ -z "${parameter_range}" ]; then
+          pkgtools__msg_error "Missing parameter range!"
+          __pkgtools__at_function_exit
+          return 1
+      fi
+
+      # Create output directory
+      local profile_dir=${parfile_dir}/${parfile_name}_${parameter_name}_prof
+      if [ -d ${profile_dir} ]; then
+          pkgtools__msg_warning "Directory '${profile_dir}' already exist!"
+          pkgtools__yesno_question "Do you want to remove it ?"
+          if $(pkgtools__answer_is_no); then
+              __pkgtools__at_function_exit
+              return 0
+          fi
+          rm -rf ${profile_dir}
+      fi
+      mkdir -p ${profile_dir}
+
+      pkgtools__msg_notice "Parameter file  : ${parfile}"
+      pkgtools__msg_notice "Parameter name  : ${parameter_name}"
+      pkgtools__msg_notice "Parameter range : ${=parameter_range}"
+      pkgtools__msg_notice "Profile directory  : ${profile_dir}"
+      pkgtools__msg_notice "CC jobs setup :"
+      pkgtools__msg_notice " - Number of chains : ${nchain}"
+      pkgtools__msg_notice " - Number of cores  : ${ncore}"
+      pkgtools__msg_notice " - Queue type       : ${queue}"
+      pkgtools__msg_notice " - Project type     : ${project}"
+      pkgtools__yesno_question "Start jobs ?"
+      if $(pkgtools__answer_is_no); then
+          __pkgtools__at_function_exit
+          return 0
+      fi
+
+      # Looping over parameter range
+      for par in ${parameter_range}; do
+          pkgtools__msg_notice "Starting job for ${parameter_name}=${par}..."
+
+          local run_name="${parameter_name}_${par}"
+          local par_dir="${profile_dir}/${run_name}"
+          if [ -d ${par_dir} ]; then
+              rm -rf ${par_dir}
+          else
+              mkdir -p ${par_dir}
+          fi
+          pkgtools__enter_directory ${par_dir}
+
+          # Create job script
+          {
+              echo "#$ -l sps=1"
+              echo "#$ -l os=sl6"
+              echo "#$ -j y"
+              echo "#$ -R y"
+              echo "#$ -t 1-$nchain"
+              echo "#$ -N ${parfile_name}_${run_name}"
+              # echo "#$ -m be"
+              echo
+              echo "echo \"running on : \$(uname -a)\""
+              echo "source $(dirname $(which python))/activate"
+              echo "export OMP_NUM_THREADS=$ncore"
+              echo "cd \$TMPDIR"
+              echo "cp ${parfile} profile.par"
+              echo "cp ${profile_exe} ."
+              echo "cp ${CAMELROOT}/work/tools/awk/genrand.awk ."
+              echo
+              echo "current_profile=profile\${SGE_TASK_ID}.par"
+              echo "if [ \${SGE_TASK_ID} -eq 1 ]; then"
+              echo "cp profile.par \${current_profile}"
+              echo "else"
+              echo "awk -v seed=\$RANDOM -f genrand.awk profile.par > \${current_profile}"
+              echo "fi"
+              echo
+              echo "cp \${current_profile} $PWD"
+              echo
+              echo "./Profile \${current_profile} ${parameter_name} ${par} ${par} 1 best_fit > $PWD/output\${SGE_TASK_ID}.log 2>&1"
+              echo
+              echo "cp best_fit $PWD/best_fit\${SGE_TASK_ID}.txt"
+              echo
+              echo "qstat -j \${JOB_ID} -nenv"
+          } >> profile.sh
+
+          # Running job
+          if ! ${dry_run}; then
+              qsub -j y -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD profile.sh
+          fi
+
+          pkgtools__exit_directory
+      done
+      __pkgtools__at_function_exit
+      return 0
+  }
+#+END_SRC
+***** Completion
+#+BEGIN_SRC sh
+  compdef _run_cmb_profile run_cmb_profile
+  function _run_cmb_profile ()
+  {
+      _arguments                                                       \
+          {-h,--help}'[print this help message]'                       \
+          {-d,--debug}'[debug mode]'                                   \
+          {-D,--devel}'[devel mode]'                                   \
+          '--dry-run[do not start qsub jobs]'                          \
+          '--nchain[set number of qjob chains]'                        \
+          '--ncore[set number of qjob cores]'                          \
+          '--parameter-name[set the name of the parameter to profile]' \
+          '--parameter-range[set the parameter range to profile]'      \
+          '*:file:_files -g \*.par'                                    \
+          && ret=0
+
+      return ret
+  }
+#+END_SRC
 **** Postamble
 #+BEGIN_SRC sh
   }
