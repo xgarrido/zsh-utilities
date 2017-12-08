@@ -557,14 +557,14 @@ function root/mergeTree () {
       local gcc_version=5.2.0
       local gcc_dir=/usr/local/gcc/${gcc_version}
       pkgtools__add_path_to_PATH  ${gcc_dir}/bin
-      pkgtools__add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib
+      pkgtools__add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib64
 
       # Set brew cache directory (default ~/.cache)
       pkgtools__reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/software/brew/.cache
       # pkgtools__reset_variable HOMEBREW_TEMP ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.tmp
       pkgtools__reset_variable HOMEBREW_MAKE_JOBS 4
       pkgtools__reset_variable HOMEBREW_CC gcc-${gcc_version:0:1}
-      pkgtools__reset_variable HOMEBREW_CXX g++-{gcc_version:0:1}
+      pkgtools__reset_variable HOMEBREW_CXX g++-${gcc_version:0:1}
   }
 #+END_SRC
 *** CMB configuration
