@@ -597,7 +597,7 @@ function root/mergeTree () {
   pkgtools__reset_variable PIP_DOWNLOAD_CACHE /tmp/garrido.d
 
   # MKL
-  local intel_compiler_library=/usr/local/intel/compilers_and_libraries_2017/linux
+  local intel_compiler_library=/usr/local/intel/compilers_and_libraries/linux
   pkgtools__add_path_to_PATH ${intel_compiler_library}/bin/intel64
   pkgtools__add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
   pkgtools__reset_variable MKLROOT ${intel_compiler_library}/mkl
