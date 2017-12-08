@@ -103,7 +103,7 @@ way it should be easy to add its own configuration.
       pkgtools__reset_variable EXPDIR /exp/nemo/garrido
       pkgtools__reset_variable WORKDIR /exp/nemo/garrido/workdir
 
-      # Add emacs 24.3
+      # Add homemade software
       pkgtools__add_path_to_PATH ${EXPDIR}/software/bin
 
       __pkgtools__at_function_exit
