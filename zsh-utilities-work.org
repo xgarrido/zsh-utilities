@@ -604,6 +604,7 @@ function root/mergeTree () {
   pkgtools__add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
 #+END_SRC
 **** Run MCMC jobs
+***** Wrapper
 #+BEGIN_SRC sh
   function run_cmb_mcmc()
   {
@@ -763,7 +764,24 @@ function root/mergeTree () {
       return 0
   }
 #+END_SRC
+***** Completion
+#+BEGIN_SRC sh
+  compdef _run_cmb_mcmc run_cmb_mcmc
+  function _run_cmb_mcmc ()
+  {
+      _arguments                                   \
+          {-h,--help}'[print this help message]'   \
+          {-d,--debug}'[debug mode]'               \
+          {-D,--devel}'[devel mode]'               \
+          '--nsamples[set number of MCMC samples]' \
+          '--nchain[set number of qjob chains]'    \
+          '--ncore[set number of qjob cores]'      \
+          '*:file:_files -g \*.par'                \
+          && ret=0
 
+      return ret
+  }
+#+END_SRC
 **** Postamble
 #+BEGIN_SRC sh
   }
