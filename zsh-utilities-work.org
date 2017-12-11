@@ -68,6 +68,55 @@ function root/mergeTree () {
 }
 #+END_SRC
 ** SN@ilWare setup
+*** =Bayeux/Falaise= completion
+**** =bxgenbb_inspector=
+#+BEGIN_SRC shell
+  compdef _bxgenbb_inspector bxgenbb_inspector
+  function _bxgenbb_inspector ()
+  {
+      typeset -A opt_args
+      local context state line curcontext=""
+
+      _arguments \
+          {-h,--help}'[produce help message ]' \
+          {-d,--debug}'[produce debug logging ]' \
+          {-l,--load-dll}'[load a dynamic library ]' \
+          --dll-config'[load a configuration file for dynamic library loading ]' \
+          {-I,--interactive}'[run in interactive mode (not implemented) ]' \
+          {-n,--number-of-events}'[set the number of generated events.   Example :    --number-of-events 10000  ]' \
+          {-x,--trace-index}'[set the trace index.   Example :    --trace-index 10000  ]' \
+          {-u,--prng-trunc}'[set the trunc index of the random number generator (PRNG).   Example :    --prng-trunc 7  ]' \
+          {-s,--prng-seed}'[set the seed of the random number generator (PRNG).   Example :    --prng-seed 314159  ]' \
+          {-K,--prng-tracker}'[set the PRNG tracker file.   Example :    --prng-tracker genbb_inspector_prng.trk  ]' \
+          {-c,--configuration}'[set the genbb manager configuration file.   Example :    --configuration genbb.conf  ]' \
+          {-a,--action}'[set the action.   Examples :    --action list    --action shoot  ]' \
+          {-g,--generator}'[set the particle generator.   Example :    --generator Bi207  ]' \
+          {-H,--histo-def}'[set the name of an histogram definition input filename. ]' \
+          {-o,--output-file}'[set the name of an output filename. ]' \
+          {-t,--prompt-time-limit}'[set the limit on prompt time in ns. ]' \
+          {-P,--prompt}'[analyze prompt particles ]' \
+          {-D,--delayed}'[analyze delayed particles ]' \
+          {-T,--title-prefix}'[set a title prefix for exported histograms ]' \
+          {-S,--name-suffix}'[set a name suffix for exported histograms ]' \
+          '*: :->args' \
+          && ret=0
+
+      case $state in
+          args)
+              if [[ CURRENT -eq NORMARG && ${+opt_args[--match]} -eq 0 ]]
+              then
+                  # If the current argument is the first non-option argument
+                  # and --match isn't present then a pattern is expected
+                  _message -e patterns 'pattern' && ret=0
+              else
+                  _files -/
+              fi
+              ;;
+      esac
+
+      return ret
+  }
+#+END_SRC
 *** =Bayeux/Falaise= wrappers
 **** Private wrappers
 #+BEGIN_SRC sh
@@ -515,11 +564,45 @@ function root/mergeTree () {
 #+END_SRC
 ***** Completion function
 #+BEGIN_SRC shell
-  compdef _flvisualize myvisualize
-#+END_SRC
-**** Other completion system
-#+BEGIN_SRC sh
-  compdef _genbb_inspector bxgenbb_inspector
+  compdef _myvisualize myvisualize
+  function _myvisualize ()
+  {
+      local ret=1 state
+      typeset -A opt_args
+
+      _arguments                                                                                                          \
+          {-h,--help}'[produce help message]'                                                                               \
+          {-P,--logging-priority}'[set logging priority]:log:(fatal critical error warning notice information debug trace)' \
+          {-s,--scale}'[scale factor for computer screen (height/width)]:number'                                            \
+          {-a,--auto-reading-delay}'[automatic event reading delay in seconds]:number'                                      \
+          --detector-config-file'[set the path to the detector config file]:file:_files -g \*.conf'                         \
+          --style-config-file'[set the path to the style config file]:file:_files -g \*.conf'                               \
+          --cut-config-file'[set the path to the cut manager config file]:file:_files -g \*.conf'                           \
+          --preload'[enable the load in memory of Boost archive (only working with plain simulated output from sng4)]'      \
+          {-i,--input-file}'[set an input file(s)]:file:_files -g \*.{brio,xml,data.gz,txt}'                                \
+          {-l,--load-dll}'[set a DLL to be loaded]'                                                                         \
+          --2d-display'[set position of 2D display frame]:position:(left right)'                                            \
+          --full-2d-view'[add a new tab with top/front/side 2D view in one frame]'                                          \
+          --focus-on-roi'[focus views on the region-of-interest]'                                                           \
+          --show-simulated-vertex'[show simulated vertex]:boolean:(true false)'                                             \
+          --show-simulated-tracks'[show simulated tracks]:boolean:(true false)'                                             \
+          --show-simulated-hits'[show simulated hits]:boolean:(true false)'                                                 \
+          --show-calibrated-hits'[show calibrated hits]:boolean:(true false)'                                               \
+          --show-calibrated-info'[show calibrated info]:boolean:(true false)'                                               \
+          --show-tracker-clustered-hits'[show tracker clustered hits]:boolean:(true false)'                                 \
+          --show-tracker-trajectories'[show tracker trajectories]:boolean:(false true)'                                     \
+          --show-particle-tracks'[show particle tracks]:boolean:(false true)'                                               \
+          '*: :->args'                                                                                                      \
+          && ret=0
+
+      case $state in
+          args)
+              _files -g \*.conf
+              ;;
+      esac
+
+      return ret
+  }
 #+END_SRC
 
 *** =brew= setup
