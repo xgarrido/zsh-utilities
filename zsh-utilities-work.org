@@ -609,7 +609,7 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   function run_cmb_mcmc()
   {
-      __pkgtools__default_values
+      pkgtools::default_values
       pkgtools::at_function_enter run_cmb_mcmc
 
       if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
@@ -789,7 +789,7 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   function run_cmb_profile()
   {
-      __pkgtools__default_values
+      pkgtools::default_values
       pkgtools::at_function_enter run_cmb_profile
 
       if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
@@ -1016,7 +1016,7 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   function make_org_doc ()
   {
-      __pkgtools__default_values
+      pkgtools::default_values
       pkgtools::at_function_enter make_org_doc
 
       # Internal functions
