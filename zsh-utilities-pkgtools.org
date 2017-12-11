@@ -86,14 +86,14 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
 
   function pkgtools::ui_using_gui ()
   {
-      __pkgtools__at_function_enter pkgtools::ui_using_gui
+      pkgtools::at_function_enter pkgtools::ui_using_gui
       pkgtools::ui_is_batch
       if [ $? -eq 0 ]; then
           pkgtools::msg_warning "Forcing interactive mode !"
           pkgtools::ui_interactive
       fi
       __pkgtools__ui_gui=1
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 
@@ -144,14 +144,14 @@ These functions must be used with interactive function for debug purpose as well
 as getting well prefixed message using the function name.
 
 #+BEGIN_SRC sh
-  function __pkgtools__at_function_enter ()
+  function pkgtools::at_function_enter ()
   {
       pkgtools::set_funcname $1
       pkgtools::msg_devel "Entering..."
       return 0
   }
 
-  function __pkgtools__at_function_exit ()
+  function pkgtools::at_function_exit ()
   {
       pkgtools::msg_devel "Exiting."
       pkgtools::unset_funcname

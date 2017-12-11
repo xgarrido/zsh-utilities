@@ -105,10 +105,10 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   function mydpp_processing ()
   {
-      __pkgtools__at_function_enter mydpp_processing
+      pkgtools::at_function_enter mydpp_processing
       if ! $(pkgtools::has_binary bxdpp_processing); then
           pkgtools::msg_error "SN@ilWare has not been set"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
       local opt=
@@ -203,7 +203,7 @@ function root/mergeTree () {
           _dump | colout -t mylogging -T ${zsh_utilities_dir}
       fi
       unset _config _snware _falaise
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -328,7 +328,7 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   function mydpp_analysis ()
   {
-      __pkgtools__at_function_enter mydpp_analysis
+      pkgtools::at_function_enter mydpp_analysis
       if $(pkgtools::has_binary bxdpp_processing); then
           opt=
           while [ -n "$1" ]; do
@@ -352,11 +352,11 @@ function root/mergeTree () {
               # --datatools::resource-path=configuration@${_config}                                                               \
       else
           pkgtools::msg_error "SN@ilWare has not been set"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
 
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -423,7 +423,7 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   function myocd_manual ()
   {
-      __pkgtools__at_function_enter myocd_manual
+      pkgtools::at_function_enter myocd_manual
       if $(pkgtools::has_binary bxocd_manual); then
           _lib_dir=$SNAILWARE_PRO_DIR/falaise/install/lib64
           _libs=$(find ${_lib_dir} -type f -name "*.so")
@@ -434,11 +434,11 @@ function root/mergeTree () {
           --bxocd_manual $(echo $libs) $@
       else
           pkgtools::msg_error "SN@ilWare has not been set"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
 
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -504,12 +504,12 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   function myvisualize ()
   {
-    __pkgtools__at_function_enter myvisualize
+    pkgtools::at_function_enter myvisualize
     _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
     --flvisualize $@
     # --datatools::resource-path=configuration@${_config} \
     # $@
-    __pkgtools__at_function_exit
+    pkgtools::at_function_exit
     return 0
   }
 #+END_SRC
@@ -610,11 +610,11 @@ function root/mergeTree () {
   function run_cmb_mcmc()
   {
       __pkgtools__default_values
-      __pkgtools__at_function_enter run_cmb_mcmc
+      pkgtools::at_function_enter run_cmb_mcmc
 
       if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
           pkgtools::msg_error "CMB configuration not setup!"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
 
@@ -661,11 +661,11 @@ function root/mergeTree () {
 
       if [ -z ${parfile} ]; then
           pkgtools::msg_error "Missing parameter file!"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       elif [ ! -f ${parfile} ]; then
           pkgtools::msg_error "Parameter file '${parfile}' does not exist!"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
       # Make sure PWD is added
@@ -685,7 +685,7 @@ function root/mergeTree () {
       local covfile=${parfile/.par/.cov}
       if [ ! -f ${covfile} ]; then
           pkgtools::msg_error "Missing associated covariance file!"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
 
@@ -695,7 +695,7 @@ function root/mergeTree () {
           pkgtools::msg_warning "Directory '${mcmc_dir}' already exist!"
           pkgtools::yesno_question "Do you want to remove it ?"
           if $(pkgtools::answer_is_no); then
-              __pkgtools__at_function_exit
+              pkgtools::at_function_exit
               return 0
           fi
           rm -rf ${mcmc_dir}
@@ -762,7 +762,7 @@ function root/mergeTree () {
       fi
 
       pkgtools::exit_directory
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -790,11 +790,11 @@ function root/mergeTree () {
   function run_cmb_profile()
   {
       __pkgtools__default_values
-      __pkgtools__at_function_enter run_cmb_profile
+      pkgtools::at_function_enter run_cmb_profile
 
       if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
           pkgtools::msg_error "CMB configuration not setup!"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
 
@@ -851,11 +851,11 @@ function root/mergeTree () {
 
       if [ -z "${parfile}" ]; then
           pkgtools::msg_error "Missing parameter file!"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       elif [ ! -f "${parfile}" ]; then
           pkgtools::msg_error "Parameter file '${parfile}' does not exist!"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
       # Make sure PWD is added
@@ -869,12 +869,12 @@ function root/mergeTree () {
 
       if [ -z "${parameter_name}" ]; then
           pkgtools::msg_error "Missing parameter name!"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
       if [ -z "${parameter_range}" ]; then
           pkgtools::msg_error "Missing parameter range!"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
 
@@ -884,7 +884,7 @@ function root/mergeTree () {
           pkgtools::msg_warning "Directory '${profile_dir}' already exist!"
           pkgtools::yesno_question "Do you want to remove it ?"
           if $(pkgtools::answer_is_no); then
-              __pkgtools__at_function_exit
+              pkgtools::at_function_exit
               return 0
           fi
           rm -rf ${profile_dir}
@@ -902,7 +902,7 @@ function root/mergeTree () {
       pkgtools::msg_notice " - Project type     : ${project}"
       pkgtools::yesno_question "Start jobs ?"
       if $(pkgtools::answer_is_no); then
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       fi
 
@@ -960,7 +960,7 @@ function root/mergeTree () {
 
           pkgtools::exit_directory
       done
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -997,7 +997,7 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   function activate_cxxflags ()
   {
-      __pkgtools__at_function_enter activate_cxxflags
+      pkgtools::at_function_enter activate_cxxflags
       export CXXFLAGS="-Waddress -Warray-bounds -Wc++11-compat -Wchar-subscripts      \
     -Wenum-compare -Wcomment -Wformat -Wmain -Wmaybe-uninitialized -Wmissing-braces \
     -Wnonnull -Wparentheses -Wreorder -Wreturn-type -Wsequence-point -Wsign-compare \
@@ -1006,7 +1006,7 @@ function root/mergeTree () {
     -Wunused-variable -Wvolatile-register-var -Wclobbered -Wempty-body              \
     -Wignored-qualifiers -Wmissing-field-initializers -Wsign-compare -Wtype-limits  \
     -Wuninitialized -Wunused-parameter -Wunused-but-set-parameter"
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -1017,7 +1017,7 @@ function root/mergeTree () {
   function make_org_doc ()
   {
       __pkgtools__default_values
-      __pkgtools__at_function_enter make_org_doc
+      pkgtools::at_function_enter make_org_doc
 
       # Internal functions
       --mod::usage () {
@@ -1087,13 +1087,13 @@ function root/mergeTree () {
   local dirname="$(echo ${append_list_of_arguments} | awk '{print $1}')"
   if [ "${dirname}" = "" ]; then
       pkgtools::msg_error "You must give a repository name !"
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 1
   fi
 
   if [ ! -n "$type" ]; then
       pkgtools::msg_error "Missing type of documents !"
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 1
   fi
 
@@ -1295,7 +1295,7 @@ function root/mergeTree () {
   unfunction -- --mod::generate_makefile
   unfunction -- --mod::generate_org_skeleton
   unfunction -- --mod::create_directories
-  __pkgtools__at_function_exit
+  pkgtools::at_function_exit
   return 0
   }
 #+END_SRC
@@ -1349,7 +1349,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
 #+BEGIN_SRC sh
   function parse_cpp_program_options ()
   {
-      __pkgtools__at_function_enter parse_cpp_program_options
+      pkgtools::at_function_enter parse_cpp_program_options
 
       # Internal function to stream 'echo' command
       __parse ()
@@ -1483,7 +1483,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
           pkgtools::msg_notice "File has been parsed in ${completion_file} file"
       done
 
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
   compdef '_files -g "*.cxx"' parse_cpp_program_options

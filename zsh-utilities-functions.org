@@ -40,98 +40,98 @@ generic function name given the linux system installed : "debian-like" system or
 
       function install ()
       {
-          __pkgtools__at_function_enter install
+          pkgtools::at_function_enter install
           sudo ${__pkg_mgr} install -y $* && pkg-notify "Installed $@"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
       compdef "_deb_packages uninstalled" install
 
       function remove ()
       {
-          __pkgtools__at_function_enter remove
+          pkgtools::at_function_enter remove
           sudo ${__pkg_mgr} remove -y $* && pkg-notify "Removed $@"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
       compdef "_deb_packages installed" remove
 
       function upgrade ()
       {
-          __pkgtools__at_function_enter upgrade
+          pkgtools::at_function_enter upgrade
           sudo ${__pkg_mgr} update && sudo ${__pkg_mgr} upgrade && pkg-notify "Upgrade done"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
 
       function search ()
       {
-          __pkgtools__at_function_enter search
+          pkgtools::at_function_enter search
           apt-cache search $@
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
 
       function purge ()
       {
-          __pkgtools__at_function_enter purge
+          pkgtools::at_function_enter purge
           sudo ${__pkg_mgr} purge && pkg-notify "Purge done"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
 
       function distupgrade ()
       {
-          __pkgtools__at_function_enter distupgrade
+          pkgtools::at_function_enter distupgrade
           sudo ${__pkg_mgr} update && sudo ${__pkg_mgr} dist-upgrade && pkg-notify "Distribution upgrade done"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
 
       function autoremove ()
       {
-          __pkgtools__at_function_enter autoremove
+          pkgtools::at_function_enter autoremove
           sudo ${__pkg_mgr} autoremove && pkg-notify "Autoremove done"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
   else
       function upgrade ()
       {
-          __pkgtools__at_function_enter upgrade
+          pkgtools::at_function_enter upgrade
           ${__pkg_mgr} -Suy && pkg-notify "Upgrade done"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
 
       function upgrade-aur ()
       {
-          __pkgtools__at_function_enter upgrade-aur
+          pkgtools::at_function_enter upgrade-aur
           ${__pkg_mgr} -Suya --devel && pkg-notify "Upgrade done"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
 
       function search ()
       {
-          __pkgtools__at_function_enter search
+          pkgtools::at_function_enter search
           ${__pkg_mgr} -Ss $@
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
 
       function purge ()
       {
-          __pkgtools__at_function_enter purge
+          pkgtools::at_function_enter purge
           ${__pkg_mgr} -Qdt && pkg-notify "Purge done"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
       function autoremove ()
       {
-          __pkgtools__at_function_enter autoremove
+          pkgtools::at_function_enter autoremove
           ${__pkg_mgr} -Sc && pkg-notify "Autoremove done"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 0
       }
 
@@ -142,7 +142,7 @@ generic function name given the linux system installed : "debian-like" system or
 #+BEGIN_SRC sh
   function extract ()
   {
-      __pkgtools__at_function_enter extract
+      pkgtools::at_function_enter extract
       local remove_archive
       local success
       local file_name
@@ -209,7 +209,7 @@ generic function name given the linux system installed : "debian-like" system or
           (( $success == 0 )) && (( $remove_archive == 0 )) && rm "$1"
           shift
       done
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -217,7 +217,7 @@ generic function name given the linux system installed : "debian-like" system or
 #+BEGIN_SRC sh
   function compress ()
   {
-      __pkgtools__at_function_enter compress
+      pkgtools::at_function_enter compress
 
       if [[ "$1" == "" ]]; then
           echo "Usage: compress [-option] dir[.tar.gz]"
@@ -271,7 +271,7 @@ generic function name given the linux system installed : "debian-like" system or
           (( success = $success > 0 ? $success : $? ))
           shift
       done
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return success
   }
 #+END_SRC
@@ -283,10 +283,10 @@ by using a classical =Makefile=
 #+BEGIN_SRC sh
   function dotfiles ()
   {
-      __pkgtools__at_function_enter dotfiles
+      pkgtools::at_function_enter dotfiles
       cd ~/Development/github.com/xgarrido/dotfiles
       make $@
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
   # Connect completion system
@@ -398,7 +398,7 @@ db.
 #+BEGIN_SRC sh
   function connect ()
   {
-      __pkgtools__at_function_enter connect
+      pkgtools::at_function_enter connect
       local use_screen=0
       local server_name=
       local ssh_option=
@@ -406,7 +406,7 @@ db.
 
       if [[ "$1" == "" ]]; then
           pkgtools::msg_error "Missing the name of machine to connect !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
 
@@ -480,7 +480,7 @@ db.
           screen ssh -Y ${ssh_option} ${server_name}
       fi
 
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
   # Connect completion system
@@ -515,16 +515,16 @@ db.
 #+BEGIN_SRC sh
   function psgrep ()
   {
-      __pkgtools__at_function_enter psgrep
+      pkgtools::at_function_enter psgrep
       if [[ ! -z $1 ]] ; then
           pkgtools::msg_notice "Grepping for processes matching $1..."
           ps aux | grep $1 | grep -v grep
       else
           pkgtools::msg_error "Need name to grep for !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -532,9 +532,9 @@ db.
 #+BEGIN_SRC sh
   function pskill ()
   {
-      __pkgtools__at_function_enter pskill
+      pkgtools::at_function_enter pskill
       psgrep $1 | awk '{print "kill -9",$2}' | sh
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -542,16 +542,16 @@ db.
 #+BEGIN_SRC sh
   function hgrep ()
   {
-      __pkgtools__at_function_enter hgrep
+      pkgtools::at_function_enter hgrep
       if [[ ! -z $1 ]] ; then
           pkgtools::msg_notice "Grepping for command matching $1..."
           history | grep $1
       else
           pkgtools::msg_error "Need name to grep for !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -561,16 +561,16 @@ db.
 #+BEGIN_SRC sh
   function remove_trailing_whitespace ()
   {
-      __pkgtools__at_function_enter remove_trailing_whitespace
+      pkgtools::at_function_enter remove_trailing_whitespace
       if [[ ! -z $1 ]] ; then
           pkgtools::msg_notice "Removing trailing whitespace in file $1..."
           find $1 -type f -exec sed -i 's/ *$//' '{}' ';'
       else
           pkgtools::msg_error "Missing filename !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -578,17 +578,17 @@ db.
 #+BEGIN_SRC sh
   function remove_duplicate_lines ()
   {
-      __pkgtools__at_function_enter remove_duplicate_lines
+      pkgtools::at_function_enter remove_duplicate_lines
       if [[ ! -z $1 ]] ; then
           pkgtools::msg_notice "Removing duplicate lines in file $1..."
           awk '!seen[$0]++' $1 > /tmp/$(basename $1).tmp
           mv /tmp/$(basename $1).tmp $1
       else
           pkgtools::msg_error "Missing filename !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -628,7 +628,7 @@ db.
 #+BEGIN_SRC sh
   function eps2tikz ()
   {
-      __pkgtools__at_function_enter eps2tikz
+      pkgtools::at_function_enter eps2tikz
       local use_helvetica=0
       local keep_xfig=0
       local remove_duplicate_lines=1
@@ -671,7 +671,7 @@ db.
 
       if [[ -z "${eps_file}" ]]; then
           pkgtools::msg_error "Missing EPS file !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
 
@@ -688,14 +688,14 @@ db.
 
           if [[ ! -x $(which pstoedit) ]]; then
               pkgtools::msg_error "Missing 'pstoedit' binary !"
-              __pkgtools__at_function_exit
+              pkgtools::at_function_exit
               return 1
           fi
           pstoedit -f xfig "${i}" > ${fig_file} 2> /dev/null
 
           if [[ ! -x $(which fig2tikz) ]]; then
               pkgtools::msg_error "Missing fig2tikz' binary !"
-              __pkgtools__at_function_exit
+              pkgtools::at_function_exit
               return 1
           fi
           fig2tikz ${fig_file} > ${tikz_file}.tmp
@@ -713,7 +713,7 @@ db.
           fi
 
       done
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 
@@ -740,16 +740,16 @@ Astrophysics Data System.
 #+BEGIN_SRC sh
   function dexter ()
   {
-      __pkgtools__at_function_enter dexter
+      pkgtools::at_function_enter dexter
       if [[ "$1" == "" ]]; then
           echo "Usage: dexter [image files ...]"
           echo
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       else
           java -jar /home/garrido/Workdir/Development/java/dexter/Debuxter.jar $1
       fi
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -815,11 +815,11 @@ Astrophysics Data System.
 #+BEGIN_SRC sh
   function svnstatus ()
   {
-      __pkgtools__at_function_enter svnstatus
+      pkgtools::at_function_enter svnstatus
       templist=$(svn status $*)
       echo "$(echo $templist | grep '^?' | wc -l) unversioned files/directories"
       echo $templist | grep -v '^?'
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -827,9 +827,9 @@ Astrophysics Data System.
 #+BEGIN_SRC sh :tangle no
   function svndiff ()
   {
-      __pkgtools__at_function_enter svndiff
+      pkgtools::at_function_enter svndiff
       svn diff $* | code2color -l patch -
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -1243,16 +1243,16 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 #+BEGIN_SRC sh
   function grab_video ()
   {
-      __pkgtools__at_function_enter grab_video
+      pkgtools::at_function_enter grab_video
       if [[ ! -z $1 ]] ; then
           pkgtools::msg_notice "Grabing video from $1 link and saving it to /tmp/dump_video.avi..."
           mplayer -dumpstream "$1" -dumpfile /tmp/dump_video.avi
       else
           pkgtools::msg_error "Missing mms link !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -1260,28 +1260,28 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 #+BEGIN_SRC sh
   function bak ()
   {
-      __pkgtools__at_function_enter bak
+      pkgtools::at_function_enter bak
       if [ -z $1 ]; then
           pkgtools::msg_error "Missing file or directory name !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
       [ -f $1 ] && cp $1 $1.bak
       [ -d $1 ] && cp -r $1 $1.bak
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
   function unbak ()
   {
-      __pkgtools__at_function_enter unbak
+      pkgtools::at_function_enter unbak
       if [ -z $1 ]; then
           pkgtools::msg_error "Missing file or directory name !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
       if  [[ ${1##*.} != "bak" ]]; then
           pkgtools::msg_error "$1 is not a backup copy !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       fi
       unbak_name=${1/.bak/}
@@ -1291,7 +1291,7 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
       fi
       [ -f $1 ] && mv $1 ${1/.bak/}
       [ -d $1 ] && mv $1 ${1/.bak/}
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
@@ -1299,14 +1299,14 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 #+BEGIN_SRC sh
   function search_student ()
   {
-      __pkgtools__at_function_enter search_student
+      pkgtools::at_function_enter search_student
       if [ -z $1 ]; then
           pkgtools::msg_error "Missing student name !"
-          __pkgtools__at_function_exit
+          pkgtools::at_function_exit
           return 1
       elif [[ $1 == "--help" || $1 == "-h" ]]; then
         pkgtools::msg_notice "Usage : search_student \"firstname lastname\""
-        __pkgtools__at_function_exit
+        pkgtools::at_function_exit
         return 0
       fi
 
@@ -1335,12 +1335,12 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
                   break
               elif [ $i -eq 3 ]; then
                   pkgtools::msg_error "${prefix} -> picture not found"
-                  __pkgtools__at_function_exit
+                  pkgtools::at_function_exit
                   return 1
               fi
           done
       done
-      __pkgtools__at_function_exit
+      pkgtools::at_function_exit
       return 0
   }
 #+END_SRC
