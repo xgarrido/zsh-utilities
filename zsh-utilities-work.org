@@ -580,16 +580,17 @@ function root/mergeTree () {
 #+END_SRC
 **** Environment variables
 #+BEGIN_SRC sh
-  # Unset to start from fresh config.
-  pkgtools::unset_variable LD_LIBRARY_PATH
-  pkgtools::unset_variable PATH
+  # # Unset to start from fresh config.
+  # pkgtools::unset_variable LD_LIBRARY_PATH
+  # pkgtools::unset_variable PATH
 
-  # bin directories
-  pkgtools::add_path_to_PATH /bin
-  pkgtools::add_path_to_PATH /usr/bin
+  # # bin directories
+  # pkgtools::add_path_to_PATH /bin
+  # pkgtools::add_path_to_PATH /usr/bin
 
   # Unset planck PYHTONHOME
   unset PYTHONHOME
+  unset PYTHONPATH
   unset CFLAGS
 
   # Set pip cache directory
