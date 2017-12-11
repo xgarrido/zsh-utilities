@@ -479,3 +479,41 @@ From https://lebkowski.name/docker-volumes/
 #+BEGIN_SRC sh
   fi
 #+END_SRC
+
+** mybackup
+*** Preamble
+#+BEGIN_SRC sh
+  if (( $+commands[mybackup] )); then
+#+END_SRC
+
+*** Completion
+#+BEGIN_SRC sh
+  compdef _mybackup mybackup
+  function _mybackup()
+  {
+      local ret=1 state
+
+      _arguments                                    \
+          {-h,--help}'[produce help message]'         \
+          '--profile[set the profile]:profile:->prof' \
+          && ret=0
+
+      case $state in
+          prof)
+              local -a _profiles
+              _profiles=(
+                  lal:'LAL machine (via lx3)'
+                  usb:'USB hard disk'
+              )
+              _describe -t _profiles 'Bakcup profiles' _profiles
+              ;;
+      esac
+
+      return ret
+  }
+#+END_SRC
+
+*** Postamble
+#+BEGIN_SRC sh
+  fi
+#+END_SRC
