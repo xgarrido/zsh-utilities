@@ -51,7 +51,7 @@ This file contains some function/alias in relation with "work" topic.
       while [ -n "$1" ]; do
           file="$1"
           if [ ! -f $file ]; then
-              pkgtools__msg_error "Could not find file $file"
+              pkgtools::msg_error "Could not find file $file"
           else
               file_list+="$file "
           fi
@@ -74,9 +74,9 @@ function root/mergeTree () {
   function --flvisualize ()
   {
       if (( $+commands[colout] )); then
-          $(pkgtools__get_binary_path flvisualize) $@ 2>&1 | colout -t mylogging -T ${zsh_utilities_dir}
+          $(pkgtools::get_binary_path flvisualize) $@ 2>&1 | colout -t mylogging -T ${zsh_utilities_dir}
       else
-          $(pkgtools__get_binary_path flvisualize) $@
+          $(pkgtools::get_binary_path flvisualize) $@
       fi
   }
   function --bxdpp_processing ()
@@ -84,19 +84,19 @@ function root/mergeTree () {
       mkdir -p /tmp/garrido/snemo.d
       if (( $+commands[colout] )); then
           TIMEFMT="$terminfo[bold]$fg[blue][notice]:${reset_color}$fg[blue] %U user %S system %P cpu %*E total";\
-              time $(pkgtools__get_binary_path bxdpp_processing) $@ 2>&1 | \
+              time $(pkgtools::get_binary_path bxdpp_processing) $@ 2>&1 | \
               colout -t mylogging -T ${zsh_utilities_dir} | \
               colout "([0-9]+) (pro.*:)(.*\))(.*\))" blue,blue,green,red bold,normal,bold,bold
       else
-          time $(pkgtools__get_binary_path bxdpp_processing) $@
+          time $(pkgtools::get_binary_path bxdpp_processing) $@
       fi
   }
   function --bxocd_manual ()
   {
       if (( $+commands[cm] )); then
-          $(pkgtools__get_binary_path bxocd_manual) $@ | colout -t mylogging -T ${zsh_utilities_dir} | colout -s rst
+          $(pkgtools::get_binary_path bxocd_manual) $@ | colout -t mylogging -T ${zsh_utilities_dir} | colout -s rst
       else
-          $(pkgtools__get_binary_path bxocd_manual) $@
+          $(pkgtools::get_binary_path bxocd_manual) $@
       fi
   }
 #+END_SRC
@@ -106,8 +106,8 @@ function root/mergeTree () {
   function mydpp_processing ()
   {
       __pkgtools__at_function_enter mydpp_processing
-      if ! $(pkgtools__has_binary bxdpp_processing); then
-          pkgtools__msg_error "SN@ilWare has not been set"
+      if ! $(pkgtools::has_binary bxdpp_processing); then
+          pkgtools::msg_error "SN@ilWare has not been set"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -329,7 +329,7 @@ function root/mergeTree () {
   function mydpp_analysis ()
   {
       __pkgtools__at_function_enter mydpp_analysis
-      if $(pkgtools__has_binary bxdpp_processing); then
+      if $(pkgtools::has_binary bxdpp_processing); then
           opt=
           while [ -n "$1" ]; do
               token="$1"
@@ -351,7 +351,7 @@ function root/mergeTree () {
               # --datatools::resource-path=snware@$SNAILWARE_PRO_DIR                                                              \
               # --datatools::resource-path=configuration@${_config}                                                               \
       else
-          pkgtools__msg_error "SN@ilWare has not been set"
+          pkgtools::msg_error "SN@ilWare has not been set"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -424,7 +424,7 @@ function root/mergeTree () {
   function myocd_manual ()
   {
       __pkgtools__at_function_enter myocd_manual
-      if $(pkgtools__has_binary bxocd_manual); then
+      if $(pkgtools::has_binary bxocd_manual); then
           _lib_dir=$SNAILWARE_PRO_DIR/falaise/install/lib64
           _libs=$(find ${_lib_dir} -type f -name "*.so")
           libs=
@@ -433,7 +433,7 @@ function root/mergeTree () {
           done
           --bxocd_manual $(echo $libs) $@
       else
-          pkgtools__msg_error "SN@ilWare has not been set"
+          pkgtools::msg_error "SN@ilWare has not been set"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -526,13 +526,13 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   function set_brew ()
   {
-      pkgtools__msg_notice "Setting brew installation"
-      pkgtools__add_path_to_PATH ~/Workdir/NEMO/supernemo/snware/brew/cadfaelbrew/bin
+      pkgtools::msg_notice "Setting brew installation"
+      pkgtools::add_path_to_PATH ~/Workdir/NEMO/supernemo/snware/brew/cadfaelbrew/bin
   }
   function unset_brew ()
   {
-      pkgtools__msg_notice "Unsetting brew installation"
-      pkgtools__remove_path_to_PATH ~/Workdir/NEMO/supernemo/snware/brew/cadfaelbrew/bin
+      pkgtools::msg_notice "Unsetting brew installation"
+      pkgtools::remove_path_to_PATH ~/Workdir/NEMO/supernemo/snware/brew/cadfaelbrew/bin
   }
 #+END_SRC
 ** Lyon ccali setup
@@ -556,15 +556,15 @@ function root/mergeTree () {
       # Use up-to-date gcc
       local gcc_version=5.2.0
       local gcc_dir=/usr/local/gcc/${gcc_version}
-      pkgtools__add_path_to_PATH  ${gcc_dir}/bin
-      pkgtools__add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib64
+      pkgtools::add_path_to_PATH  ${gcc_dir}/bin
+      pkgtools::add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib64
 
       # Set brew cache directory (default ~/.cache)
-      pkgtools__reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/software/brew/.cache
-      # pkgtools__reset_variable HOMEBREW_TEMP ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.tmp
-      pkgtools__reset_variable HOMEBREW_MAKE_JOBS 4
-      pkgtools__reset_variable HOMEBREW_CC gcc-${gcc_version:0:1}
-      pkgtools__reset_variable HOMEBREW_CXX g++-${gcc_version:0:1}
+      pkgtools::reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/software/brew/.cache
+      # pkgtools::reset_variable HOMEBREW_TEMP ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.tmp
+      pkgtools::reset_variable HOMEBREW_MAKE_JOBS 4
+      pkgtools::reset_variable HOMEBREW_CC gcc-${gcc_version:0:1}
+      pkgtools::reset_variable HOMEBREW_CXX g++-${gcc_version:0:1}
   }
 #+END_SRC
 *** CMB configuration
@@ -581,12 +581,12 @@ function root/mergeTree () {
 **** Environment variables
 #+BEGIN_SRC sh
   # Unset to start from fresh config.
-  pkgtools__unset_variable LD_LIBRARY_PATH
-  pkgtools__unset_variable PATH
+  pkgtools::unset_variable LD_LIBRARY_PATH
+  pkgtools::unset_variable PATH
 
   # bin directories
-  pkgtools__add_path_to_PATH /bin
-  pkgtools__add_path_to_PATH /usr/bin
+  pkgtools::add_path_to_PATH /bin
+  pkgtools::add_path_to_PATH /usr/bin
 
   # Unset planck PYHTONHOME
   unset PYTHONHOME
@@ -594,14 +594,14 @@ function root/mergeTree () {
 
   # Set pip cache directory
   mkdir -p /tmp/garrido.d
-  pkgtools__reset_variable PIP_DOWNLOAD_CACHE /tmp/garrido.d
+  pkgtools::reset_variable PIP_DOWNLOAD_CACHE /tmp/garrido.d
 
   # MKL
   local intel_compiler_library=/usr/local/intel/compilers_and_libraries/linux
-  pkgtools__add_path_to_PATH ${intel_compiler_library}/bin/intel64
-  pkgtools__add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
-  pkgtools__reset_variable MKLROOT ${intel_compiler_library}/mkl
-  pkgtools__add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
+  pkgtools::add_path_to_PATH ${intel_compiler_library}/bin/intel64
+  pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
+  pkgtools::reset_variable MKLROOT ${intel_compiler_library}/mkl
+  pkgtools::add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
 #+END_SRC
 **** Run MCMC jobs
 ***** Wrapper
@@ -612,7 +612,7 @@ function root/mergeTree () {
       __pkgtools__at_function_enter run_cmb_mcmc
 
       if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
-          pkgtools__msg_error "CMB configuration not setup!"
+          pkgtools::msg_error "CMB configuration not setup!"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -639,9 +639,9 @@ function root/mergeTree () {
                   echo " --ncore      set number of qjob cores"
                   return 0
               elif [[ ${opt} = -d || ${opt} = --debug ]]; then
-                  pkgtools__msg_using_debug
+                  pkgtools::msg_using_debug
               elif [[ ${opt} = -D || ${opt} = --devel ]]; then
-                  pkgtools__msg_using_devel
+                  pkgtools::msg_using_devel
               elif [[ ${opt} = --nsamples ]]; then
                   shift 1
                   nsamples="$1"
@@ -659,11 +659,11 @@ function root/mergeTree () {
       done
 
       if [ -z ${parfile} ]; then
-          pkgtools__msg_error "Missing parameter file!"
+          pkgtools::msg_error "Missing parameter file!"
           __pkgtools__at_function_exit
           return 1
       elif [ ! -f ${parfile} ]; then
-          pkgtools__msg_error "Parameter file '${parfile}' does not exist!"
+          pkgtools::msg_error "Parameter file '${parfile}' does not exist!"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -678,12 +678,12 @@ function root/mergeTree () {
 
       # Get total number of MCMC parameters
       local ndim=$(awk '$1=="par"{n++} END{print n}' ${parfile})
-      pkgtools__msg_notice "Number of parameters : ${ndim}"
+      pkgtools::msg_notice "Number of parameters : ${ndim}"
 
       # Get covariance file
       local covfile=${parfile/.par/.cov}
       if [ ! -f ${covfile} ]; then
-          pkgtools__msg_error "Missing associated covariance file!"
+          pkgtools::msg_error "Missing associated covariance file!"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -691,16 +691,16 @@ function root/mergeTree () {
       # Create output directory
       local mcmc_dir=${parfile_dir}/${parfile_name}_MC
       if [ -d ${mcmc_dir} ]; then
-          pkgtools__msg_warning "Directory '${mcmc_dir}' already exist!"
-          pkgtools__yesno_question "Do you want to remove it ?"
-          if $(pkgtools__answer_is_no); then
+          pkgtools::msg_warning "Directory '${mcmc_dir}' already exist!"
+          pkgtools::yesno_question "Do you want to remove it ?"
+          if $(pkgtools::answer_is_no); then
               __pkgtools__at_function_exit
               return 0
           fi
           rm -rf ${mcmc_dir}
       fi
       mkdir -p ${mcmc_dir}
-      pkgtools__enter_directory ${mcmc_dir}
+      pkgtools::enter_directory ${mcmc_dir}
 
       # Setup MCMC
       cp ${covfile} .
@@ -747,20 +747,20 @@ function root/mergeTree () {
           echo "qstat -j \${JOB_ID} -nenv"
       } >> ${parfile_name}.sh
 
-      pkgtools__msg_notice "Parameter file  : ${parfile}"
-      pkgtools__msg_notice "Covariance file : ${covfile}"
-      pkgtools__msg_notice "MCMC directory  : ${mcmc_dir}"
-      pkgtools__msg_notice "CC jobs setup :"
-      pkgtools__msg_notice " - Number of chains : ${nchain}"
-      pkgtools__msg_notice " - Number of cores  : ${ncore}"
-      pkgtools__msg_notice " - Queue type       : ${queue}"
-      pkgtools__msg_notice " - Project type     : ${project}"
-      pkgtools__yesno_question "Start jobs ?"
-      if $(pkgtools__answer_is_yes); then
+      pkgtools::msg_notice "Parameter file  : ${parfile}"
+      pkgtools::msg_notice "Covariance file : ${covfile}"
+      pkgtools::msg_notice "MCMC directory  : ${mcmc_dir}"
+      pkgtools::msg_notice "CC jobs setup :"
+      pkgtools::msg_notice " - Number of chains : ${nchain}"
+      pkgtools::msg_notice " - Number of cores  : ${ncore}"
+      pkgtools::msg_notice " - Queue type       : ${queue}"
+      pkgtools::msg_notice " - Project type     : ${project}"
+      pkgtools::yesno_question "Start jobs ?"
+      if $(pkgtools::answer_is_yes); then
           qsub -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD ${parfile_name}.sh
       fi
 
-      pkgtools__exit_directory
+      pkgtools::exit_directory
       __pkgtools__at_function_exit
       return 0
   }
@@ -792,7 +792,7 @@ function root/mergeTree () {
       __pkgtools__at_function_enter run_cmb_profile
 
       if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
-          pkgtools__msg_error "CMB configuration not setup!"
+          pkgtools::msg_error "CMB configuration not setup!"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -823,9 +823,9 @@ function root/mergeTree () {
                   echo " --ncore      set number of qjob cores"
                   return 0
               elif [[ ${opt} = -d || ${opt} = --debug ]]; then
-                  pkgtools__msg_using_debug
+                  pkgtools::msg_using_debug
               elif [[ ${opt} = -D || ${opt} = --devel ]]; then
-                  pkgtools__msg_using_devel
+                  pkgtools::msg_using_devel
               elif [[ ${opt} = --dry-run ]]; then
                   dry_run=true
               elif [[ ${opt} = --parameter-name ]]; then
@@ -849,11 +849,11 @@ function root/mergeTree () {
       done
 
       if [ -z "${parfile}" ]; then
-          pkgtools__msg_error "Missing parameter file!"
+          pkgtools::msg_error "Missing parameter file!"
           __pkgtools__at_function_exit
           return 1
       elif [ ! -f "${parfile}" ]; then
-          pkgtools__msg_error "Parameter file '${parfile}' does not exist!"
+          pkgtools::msg_error "Parameter file '${parfile}' does not exist!"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -867,12 +867,12 @@ function root/mergeTree () {
       local parfile_name=${parfile_base%.*}
 
       if [ -z "${parameter_name}" ]; then
-          pkgtools__msg_error "Missing parameter name!"
+          pkgtools::msg_error "Missing parameter name!"
           __pkgtools__at_function_exit
           return 1
       fi
       if [ -z "${parameter_range}" ]; then
-          pkgtools__msg_error "Missing parameter range!"
+          pkgtools::msg_error "Missing parameter range!"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -880,9 +880,9 @@ function root/mergeTree () {
       # Create output directory
       local profile_dir=${parfile_dir}/${parfile_name}_${parameter_name}_prof
       if [ -d ${profile_dir} ]; then
-          pkgtools__msg_warning "Directory '${profile_dir}' already exist!"
-          pkgtools__yesno_question "Do you want to remove it ?"
-          if $(pkgtools__answer_is_no); then
+          pkgtools::msg_warning "Directory '${profile_dir}' already exist!"
+          pkgtools::yesno_question "Do you want to remove it ?"
+          if $(pkgtools::answer_is_no); then
               __pkgtools__at_function_exit
               return 0
           fi
@@ -890,24 +890,24 @@ function root/mergeTree () {
       fi
       mkdir -p ${profile_dir}
 
-      pkgtools__msg_notice "Parameter file  : ${parfile}"
-      pkgtools__msg_notice "Parameter name  : ${parameter_name}"
-      pkgtools__msg_notice "Parameter range : ${=parameter_range}"
-      pkgtools__msg_notice "Profile directory  : ${profile_dir}"
-      pkgtools__msg_notice "CC jobs setup :"
-      pkgtools__msg_notice " - Number of chains : ${nchain}"
-      pkgtools__msg_notice " - Number of cores  : ${ncore}"
-      pkgtools__msg_notice " - Queue type       : ${queue}"
-      pkgtools__msg_notice " - Project type     : ${project}"
-      pkgtools__yesno_question "Start jobs ?"
-      if $(pkgtools__answer_is_no); then
+      pkgtools::msg_notice "Parameter file  : ${parfile}"
+      pkgtools::msg_notice "Parameter name  : ${parameter_name}"
+      pkgtools::msg_notice "Parameter range : ${=parameter_range}"
+      pkgtools::msg_notice "Profile directory  : ${profile_dir}"
+      pkgtools::msg_notice "CC jobs setup :"
+      pkgtools::msg_notice " - Number of chains : ${nchain}"
+      pkgtools::msg_notice " - Number of cores  : ${ncore}"
+      pkgtools::msg_notice " - Queue type       : ${queue}"
+      pkgtools::msg_notice " - Project type     : ${project}"
+      pkgtools::yesno_question "Start jobs ?"
+      if $(pkgtools::answer_is_no); then
           __pkgtools__at_function_exit
           return 0
       fi
 
       # Looping over parameter range
       for par in ${parameter_range}; do
-          pkgtools__msg_notice "Starting job for ${parameter_name}=${par}..."
+          pkgtools::msg_notice "Starting job for ${parameter_name}=${par}..."
 
           local run_name="${parameter_name}_${par}"
           local par_dir="${profile_dir}/${run_name}"
@@ -916,7 +916,7 @@ function root/mergeTree () {
           else
               mkdir -p ${par_dir}
           fi
-          pkgtools__enter_directory ${par_dir}
+          pkgtools::enter_directory ${par_dir}
 
           # Create job script
           {
@@ -957,7 +957,7 @@ function root/mergeTree () {
               qsub -j y -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD profile.sh
           fi
 
-          pkgtools__exit_directory
+          pkgtools::exit_directory
       done
       __pkgtools__at_function_exit
       return 0
@@ -1041,22 +1041,22 @@ function root/mergeTree () {
                   --mod::usage
                   return 0
               elif [ "${opt}" = "-d" -o "${opt}" = "--debug" ]; then
-                  pkgtools__msg_using_debug
+                  pkgtools::msg_using_debug
               elif [ "${opt}" = "-D" -o "${opt}" = "--devel" ]; then
-                  pkgtools__msg_using_devel
+                  pkgtools::msg_using_devel
               elif [ "${opt}" = "-v" -o "${opt}" = "--verbose" ]; then
-                  pkgtools__msg_using_verbose
+                  pkgtools::msg_using_verbose
               elif [ "${opt}" = "-W" -o "${opt}" = "--no-warning" ]; then
-                  pkgtools__msg_not_using_warning
+                  pkgtools::msg_not_using_warning
               elif [ "${opt}" = "-q" -o "${opt}" = "--quiet" ]; then
-                  pkgtools__msg_using_quiet
+                  pkgtools::msg_using_quiet
                   export PKGTOOLS_MSG_QUIET=1
               elif [ "${opt}" = "-i" -o "${opt}" = "--interactive" ]; then
-                  pkgtools__ui_interactive
+                  pkgtools::ui_interactive
               elif [ "${opt}" = "-b" -o "${opt}" = "--batch" ]; then
-                  pkgtools__ui_batch
+                  pkgtools::ui_batch
               elif [ "${opt}" = "--gui" ]; then
-                  pkgtools__ui_using_gui
+                  pkgtools::ui_using_gui
               elif [ "${opt}" = "--doc-type" ]; then
                   shift 1; type="$1"
               elif [ "${opt}" = "--title" ]; then
@@ -1085,13 +1085,13 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   local dirname="$(echo ${append_list_of_arguments} | awk '{print $1}')"
   if [ "${dirname}" = "" ]; then
-      pkgtools__msg_error "You must give a repository name !"
+      pkgtools::msg_error "You must give a repository name !"
       __pkgtools__at_function_exit
       return 1
   fi
 
   if [ ! -n "$type" ]; then
-      pkgtools__msg_error "Missing type of documents !"
+      pkgtools::msg_error "Missing type of documents !"
       __pkgtools__at_function_exit
       return 1
   fi
@@ -1111,15 +1111,15 @@ function root/mergeTree () {
           ;;
   esac
 
-  pkgtools__msg_devel "base_directory=${base_directory}"
-  pkgtools__msg_devel "latex_class=${latex_class}"
-  pkgtools__msg_devel "latex_class_options=${latex_class_options}"
+  pkgtools::msg_devel "base_directory=${base_directory}"
+  pkgtools::msg_devel "latex_class=${latex_class}"
+  pkgtools::msg_devel "latex_class_options=${latex_class_options}"
 
   # Remove last space
   append_list_of_arguments=${append_list_of_arguments%?}
   append_list_of_options=${append_list_of_options%?}
-  pkgtools__msg_devel "append_list_of_arguments=${append_list_of_arguments}"
-  pkgtools__msg_devel "append_list_of_options=${append_list_of_options}"
+  pkgtools::msg_devel "append_list_of_arguments=${append_list_of_arguments}"
+  pkgtools::msg_devel "append_list_of_options=${append_list_of_options}"
 #+END_SRC
 **** Internal functions
 ***** Create directories
@@ -1261,7 +1261,7 @@ function root/mergeTree () {
                   ;;
           esac
           if [ -d ${directory}/.git ]; then
-              pkgtools__msg_warning "Directory '${directory}' is already under git-svn !"
+              pkgtools::msg_warning "Directory '${directory}' is already under git-svn !"
               return 0
           fi
           svn mkdir ${svn_directory}/${dirname} -m "create ${dirname} directory"
@@ -1362,7 +1362,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
                   break
               fi
               token=${token/\\n/ }
-              pkgtools__msg_devel "token = ${token}"
+              pkgtools::msg_devel "token = ${token}"
               if [[ "$token" == *'"'* ]]; then
                   # Get option indentificator
                   if [[ "$token" == *'("'* ]]; then
@@ -1438,10 +1438,10 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
           local completion_file=/tmp/_${program_name}
           cat ${program_file} | grep -q add_options
           if [ $? -ne 0 ]; then
-              pkgtools__msg_warning "Program ${program_name} does not use boost::program_option ! Skip it !"
+              pkgtools::msg_warning "Program ${program_name} does not use boost::program_option ! Skip it !"
               continue
           else
-              pkgtools__msg_notice "Build completion system for program ${program_name}"
+              pkgtools::msg_notice "Build completion system for program ${program_name}"
           fi
 
           __header () {
@@ -1479,7 +1479,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
               echo "# End:"
           }
           __footer >> ${completion_file}
-          pkgtools__msg_notice "File has been parsed in ${completion_file} file"
+          pkgtools::msg_notice "File has been parsed in ${completion_file} file"
       done
 
       __pkgtools__at_function_exit

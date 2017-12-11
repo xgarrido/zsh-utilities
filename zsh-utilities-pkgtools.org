@@ -38,19 +38,19 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
 ** User Interface utilities
 *** Setting batch or interactive session
 #+BEGIN_SRC sh
-  function pkgtools__ui_interactive ()
+  function pkgtools::ui_interactive ()
   {
       __pkgtools__ui_interactive=1
       return 0
   }
 
-  function pkgtools__ui_batch ()
+  function pkgtools::ui_batch ()
   {
       __pkgtools__ui_interactive=0
       return 0
   }
 
-  function pkgtools__ui_is_interactive ()
+  function pkgtools::ui_is_interactive ()
   {
       if [ "x${PKGTOOLS_BATCH}" != "x" ]; then
           if  [ "x${PKGTOOLS_BATCH}" != "x0" ]; then
@@ -64,9 +64,9 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
       return 1 # false
   }
 
-  function pkgtools__ui_is_batch ()
+  function pkgtools::ui_is_batch ()
   {
-      pkgtools__ui_is_interactive
+      pkgtools::ui_is_interactive
       if [ $? -eq 0 ]; then
           return 1
       fi
@@ -76,7 +76,7 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
 
 *** Using GUI
 #+BEGIN_SRC sh
-  function pkgtools__ui_is_gui ()
+  function pkgtools::ui_is_gui ()
   {
       if [ ${__pkgtools__ui_gui} = 1 ]; then
           return 0 # true
@@ -84,20 +84,20 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
       return 1 # false
   }
 
-  function pkgtools__ui_using_gui ()
+  function pkgtools::ui_using_gui ()
   {
-      __pkgtools__at_function_enter pkgtools__ui_using_gui
-      pkgtools__ui_is_batch
+      __pkgtools__at_function_enter pkgtools::ui_using_gui
+      pkgtools::ui_is_batch
       if [ $? -eq 0 ]; then
-          pkgtools__msg_warning "Forcing interactive mode !"
-          pkgtools__ui_interactive
+          pkgtools::msg_warning "Forcing interactive mode !"
+          pkgtools::ui_interactive
       fi
       __pkgtools__ui_gui=1
       __pkgtools__at_function_exit
       return 0
   }
 
-  function pkgtools__ui_not_using_gui ()
+  function pkgtools::ui_not_using_gui ()
   {
       __pkgtools__ui_gui=0
       return 0
@@ -107,7 +107,7 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
 ** Function facilities
 *** Setting function name
 #+BEGIN_SRC sh
-  function pkgtools__set_funcname ()
+  function pkgtools::set_funcname ()
   {
       local fname=$1
       if [ "x${fname}" != "x" ]; then
@@ -121,7 +121,7 @@ to this file. The original idea was by F. Mauger and can be found at [[https://n
       return 0
   }
 
-  function pkgtools__unset_funcname ()
+  function pkgtools::unset_funcname ()
   {
       local fname=$(echo ${__pkgtools__msg_funcname_deps} | tr "@" "\n" | tail -1)
       if [ "x${__pkgtools__msg_funcname_deps}" != "x" ]; then
@@ -146,15 +146,15 @@ as getting well prefixed message using the function name.
 #+BEGIN_SRC sh
   function __pkgtools__at_function_enter ()
   {
-      pkgtools__set_funcname $1
-      pkgtools__msg_devel "Entering..."
+      pkgtools::set_funcname $1
+      pkgtools::msg_devel "Entering..."
       return 0
   }
 
   function __pkgtools__at_function_exit ()
   {
-      pkgtools__msg_devel "Exiting."
-      pkgtools__unset_funcname
+      pkgtools::msg_devel "Exiting."
+      pkgtools::unset_funcname
       return 0
   }
 #+END_SRC
@@ -166,7 +166,7 @@ one is itemized to make navigation easier
 
 *** Default color message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_normal ()
+  function pkgtools::msg_color_normal ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[0;39m" 1>&2
@@ -177,14 +177,14 @@ one is itemized to make navigation easier
 *** Colorized message
 **** Red message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_red ()
+  function pkgtools::msg_color_red ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[0;31m" 1>&2
       fi
       return 0
   }
-  function pkgtools__msg_color_bright_red ()
+  function pkgtools::msg_color_bright_red ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[0;31m" 1>&2
@@ -194,7 +194,7 @@ one is itemized to make navigation easier
 #+END_SRC
 **** Green message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_green ()
+  function pkgtools::msg_color_green ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[0;32m" 1>&2
@@ -204,7 +204,7 @@ one is itemized to make navigation easier
 #+END_SRC
 **** Brown message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_brown ()
+  function pkgtools::msg_color_brown ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[0;33m" 1>&2
@@ -214,7 +214,7 @@ one is itemized to make navigation easier
 #+END_SRC
 **** Blue message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_blue ()
+  function pkgtools::msg_color_blue ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[0;34m" 1>&2
@@ -224,7 +224,7 @@ one is itemized to make navigation easier
 #+END_SRC
 **** Violet message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_violet ()
+  function pkgtools::msg_color_violet ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[0;35m" 1>&2
@@ -234,7 +234,7 @@ one is itemized to make navigation easier
 #+END_SRC
 **** Grey message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_grey ()
+  function pkgtools::msg_color_grey ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[0;37m" 1>&2
@@ -244,7 +244,7 @@ one is itemized to make navigation easier
 #+END_SRC
 **** White message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_white ()
+  function pkgtools::msg_color_white ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[1;37m" 1>&2
@@ -254,7 +254,7 @@ one is itemized to make navigation easier
 #+END_SRC
 **** Black message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_black ()
+  function pkgtools::msg_color_black ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[1;39m" 1>&2
@@ -264,7 +264,7 @@ one is itemized to make navigation easier
 #+END_SRC
 *** Reverse color
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_reverse ()
+  function pkgtools::msg_color_reverse ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[1;7m" 1>&2
@@ -272,7 +272,7 @@ one is itemized to make navigation easier
       return 0
   }
 
-  function pkgtools__msg_color_no_reverse ()
+  function pkgtools::msg_color_no_reverse ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[1;27m" 1>&2
@@ -282,7 +282,7 @@ one is itemized to make navigation easier
 #+END_SRC
 *** Cancel color
 #+BEGIN_SRC sh
-  function pkgtools__msg_color__cancel ()
+  function pkgtools::msg_color__cancel ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[1;m" 1>&2
@@ -292,7 +292,7 @@ one is itemized to make navigation easier
 #+END_SRC
 *** Underline message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_underline ()
+  function pkgtools::msg_color_underline ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[0;38m" 1>&2
@@ -302,7 +302,7 @@ one is itemized to make navigation easier
 #+END_SRC
 *** Bold message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_bold ()
+  function pkgtools::msg_color_bold ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "\\033[1;1m" 1>&2
@@ -312,7 +312,7 @@ one is itemized to make navigation easier
 #+END_SRC
 *** Blinking message
 #+BEGIN_SRC sh
-  function pkgtools__msg_color_blink ()
+  function pkgtools::msg_color_blink ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "" 1>&2
@@ -320,7 +320,7 @@ one is itemized to make navigation easier
       return 0
   }
 
-  function pkgtools__msg_color_no_blink ()
+  function pkgtools::msg_color_no_blink ()
   {
       if [ ${__pkgtools__msg_use_color} = 1 ]; then
           echo -en "" 1>&2
@@ -330,11 +330,11 @@ one is itemized to make navigation easier
 #+END_SRC
 *** Hightlight message
 #+BEGIN_SRC sh
-  function pkgtools__highlight ()
+  function pkgtools::highlight ()
   {
-      pkgtools__msg_color_bright_red
+      pkgtools::msg_color_bright_red
       echo -en "$@" 1>&2
-      pkgtools__msg_color_normal
+      pkgtools::msg_color_normal
       return 0
   }
 #+END_SRC
@@ -344,23 +344,23 @@ Use to print message requiring different level of attention.
 
 *** Notice message
 #+BEGIN_SRC sh
-  function pkgtools__msg_notice ()
+  function pkgtools::msg_notice ()
   {
-      # pkgtools__msg_is_quiet
+      # pkgtools::msg_is_quiet
       # if [ $? -eq 0 ]; then
       #     return 0
       # fi
 
-      pkgtools__msg_color_blue
+      pkgtools::msg_color_blue
       __pkgtools__base_msg_prefix "NOTICE"
       __pkgtools__base_msg "$@"
-      pkgtools__msg_color_normal
+      pkgtools::msg_color_normal
 
-      pkgtools__ui_is_interactive
+      pkgtools::ui_is_interactive
       if [ $? -ne 0 ]; then
           return 0
       fi
-      pkgtools__ui_is_gui
+      pkgtools::ui_is_gui
       if [ $? -eq 0 ]; then
           message="$@"
           term_nl=$(stty size | cut -d' ' -f1)
@@ -382,18 +382,18 @@ Use to print message requiring different level of attention.
       return 0
   }
 
-  function pkgtools__msg_highlight_notice ()
+  function pkgtools::msg_highlight_notice ()
   {
-      pkgtools__msg_color_green
+      pkgtools::msg_color_green
       __pkgtools__base_msg_prefix "NOTICE"
       __pkgtools__base_msg $@
-      pkgtools__msg_color_normal
+      pkgtools::msg_color_normal
 
-      pkgtools__ui_is_interactive
+      pkgtools::ui_is_interactive
       if [ $? -ne 0 ]; then
           return 0
       fi
-      pkgtools__ui_is_gui
+      pkgtools::ui_is_gui
       if [ $? -eq 0 ]; then
           message="$@"
           ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
@@ -405,23 +405,23 @@ Use to print message requiring different level of attention.
 #+END_SRC
 *** Info message
 #+BEGIN_SRC sh
-  function pkgtools__msg_info ()
+  function pkgtools::msg_info ()
   {
-      pkgtools__msg_is_quiet
+      pkgtools::msg_is_quiet
       if [ $? -eq 0 ]; then
           return 0
       fi
 
-      pkgtools__msg_color_blue
+      pkgtools::msg_color_blue
       __pkgtools__base_msg_prefix "INFO"
       __pkgtools__base_msg  $@
-      pkgtools__msg_color_normal
+      pkgtools::msg_color_normal
 
-      pkgtools__ui_is_interactive
+      pkgtools::ui_is_interactive
       if [ $? -ne 0 ]; then
           return 0
       fi
-      pkgtools__ui_is_gui
+      pkgtools::ui_is_gui
       if [ $? -eq 0 ]; then
           message="$@"
           ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
@@ -433,82 +433,82 @@ Use to print message requiring different level of attention.
 #+END_SRC
 *** Verbose message
 #+BEGIN_SRC sh
-  function pkgtools__msg_using_verbose ()
+  function pkgtools::msg_using_verbose ()
   {
       __pkgtools__msg_quiet=0
       return 0
   }
 
-  function pkgtools__msg_not_using_verbose ()
+  function pkgtools::msg_not_using_verbose ()
   {
       __pkgtools__msg_quiet=1
       return 0
   }
 
-  function pkgtools__msg_verbose ()
+  function pkgtools::msg_verbose ()
   {
-      pkgtools__msg_info $@
+      pkgtools::msg_info $@
       return 0
   }
 #+END_SRC
 *** Debug message
 #+BEGIN_SRC sh
-  function pkgtools__msg_using_debug ()
+  function pkgtools::msg_using_debug ()
   {
       __pkgtools__msg_debug=1
       return 0
   }
 
-  function pkgtools__msg_not_using_debug ()
+  function pkgtools::msg_not_using_debug ()
   {
       __pkgtools__msg_debug=0
       return 0
   }
 
-  function pkgtools__msg_debug ()
+  function pkgtools::msg_debug ()
   {
       if [ ${__pkgtools__msg_debug} -eq 0 ]; then
           return 0
       fi
       ok=1
       if [ ${ok} -eq 1 ]; then
-          pkgtools__msg_color_brown
+          pkgtools::msg_color_brown
           __pkgtools__base_msg_prefix "DEBUG"
           __pkgtools__base_msg  $@
-          pkgtools__msg_color_normal
+          pkgtools::msg_color_normal
       fi
       return 0
   }
 #+END_SRC
 *** Warning message
 #+BEGIN_SRC sh
-  function pkgtools__msg_using_warning ()
+  function pkgtools::msg_using_warning ()
   {
       __pkgtools__msg_warning=1
       return 0
   }
 
-  function pkgtools__msg_not_using_warning ()
+  function pkgtools::msg_not_using_warning ()
   {
       __pkgtools__msg_warning=0
       return 0
   }
 
-  function pkgtools__msg_warning ()
+  function pkgtools::msg_warning ()
   {
       if [ ${__pkgtools__msg_warning} -eq 0 ]; then
           return 0
       fi
-      pkgtools__msg_color_violet
+      pkgtools::msg_color_violet
       __pkgtools__base_msg_prefix "WARNING"
       __pkgtools__base_msg  $@
-      pkgtools__msg_color_normal
+      pkgtools::msg_color_normal
 
-      pkgtools__ui_is_interactive
+      pkgtools::ui_is_interactive
       if [ $? -ne 0 ]; then
           return 0
       fi
-      pkgtools__ui_is_gui
+      pkgtools::ui_is_gui
       if [ $? -eq 0 ]; then
           message="$@"
           ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
@@ -520,18 +520,18 @@ Use to print message requiring different level of attention.
 #+END_SRC
 *** Error message
 #+BEGIN_SRC sh
-  function pkgtools__msg_err ()
+  function pkgtools::msg_err ()
   {
-      pkgtools__msg_color_red
+      pkgtools::msg_color_red
       __pkgtools__base_msg_prefix "ERROR"
       __pkgtools__base_msg $@
-      pkgtools__msg_color_normal
+      pkgtools::msg_color_normal
 
-      pkgtools__ui_is_interactive
+      pkgtools::ui_is_interactive
       if [ $? -ne 0 ]; then
           return 0
       fi
-      pkgtools__ui_is_gui
+      pkgtools::ui_is_gui
       if [ $? -eq 0 ]; then
           message="$@"
           ${__pkgtools__ui_dialog_bin} --title "pkgtools GUI" \
@@ -541,57 +541,57 @@ Use to print message requiring different level of attention.
       return 0
   }
 
-  function pkgtools__msg_error ()
+  function pkgtools::msg_error ()
   {
-      pkgtools__msg_err $@
+      pkgtools::msg_err $@
       return 0
   }
 #+END_SRC
 *** Devel message
 #+BEGIN_SRC sh
-  function pkgtools__msg_using_devel ()
+  function pkgtools::msg_using_devel ()
   {
       __pkgtools__msg_devel=1
       return 0
   }
 
-  function pkgtools__msg_not_using_devel ()
+  function pkgtools::msg_not_using_devel ()
   {
       __pkgtools__msg_devel=0
       return 0
   }
 
-  function pkgtools__msg_devel ()
+  function pkgtools::msg_devel ()
   {
       if [ ${__pkgtools__msg_devel} -eq 0 ]; then
           return 0
       fi
       ok=1
       if [ ${ok} -eq 1 ]; then
-          pkgtools__msg_color_reverse
+          pkgtools::msg_color_reverse
           __pkgtools__base_msg_prefix "DEVEL"
           __pkgtools__base_msg $@
-          pkgtools__msg_color_no_reverse
+          pkgtools::msg_color_no_reverse
       fi
-      pkgtools__msg_color_normal
+      pkgtools::msg_color_normal
       return 0
   }
 #+END_SRC
 *** Be quiet
 #+BEGIN_SRC sh
-  function pkgtools__msg_using_quiet ()
+  function pkgtools::msg_using_quiet ()
   {
       __pkgtools__msg_quiet=1
       return 0
   }
 
-  function pkgtools__msg_not_using_quiet ()
+  function pkgtools::msg_not_using_quiet ()
   {
       __pkgtools__msg_quiet=0
       return 0
   }
 
-  function pkgtools__msg_is_quiet ()
+  function pkgtools::msg_is_quiet ()
   {
       if [ "x${PKGTOOLS_MSG_QUIET}" != "x" ]; then
           if [ "x${PKGTOOLS_MSG_QUIET}" != "x0" ]; then
@@ -607,13 +607,13 @@ Use to print message requiring different level of attention.
 #+END_SRC
 *** Print date
 #+BEGIN_SRC sh
-  function pkgtools__msg_using_date ()
+  function pkgtools::msg_using_date ()
   {
       __pkgtools__msg_use_date=1
       return 0
   }
 
-  function pkgtools__msg_not_using_date ()
+  function pkgtools::msg_not_using_date ()
   {
       __pkgtools__msg_use_date=0
       return 0
@@ -621,16 +621,16 @@ Use to print message requiring different level of attention.
 #+END_SRC
 *** Make use of color
 #+BEGIN_SRC sh
-  function pkgtools__msg_using_color ()
+  function pkgtools::msg_using_color ()
   {
       __pkgtools__msg_use_color=1
       return 0
   }
 
-  function pkgtools__msg_not_using_color ()
+  function pkgtools::msg_not_using_color ()
   {
       __pkgtools__msg_use_color=0
-      pkgtools__msg_color_normal
+      pkgtools::msg_color_normal
       return 0
   }
 #+END_SRC
@@ -687,7 +687,7 @@ Use to print message requiring different level of attention.
 ** Shell utilities
 *** Check if a environment variable is set
 #+BEGIN_SRC sh
-  function pkgtools__check_variable ()
+  function pkgtools::check_variable ()
   {
       if env | grep -q "^$1="; then
           return 0
@@ -702,10 +702,10 @@ This function add a directory to an environment variable such as =PATH= or
 already present. In such way, it prevents cumbersome of environment variables.
 
 #+BEGIN_SRC sh
-  function pkgtools__add_path_to_env_variable ()
+  function pkgtools::add_path_to_env_variable ()
   {
       if [ ! -d "$2" ]; then
-          pkgtools__msg_error "Directory '$2' does not exist!"
+          pkgtools::msg_error "Directory '$2' does not exist!"
           return 1
       fi
       local _path=${(P)$(echo $1)}
@@ -718,15 +718,15 @@ already present. In such way, it prevents cumbersome of environment variables.
       return 0
   }
 
-  function pkgtools__add_path_to_PATH ()
+  function pkgtools::add_path_to_PATH ()
   {
-      pkgtools__add_path_to_env_variable PATH "$1"
+      pkgtools::add_path_to_env_variable PATH "$1"
       return 0
   }
 
-  function pkgtools__add_path_to_LD_LIBRARY_PATH ()
+  function pkgtools::add_path_to_LD_LIBRARY_PATH ()
   {
-      pkgtools__add_path_to_env_variable LD_LIBRARY_PATH "$1"
+      pkgtools::add_path_to_env_variable LD_LIBRARY_PATH "$1"
       return 0
   }
 #+END_SRC
@@ -734,7 +734,7 @@ already present. In such way, it prevents cumbersome of environment variables.
 The same as before: it keeps safe the environment variable by only removing the
 relevant path.
 #+BEGIN_SRC sh
-  function pkgtools__remove_path_to_env_variable ()
+  function pkgtools::remove_path_to_env_variable ()
   {
       local _path=${(P)$(echo $1)}
       eval $(echo $1=$(echo ${_path} | sed -e 's;\(^'$2':\|:'$2'$\|:'$2'\(:\)\)\|'$2';\2;g'))
@@ -743,25 +743,25 @@ relevant path.
       return 0
   }
 
-  function pkgtools__remove_path_to_PATH ()
+  function pkgtools::remove_path_to_PATH ()
   {
-      pkgtools__remove_path_to_env_variable PATH "$1"
+      pkgtools::remove_path_to_env_variable PATH "$1"
       return 0
   }
 
-  function pkgtools__remove_path_to_LD_LIBRARY_PATH ()
+  function pkgtools::remove_path_to_LD_LIBRARY_PATH ()
   {
-      pkgtools__remove_path_to_env_variable LD_LIBRARY_PATH "$1"
+      pkgtools::remove_path_to_env_variable LD_LIBRARY_PATH "$1"
       return 0
   }
 #+END_SRC
 
 *** Set variable if not already exported
 #+BEGIN_SRC sh
-  function pkgtools__set_variable ()
+  function pkgtools::set_variable ()
   {
-      if $(pkgtools__check_variable $1); then
-          pkgtools__msg_warning "$1 is already set and exported"
+      if $(pkgtools::check_variable $1); then
+          pkgtools::msg_warning "$1 is already set and exported"
       else
           export $1=$2
       fi
@@ -770,7 +770,7 @@ relevant path.
 #+END_SRC
 *** Unset variable
 #+BEGIN_SRC sh
-  function pkgtools__unset_variable ()
+  function pkgtools::unset_variable ()
   {
       unset $1
       return 0
@@ -780,16 +780,16 @@ relevant path.
 This is just a combination of the two previous functions to force the export a
 variable.
 #+BEGIN_SRC sh
-  function pkgtools__reset_variable ()
+  function pkgtools::reset_variable ()
   {
-      pkgtools__unset_variable $1
-      pkgtools__set_variable $1 $2
+      pkgtools::unset_variable $1
+      pkgtools::set_variable $1 $2
       return 0
   }
 #+END_SRC
 *** Check binary presence
 #+BEGIN_SRC sh
-  function pkgtools__has_binary ()
+  function pkgtools::has_binary ()
   {
       which $1 > /dev/null 2>&1
       return $?
@@ -797,7 +797,7 @@ variable.
 #+END_SRC
 *** Check last command status
 #+BEGIN_SRC sh
-  function pkgtools__last_command_succeeds ()
+  function pkgtools::last_command_succeeds ()
   {
       if [ $? -ne 0 ]; then
           return 1
@@ -805,7 +805,7 @@ variable.
           return 0
       fi
   }
-  function pkgtools__last_command_fails ()
+  function pkgtools::last_command_fails ()
   {
       if [ $? -ne 0 ]; then
           return 0
@@ -816,7 +816,7 @@ variable.
 #+END_SRC
 *** Get binary path
 #+BEGIN_SRC sh
-  function pkgtools__get_binary_path ()
+  function pkgtools::get_binary_path ()
   {
       local binpath="$(whereis $1 | cut -d' ' -f2)"
       if [ -z $binpath ]; then
@@ -828,7 +828,7 @@ variable.
 #+END_SRC
 *** Check if laptop is @ LAL
 #+BEGIN_SRC sh
-  function pkgtools__at_LAL ()
+  function pkgtools::at_LAL ()
   {
       ping -c 1 nemo4 > /dev/null 2>&1
       return $?
@@ -837,29 +837,29 @@ variable.
 
 *** Get system environment
 #+BEGIN_SRC sh
-  function pkgtools__get_os ()
+  function pkgtools::get_os ()
   {
       echo "${__pkgtools__os}"
       return 0
   }
 
-  function pkgtools__get_arch ()
+  function pkgtools::get_arch ()
   {
       echo "${__pkgtools__arch}"
       return 0
   }
-  function pkgtools__get_sys ()
+  function pkgtools::get_sys ()
   {
-      echo "$(pkgtools__get_os)-$(pkgtools__get_arch)"
+      echo "$(pkgtools::get_os)-$(pkgtools::get_arch)"
       return 0
   }
 #+END_SRC
 
 *** Quielty run a command
 #+BEGIN_SRC sh
-  function pkgtools__quietly_run ()
+  function pkgtools::quietly_run ()
   {
-      if $(pkgtools__msg_is_quiet); then
+      if $(pkgtools::msg_is_quiet); then
           if eval "$@" > /dev/null 2>&1; then
               return 0
           else
@@ -876,7 +876,7 @@ variable.
 #+END_SRC
 *** Yes/No question
 #+BEGIN_SRC sh
-  function pkgtools__yesno_question ()
+  function pkgtools::yesno_question ()
   {
       PS3="$@ "
       yesno=("yes" "no")
@@ -894,7 +894,7 @@ variable.
           esac
       done
   }
-  function pkgtools__answer_is_yes ()
+  function pkgtools::answer_is_yes ()
   {
       if ${__pkgtools_answer_is_yes}; then
           return 0
@@ -902,7 +902,7 @@ variable.
           return 1
       fi
   }
-  function pkgtools__answer_is_no ()
+  function pkgtools::answer_is_no ()
   {
       if ${__pkgtools_answer_is_yes}; then
           return 1
@@ -913,14 +913,14 @@ variable.
 #+END_SRC
 *** Enter directory and store PWD
 #+BEGIN_SRC sh
-  function pkgtools__enter_directory ()
+  function pkgtools::enter_directory ()
   {
       local dir=$1
       if [[ -z $dir ]]; then
-          pkgtools__msg_error "Empty directory !"
+          pkgtools::msg_error "Empty directory !"
           return 1
       elif [[ ! -d $dir ]]; then
-          pkgtools__msg_devel "Creating directory '${dir}'"
+          pkgtools::msg_devel "Creating directory '${dir}'"
           mkdir -p $dir
       fi
       __pkgtools__stored_pwd="$PWD"
@@ -930,10 +930,10 @@ variable.
 #+END_SRC
 *** Leave directory and get back to PWD
 #+BEGIN_SRC sh
-  function pkgtools__exit_directory ()
+  function pkgtools::exit_directory ()
   {
       if [[ -z ${__pkgtools__stored_pwd} ]]; then
-          pkgtools__msg_error "No stacked directory!"
+          pkgtools::msg_error "No stacked directory!"
           return 1
       fi
       cd ${__pkgtools__stored_pwd}

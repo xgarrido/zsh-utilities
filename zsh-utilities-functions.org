@@ -18,16 +18,16 @@ generic function name given the linux system installed : "debian-like" system or
 #+BEGIN_SRC sh
   function __is_debian ()
   {
-      if pkgtools__has_binary apt-fast; then
+      if pkgtools::has_binary apt-fast; then
           __pkg_mgr="apt-fast"
           return 0
-      elif pkgtools__has_binary apt-get; then
+      elif pkgtools::has_binary apt-get; then
           __pkg_mgr="apt-get"
           return 0
-      elif pkgtools__has_binary yaourt; then
+      elif pkgtools::has_binary yaourt; then
           __pkg_mgr="yaourt"
           return 1
-      elif pkgtools__has_binary pacman; then
+      elif pkgtools::has_binary pacman; then
           __pkg_mgr="pacman"
           return 1
       fi
@@ -164,7 +164,7 @@ generic function name given the linux system installed : "debian-like" system or
 
       while [ -n "$1" ]; do
           if [[ ! -f "$1" ]]; then
-              pkgtools__msg_warning "'$1' is not a valid file"
+              pkgtools::msg_warning "'$1' is not a valid file"
               shift
               continue
           fi
@@ -200,7 +200,7 @@ generic function name given the linux system installed : "debian-like" system or
                   cd ..
                   ;;
               (*)
-                  pkgtools__msg_error "'$1' cannot be extracted" 1>&2
+                  pkgtools::msg_error "'$1' cannot be extracted" 1>&2
                   success=1
                   ;;
           esac
@@ -231,7 +231,7 @@ generic function name given the linux system installed : "debian-like" system or
           local dir="$(dirname $1)/$filename"
           local ext="${base#*.}"
           if [[ ! -d "$dir" && ! -f "$file" ]]; then
-              pkgtools__msg_warning "'$dir' is not a valid directory/file"
+              pkgtools::msg_warning "'$dir' is not a valid directory/file"
               shift
               continue
           fi
@@ -248,7 +248,7 @@ generic function name given the linux system installed : "debian-like" system or
                   (tar) tar cvf "$1" "$filename" ;;
                   (zip) zip "$dir" $dir/*;;
                   (*)
-                      pkgtools__msg_error "'$dir' cannot be compressed!" 1>&2
+                      pkgtools::msg_error "'$dir' cannot be compressed!" 1>&2
                       success=1
                       ;;
               esac
@@ -262,7 +262,7 @@ generic function name given the linux system installed : "debian-like" system or
                   (lzma) lzma "$1"  ;;
                   (7z) 7za x "$1" ;;
                   (*)
-                      pkgtools__msg_error "'$file' $ext cannot be compressed!" 1>&2
+                      pkgtools::msg_error "'$file' $ext cannot be compressed!" 1>&2
                       success=1
                       ;;
               esac
@@ -311,7 +311,7 @@ Base function for notification
 #+BEGIN_SRC sh
   function --notify ()
   {
-      if pkgtools__has_binary notify-send; then
+      if pkgtools::has_binary notify-send; then
           case $HOSTNAME in
               garrido-laptop|nb-garrido)
                   notify-send $@ > /dev/null 2>&1
@@ -405,7 +405,7 @@ db.
       local append_command=
 
       if [[ "$1" == "" ]]; then
-          pkgtools__msg_error "Missing the name of machine to connect !"
+          pkgtools::msg_error "Missing the name of machine to connect !"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -473,10 +473,10 @@ db.
       done
 
       if [ ${use_screen} -eq 0 ]; then
-          pkgtools__msg_notice "Connecting to ${server_name}..."
+          pkgtools::msg_notice "Connecting to ${server_name}..."
           ssh -Y ${ssh_option} ${server_name} "${append_command}"
       else
-          pkgtools__msg_notice "Connecting to ${server_name} with screen support..."
+          pkgtools::msg_notice "Connecting to ${server_name} with screen support..."
           screen ssh -Y ${ssh_option} ${server_name}
       fi
 
@@ -517,10 +517,10 @@ db.
   {
       __pkgtools__at_function_enter psgrep
       if [[ ! -z $1 ]] ; then
-          pkgtools__msg_notice "Grepping for processes matching $1..."
+          pkgtools::msg_notice "Grepping for processes matching $1..."
           ps aux | grep $1 | grep -v grep
       else
-          pkgtools__msg_error "Need name to grep for !"
+          pkgtools::msg_error "Need name to grep for !"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -544,10 +544,10 @@ db.
   {
       __pkgtools__at_function_enter hgrep
       if [[ ! -z $1 ]] ; then
-          pkgtools__msg_notice "Grepping for command matching $1..."
+          pkgtools::msg_notice "Grepping for command matching $1..."
           history | grep $1
       else
-          pkgtools__msg_error "Need name to grep for !"
+          pkgtools::msg_error "Need name to grep for !"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -563,10 +563,10 @@ db.
   {
       __pkgtools__at_function_enter remove_trailing_whitespace
       if [[ ! -z $1 ]] ; then
-          pkgtools__msg_notice "Removing trailing whitespace in file $1..."
+          pkgtools::msg_notice "Removing trailing whitespace in file $1..."
           find $1 -type f -exec sed -i 's/ *$//' '{}' ';'
       else
-          pkgtools__msg_error "Missing filename !"
+          pkgtools::msg_error "Missing filename !"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -580,11 +580,11 @@ db.
   {
       __pkgtools__at_function_enter remove_duplicate_lines
       if [[ ! -z $1 ]] ; then
-          pkgtools__msg_notice "Removing duplicate lines in file $1..."
+          pkgtools::msg_notice "Removing duplicate lines in file $1..."
           awk '!seen[$0]++' $1 > /tmp/$(basename $1).tmp
           mv /tmp/$(basename $1).tmp $1
       else
-          pkgtools__msg_error "Missing filename !"
+          pkgtools::msg_error "Missing filename !"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -655,7 +655,7 @@ db.
               elif [ "${opt}" = "--do-not-remove-duplicate-lines" ]; then
                   remove_duplicate_lines=0
               else
-                  pkgtools__msg_warning "Ignoring option '${opt}' !"
+                  pkgtools::msg_warning "Ignoring option '${opt}' !"
               fi
           else
               arg=${token}
@@ -663,44 +663,44 @@ db.
               if [ "${arg##*.}" = "eps" ]; then
                   eps_file="${eps_file} ${arg}"
               else
-                  pkgtools__msg_warning "'${eps_file}' is not an Encapsulated PostScript"
+                  pkgtools::msg_warning "'${eps_file}' is not an Encapsulated PostScript"
               fi
           fi
           shift
       done
 
       if [[ -z "${eps_file}" ]]; then
-          pkgtools__msg_error "Missing EPS file !"
+          pkgtools::msg_error "Missing EPS file !"
           __pkgtools__at_function_exit
           return 1
       fi
 
       for i in $(echo ${eps_file}); do
           if [ ! -f "${i}" ]; then
-              pkgtools__msg_warning "File ${i} does not exist! Skip it"
+              pkgtools::msg_warning "File ${i} does not exist! Skip it"
               continue
           fi
 
           local fig_file=${i/.eps/.fig}
           local tikz_file=${i/.eps/.tikz}
 
-          pkgtools__msg_notice "Converting ${i} file to ${tikz_file}..."
+          pkgtools::msg_notice "Converting ${i} file to ${tikz_file}..."
 
           if [[ ! -x $(which pstoedit) ]]; then
-              pkgtools__msg_error "Missing 'pstoedit' binary !"
+              pkgtools::msg_error "Missing 'pstoedit' binary !"
               __pkgtools__at_function_exit
               return 1
           fi
           pstoedit -f xfig "${i}" > ${fig_file} 2> /dev/null
 
           if [[ ! -x $(which fig2tikz) ]]; then
-              pkgtools__msg_error "Missing fig2tikz' binary !"
+              pkgtools::msg_error "Missing fig2tikz' binary !"
               __pkgtools__at_function_exit
               return 1
           fi
           fig2tikz ${fig_file} > ${tikz_file}.tmp
           if [[ ${remove_duplicate_lines} -eq 1 ]]; then
-              pkgtools__msg_notice "Remove duplicate lines..."
+              pkgtools::msg_notice "Remove duplicate lines..."
               awk '{if (match($0,"definecolor") || !seen[$0]++) {print $0}}' ${tikz_file}.tmp > ${tikz_file}
           else
               cp ${tikz_file}.tmp ${tikz_file}
@@ -772,7 +772,7 @@ Astrophysics Data System.
           fi
       done
       if [[ -z ${dirs} && -z ${files} ]]; then
-        pkgtools__msg_notice "Adding current directory"
+        pkgtools::msg_notice "Adding current directory"
         dirs="."
       fi
       for d in ${=dirs}
@@ -793,7 +793,7 @@ Astrophysics Data System.
               sed -i -e 's/\(.*pgfqpoint{.*}{\)\(-[2-9][0-9][0-9]\)\(.*in}.*\)/\1-200\3/g' $file
               eval $(echo tikz2pdf ${options} ${file})
           else
-            pkgtools__msg_notice "File '$file' already processed"
+            pkgtools::msg_notice "File '$file' already processed"
           fi
       done
   }
@@ -1245,10 +1245,10 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
   {
       __pkgtools__at_function_enter grab_video
       if [[ ! -z $1 ]] ; then
-          pkgtools__msg_notice "Grabing video from $1 link and saving it to /tmp/dump_video.avi..."
+          pkgtools::msg_notice "Grabing video from $1 link and saving it to /tmp/dump_video.avi..."
           mplayer -dumpstream "$1" -dumpfile /tmp/dump_video.avi
       else
-          pkgtools__msg_error "Missing mms link !"
+          pkgtools::msg_error "Missing mms link !"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -1262,7 +1262,7 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
   {
       __pkgtools__at_function_enter bak
       if [ -z $1 ]; then
-          pkgtools__msg_error "Missing file or directory name !"
+          pkgtools::msg_error "Missing file or directory name !"
           __pkgtools__at_function_exit
           return 1
       fi
@@ -1275,18 +1275,18 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
   {
       __pkgtools__at_function_enter unbak
       if [ -z $1 ]; then
-          pkgtools__msg_error "Missing file or directory name !"
+          pkgtools::msg_error "Missing file or directory name !"
           __pkgtools__at_function_exit
           return 1
       fi
       if  [[ ${1##*.} != "bak" ]]; then
-          pkgtools__msg_error "$1 is not a backup copy !"
+          pkgtools::msg_error "$1 is not a backup copy !"
           __pkgtools__at_function_exit
           return 1
       fi
       unbak_name=${1/.bak/}
       if [[ -f ${unbak_name} || -d ${unbak_name} ]]; then
-        pkgtools__msg_warning "File or directory ${unbak_name} already exists !"
+        pkgtools::msg_warning "File or directory ${unbak_name} already exists !"
         return 1
       fi
       [ -f $1 ] && mv $1 ${1/.bak/}
@@ -1301,11 +1301,11 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
   {
       __pkgtools__at_function_enter search_student
       if [ -z $1 ]; then
-          pkgtools__msg_error "Missing student name !"
+          pkgtools::msg_error "Missing student name !"
           __pkgtools__at_function_exit
           return 1
       elif [[ $1 == "--help" || $1 == "-h" ]]; then
-        pkgtools__msg_notice "Usage : search_student \"firstname lastname\""
+        pkgtools::msg_notice "Usage : search_student \"firstname lastname\""
         __pkgtools__at_function_exit
         return 0
       fi
@@ -1320,7 +1320,7 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
           nname=$(echo $name | iconv -f utf8 -t ascii//TRANSLIT)
           prefix="Getting picture for $nname"
           if [ -f ${adonis_pics_path}/${nname}.jpg ]; then
-              pkgtools__msg_notice "${prefix} -> already downloaded"
+              pkgtools::msg_notice "${prefix} -> already downloaded"
               xdg-open ${adonis_pics_path}/${nname}.jpg &
               continue
           fi
@@ -1329,12 +1329,12 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
               http_path=${adonis_http}/sl$i/${nname:0:1}/${nname}/
               wget -r --no-parent -A "*.jpg" ${http_path} -P /tmp > /dev/null 2>&1
               if [ $? -eq 0 ]; then
-                  pkgtools__msg_notice "${prefix} -> picture found"
+                  pkgtools::msg_notice "${prefix} -> picture found"
                   ls -1 /tmp/${http_path/http:\/\//}/*.jpg | tail -n1 | xargs -i cp {} ${adonis_pics_path}/${nname}.jpg
                   xdg-open ${adonis_pics_path}/${nname}.jpg &
                   break
               elif [ $i -eq 3 ]; then
-                  pkgtools__msg_error "${prefix} -> picture not found"
+                  pkgtools::msg_error "${prefix} -> picture not found"
                   __pkgtools__at_function_exit
                   return 1
               fi

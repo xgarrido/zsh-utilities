@@ -37,9 +37,9 @@ command.
 ** Greping stuff
 #+BEGIN_SRC sh
   alias grep='grep --color=auto'
-  if pkgtools__has_binary ack-grep; then
+  if pkgtools::has_binary ack-grep; then
       alias ack='ack-grep'
-  elif pkgtools__has_binary /usr/bin/vendor_perl/ack; then
+  elif pkgtools::has_binary /usr/bin/vendor_perl/ack; then
       alias ack='/usr/bin/vendor_perl/ack'
   fi
 #+END_SRC
@@ -66,10 +66,10 @@ command.
 #+BEGIN_SRC sh :tangle no
   function cask ()
   {
-      if pkgtools__has_binary cask; then
+      if pkgtools::has_binary cask; then
            (
                cd ~/.emacs.d
-               $(pkgtools__get_binary_path cask) $@
+               $(pkgtools::get_binary_path cask) $@
            )
       fi
   }
@@ -92,10 +92,10 @@ Options for =less= program are the following
 #+BEGIN_SRC sh
   export PAGER='less -M -N -X'
   alias more='less -M -N -X'
-  if pkgtools__has_binary pygmentize; then
-      pkgtools__reset_variable LESSOPEN "| pygmentize %s"
+  if pkgtools::has_binary pygmentize; then
+      pkgtools::reset_variable LESSOPEN "| pygmentize %s"
   else
-      pkgtools__unset_variable LESSOPEN
+      pkgtools::unset_variable LESSOPEN
   fi
 #+END_SRC
 

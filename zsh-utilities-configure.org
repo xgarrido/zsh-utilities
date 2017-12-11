@@ -45,7 +45,7 @@ way it should be easy to add its own configuration.
               if [ $? -eq 0 ]; then
                   __configure_$(hostname)
               else
-                  pkgtools__msg_debug "No configuration for machine '$(hostname)' has been found ! Use default one"
+                  pkgtools::msg_debug "No configuration for machine '$(hostname)' has been found ! Use default one"
                   __configure_default
               fi
               ;;
@@ -62,31 +62,31 @@ way it should be easy to add its own configuration.
       __pkgtools__at_function_enter __configure_laptop
 
       # Use 256 colors terminal
-      pkgtools__reset_variable TERM xterm-256color
+      pkgtools::reset_variable TERM xterm-256color
 
       # Homemade latex style
-      pkgtools__reset_variable TEXMFHOME ${HOME}/.config/texmf
-      pkgtools__reset_variable TEXMFOUTPUT /tmp
+      pkgtools::reset_variable TEXMFHOME ${HOME}/.config/texmf
+      pkgtools::reset_variable TEXMFOUTPUT /tmp
 
       # Load Go Programming Language
-      pkgtools__reset_variable GOPATH ${HOME}/Development/go
-      pkgtools__add_path_to_PATH ${GOPATH}/bin
+      pkgtools::reset_variable GOPATH ${HOME}/Development/go
+      pkgtools::add_path_to_PATH ${GOPATH}/bin
 
       # Adding utilities path
-      pkgtools__add_path_to_PATH ${HOME}/.bin
+      pkgtools::add_path_to_PATH ${HOME}/.bin
 
       # Reset LD_LIBRARY_PATH
       unset LD_LIBRARY_PATH
 
       # Set HOST
-      pkgtools__reset_variable HOST ${HOSTNAME}
-      pkgtools__reset_variable WORKDIR ${HOME}/Workdir
+      pkgtools::reset_variable HOST ${HOSTNAME}
+      pkgtools::reset_variable WORKDIR ${HOME}/Workdir
 
       # SuperNEMO variable
-      pkgtools__reset_variable SNAILWARE_SIMULATION_DIR $WORKDIR/NEMO/supernemo/simulations
+      pkgtools::reset_variable SNAILWARE_SIMULATION_DIR $WORKDIR/NEMO/supernemo/simulations
 
       # Set EDITOR
-      pkgtools__reset_variable EDITOR "ec"
+      pkgtools::reset_variable EDITOR "ec"
 
       __pkgtools__at_function_exit
       return 0
@@ -100,11 +100,11 @@ way it should be easy to add its own configuration.
       __pkgtools__at_function_enter __configure_lal_machines
 
       umask 022
-      pkgtools__reset_variable EXPDIR /exp/nemo/garrido
-      pkgtools__reset_variable WORKDIR /exp/nemo/garrido/workdir
+      pkgtools::reset_variable EXPDIR /exp/nemo/garrido
+      pkgtools::reset_variable WORKDIR /exp/nemo/garrido/workdir
 
       # Add homemade software
-      pkgtools__add_path_to_PATH ${EXPDIR}/software/bin
+      pkgtools::add_path_to_PATH ${EXPDIR}/software/bin
 
       __pkgtools__at_function_exit
       return 0
@@ -115,8 +115,8 @@ way it should be easy to add its own configuration.
   function __configure_lyon_machines ()
   {
       __pkgtools__at_function_enter __configure_lyon_machines
-      pkgtools__reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
-      pkgtools__reset_variable WORKDIR ${SCRATCH_DIR}/workdir
+      pkgtools::reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
+      pkgtools::reset_variable WORKDIR ${SCRATCH_DIR}/workdir
 
       # Redefine new group function
       if (( ! $+functions[newgroup] )); then
@@ -144,10 +144,10 @@ way it should be easy to add its own configuration.
       done
 
       # Homemade software for everybody
-      pkgtools__add_path_to_PATH ${SCRATCH_DIR}/software/bin
+      pkgtools::add_path_to_PATH ${SCRATCH_DIR}/software/bin
 
       # qjob/qstat for everybody
-      pkgtools__add_path_to_PATH /opt/sge/bin/lx-amd64
+      pkgtools::add_path_to_PATH /opt/sge/bin/lx-amd64
 
       __pkgtools__at_function_exit
       return 0
