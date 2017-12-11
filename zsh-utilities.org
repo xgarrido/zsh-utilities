@@ -92,11 +92,6 @@ configuration for external resources.
 The following files contain specific settings for several plugins. *Keep this
 order* since there are some dependencies.
 
-- Message handling and function facilities in [[file:zsh-utilities-pkgtools.org][zsh-utilities-pkgtools]]
-  #+BEGIN_SRC sh
-    source ${zsh_utilities_dir}/zsh-utilities-pkgtools.zsh
-  #+END_SRC
-
 - Some =zsh= default and custom settings in [[file:zsh-utilities-settings.org][zsh-utilities-settings]]
   #+BEGIN_SRC sh
     source ${zsh_utilities_dir}/zsh-utilities-settings.zsh
