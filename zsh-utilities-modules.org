@@ -493,9 +493,13 @@ From https://lebkowski.name/docker-volumes/
   {
       local ret=1 state
 
-      _arguments                                    \
-          {-h,--help}'[produce help message]'         \
-          '--profile[set the profile]:profile:->prof' \
+      _arguments                                         \
+          {-h,--help}'[produce help message]'            \
+          {-d,--debug}'[enable debug mode]'              \
+          {-D,--devel}'[enable devel mode]'              \
+          '--profile[set the profile]:profile:->prof'    \
+          '--source[set the source directory]'           \
+          '--destination[set the destination directory]' \
           && ret=0
 
       case $state in
@@ -505,7 +509,7 @@ From https://lebkowski.name/docker-volumes/
                   lal:'LAL machine (via lx3)'
                   usb:'USB hard disk'
               )
-              _describe -t _profiles 'Bakcup profiles' _profiles
+              _describe -t _profiles 'Backup profiles' _profiles
               ;;
       esac
 
