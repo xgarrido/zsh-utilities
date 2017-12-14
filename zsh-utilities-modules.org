@@ -191,6 +191,8 @@ be colored bold strings, for instance.
           # [percent] Generating
           [ "^\[.*\]\s(Generating)(\s+.*)$",
             generating, "normal,bold"],
+          [ "^\[.*\]\s(Creating)(\s+.*/)(.*)$",
+            "magenta", "normal,normal,bold"],
           # Ninja stop
           [ ".*build stopped.*", "red", "bold" ],
           # progress percentage
