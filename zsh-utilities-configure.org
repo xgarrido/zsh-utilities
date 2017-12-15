@@ -131,12 +131,10 @@ way it should be easy to add its own configuration.
       do
           case $setup in
               "supernemo")
-                  newgroup --temp nemo
                   do_nemo_setup
                   break
                   ;;
               "cmb")
-                  newgroup --temp planck
                   do_cmb_setup
                   break
                   ;;
