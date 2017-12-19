@@ -636,11 +636,21 @@ function root/mergeTree () {
       alias qjob_nemo_user='echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| tail -n+3 | grep nemo | awk "{print \$5}" | sort | uniq -c'
       alias qjob_summary='qjob_my_total; qjob_my_run; qjob_nemo_user'
 
+      # Unset to start from fresh config.
+      pkgtools::unset_variable LD_LIBRARY_PATH
+      pkgtools::unset_variable PATH
+      pkgtools::unset_variable CFLAGS
+
+      # bin directories
+      pkgtools::add_path_to_PATH /usr/bin
+      pkgtools::add_path_to_PATH /bin
+
       # Use up-to-date gcc
       local gcc_version=5.2.0
       local gcc_dir=/usr/local/gcc/${gcc_version}
       pkgtools::add_path_to_PATH  ${gcc_dir}/bin
       pkgtools::add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib64
+      pkgtools::reset_variable LIBRARY_PATH ${gcc_dir}/lib64
 
       # Set brew cache directory (default ~/.cache)
       pkgtools::reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/software/brew/.cache
@@ -663,18 +673,19 @@ function root/mergeTree () {
 #+END_SRC
 **** Environment variables
 #+BEGIN_SRC sh
-  # # Unset to start from fresh config.
-  # pkgtools::unset_variable LD_LIBRARY_PATH
-  # pkgtools::unset_variable PATH
+  # Unset to start from fresh config.
+  pkgtools::unset_variable LD_LIBRARY_PATH
+  pkgtools::unset_variable PATH
 
-  # # bin directories
-  # pkgtools::add_path_to_PATH /bin
-  # pkgtools::add_path_to_PATH /usr/bin
+  # bin directories
+  pkgtools::add_path_to_PATH /usr/bin
+  pkgtools::add_path_to_PATH /bin
 
   # Unset planck PYHTONHOME
-  unset PYTHONHOME
-  unset PYTHONPATH
-  unset CFLAGS
+  pkgtools::unset_variable PYTHONHOME
+  pkgtools::unset_variable PYTHONPATH
+  pkgtools::unset_variable CFLAGS
+  pkgtools::reset_variable LDLAGS "--no-warn-search-mismatch"
 
   # Set pip cache directory
   mkdir -p /tmp/garrido.d
@@ -802,9 +813,13 @@ function root/mergeTree () {
       } >> ${parfile_base}
 
       # Create job script
+      local sysname=${SYSNAME/*_/}
+      if [[ ${sysname} = sl7 ]]; then
+          sysname="cl7"
+      fi
       {
           echo "#$ -l sps=1"
-          echo "#$ -l os=sl6"
+          echo "#$ -l os=${sysname}"
           echo "#$ -j y"
           echo "#$ -R y"
           echo "#$ -t 1-$nchain"
@@ -974,6 +989,10 @@ function root/mergeTree () {
       fi
       mkdir -p ${profile_dir}
 
+      local sysname=${SYSNAME/*_/}
+      if [[ ${sysname} = sl7 ]]; then
+          sysname="cl7"
+      fi
       pkgtools::msg_notice "Parameter file  : ${parfile}"
       pkgtools::msg_notice "Parameter name  : ${parameter_name}"
       pkgtools::msg_notice "Parameter range : ${=parameter_range}"
@@ -983,6 +1002,7 @@ function root/mergeTree () {
       pkgtools::msg_notice " - Number of cores  : ${ncore}"
       pkgtools::msg_notice " - Queue type       : ${queue}"
       pkgtools::msg_notice " - Project type     : ${project}"
+      pkgtools::msg_notice " - Machine type     : ${sysname}"
       pkgtools::yesno_question "Start jobs ?"
       if $(pkgtools::answer_is_no); then
           pkgtools::at_function_exit
@@ -1005,7 +1025,7 @@ function root/mergeTree () {
           # Create job script
           {
               echo "#$ -l sps=1"
-              echo "#$ -l os=sl6"
+              echo "#$ -l os=${sysname}"
               echo "#$ -j y"
               echo "#$ -R y"
               echo "#$ -t 1-$nchain"
