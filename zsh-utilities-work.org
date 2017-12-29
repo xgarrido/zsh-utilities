@@ -1058,7 +1058,7 @@ function root/mergeTree () {
 
           # Running job
           if ! ${dry_run}; then
-              qsub -j y -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD profile.sh
+              qsub -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD profile.sh
           fi
 
           pkgtools::exit_directory
@@ -1196,7 +1196,7 @@ function root/mergeTree () {
           echo "#$ -j y"
           echo "#$ -R y"
           echo "#$ -t 1-$nchain"
-          echo "#$ -N ${parfile_name}_${run_name}"
+          echo "#$ -N ${parfile_name}"
           # echo "#$ -m be"
           echo
           echo "echo \"running on : \$(uname -a)\""
@@ -1211,7 +1211,7 @@ function root/mergeTree () {
           echo "if [ \${SGE_TASK_ID} -eq 1 ]; then"
           echo "cp minimize.par \${current_minimize}"
           echo "else"
-          echo "awk -v seed=\$RANDOM -f genrand.awk profile.par > \${current_minimize}"
+          echo "awk -v seed=\$RANDOM -f genrand.awk minimize.par > \${current_minimize}"
           echo "fi"
           echo
           echo "cp \${current_minimize} $PWD"
@@ -1225,7 +1225,7 @@ function root/mergeTree () {
 
       # Running job
       if ! ${dry_run}; then
-          qsub -j y -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD minimize.sh
+          qsub -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD minimize.sh
       fi
       pkgtools::at_function_exit
       return 0
