@@ -1185,6 +1185,8 @@ function root/mergeTree () {
           return 0
       fi
 
+      pkgtools::enter_directory ${minimize_dir}
+
       # Create job script
       {
           local sysname=${SYSNAME/*_/}
@@ -1227,6 +1229,7 @@ function root/mergeTree () {
       if ! ${dry_run}; then
           qsub -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD minimize.sh
       fi
+      pkgtools::exit_directory
       pkgtools::at_function_exit
       return 0
   }
