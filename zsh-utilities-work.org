@@ -1172,13 +1172,13 @@ function root/mergeTree () {
       fi
       mkdir -p ${minimize_dir}
 
-      pkgtools::msg_notice "Parameter file     : ${parfile}"
+      pkgtools::msg_notice "Parameter file : ${parfile}"
       pkgtools::msg_notice "Minimize directory : ${minimize_dir}"
       pkgtools::msg_notice "CC jobs setup :"
       pkgtools::msg_notice " - Number of chains : ${nchain}"
-      pkgtools::msg_notice " - Number of cores  : ${ncore}"
-      pkgtools::msg_notice " - Queue type       : ${queue}"
-      pkgtools::msg_notice " - Project type     : ${project}"
+      pkgtools::msg_notice " - Number of cores : ${ncore}"
+      pkgtools::msg_notice " - Queue type : ${queue}"
+      pkgtools::msg_notice " - Project type : ${project}"
       pkgtools::yesno_question "Start jobs ?"
       if $(pkgtools::answer_is_no); then
           pkgtools::at_function_exit
