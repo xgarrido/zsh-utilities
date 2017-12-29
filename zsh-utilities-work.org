@@ -1189,8 +1189,12 @@ function root/mergeTree () {
 
       # Create job script
       {
+          local sysname=${SYSNAME/*_/}
+          if [[ ${sysname} = sl7 ]]; then
+              sysname="cl7"
+          fi
           echo "#$ -l sps=1"
-          echo "#$ -l os=sl6"
+          echo "#$ -l os=${sysname}"
           echo "#$ -j y"
           echo "#$ -R y"
           echo "#$ -t 1-$nchain"
@@ -1201,24 +1205,24 @@ function root/mergeTree () {
           echo "source $(dirname $(which python))/activate"
           echo "export OMP_NUM_THREADS=$ncore"
           echo "cd \$TMPDIR"
-          echo "cp ${parfile} profile.par"
-          echo "cp ${profile_exe} ."
+          echo "cp ${parfile} minimize.par"
+          echo "cp ${minimize_exe} ."
           echo "cp ${CAMELROOT}/work/tools/awk/genrand.awk ."
           echo
-          echo "current_profile=profile\${SGE_TASK_ID}.par"
+          echo "current_minimize=minimize\${SGE_TASK_ID}.par"
           echo "if [ \${SGE_TASK_ID} -eq 1 ]; then"
-          echo "cp profile.par \${current_profile}"
+          echo "cp minimize.par \${current_minimize}"
           echo "else"
-          echo "awk -v seed=\$RANDOM -f genrand.awk profile.par > \${current_profile}"
+          echo "awk -v seed=\$RANDOM -f genrand.awk profile.par > \${current_minimize}"
           echo "fi"
           echo
-          echo "cp \${current_profile} $PWD"
+          echo "cp \${current_minimize} $PWD"
           echo
-          echo "./Profile \${current_profile} ${parameter_name} ${par} ${par} 1 best_fit > $PWD/output\${SGE_TASK_ID}.log 2>&1"
+          echo "./Minimize \${current_minimize} best_fit covmat > $PWD/output\${SGE_TASK_ID}.log 2>&1"
           echo
           echo "cp best_fit $PWD/best_fit\${SGE_TASK_ID}.txt"
+          echo "cp covmat $PWD/covmat\${SGE_TASK_ID}.txt"
           echo
-          echo "qstat -j \${JOB_ID} -nenv"
       } >> minimize.sh
 
       # Running job
