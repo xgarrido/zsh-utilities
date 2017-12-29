@@ -1160,7 +1160,7 @@ function root/mergeTree () {
       local parfile_name=${parfile_base%.*}
 
       # Create output directory
-      local minimize_dir=${parfile_dir}/${parfile_name}_${parameter_name}_min
+      local minimize_dir=${parfile_dir}/${parfile_name}_min
       if [ -d ${minimize_dir} ]; then
           pkgtools::msg_warning "Directory '${minimize_dir}' already exist!"
           pkgtools::yesno_question "Do you want to remove it ?"
