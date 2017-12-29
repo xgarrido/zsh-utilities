@@ -910,7 +910,7 @@ function root/mergeTree () {
           if [ ${token[0,1]} = - ]; then
               local opt=${token}
               if [[ ${opt} = -h || ${opt} = --help ]]; then
-                  echo "Usage:\n run_cmb_mcmc [options] parfile"
+                  echo "Usage:\n run_cmb_profile [options] parfile"
                   echo "Options:"
                   echo " -h [--help]  print this help message"
                   echo " -d [--debug] debug mode"
@@ -1085,6 +1085,148 @@ function root/mergeTree () {
           && ret=0
 
       return ret
+  }
+#+END_SRC
+**** Run minimize jobs
+***** Wrapper
+#+BEGIN_SRC sh
+  function run_cmb_minimize()
+  {
+      pkgtools::default_values
+      pkgtools::at_function_enter run_cmb_minimize
+
+      if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
+          pkgtools::msg_error "CMB configuration not setup!"
+          pkgtools::at_function_exit
+          return 1
+      fi
+
+      local dry_run=false
+      local minimize_exe=$CAMELROOT/$CMTCONFIG/Minimize
+      local parfile
+      local nchain=10
+      local ncore=8
+      local queue=mc_long
+      local project=P_planck
+      while [ -n "$1" ]; do
+          local token="$1"
+          if [ ${token[0,1]} = - ]; then
+              local opt=${token}
+              if [[ ${opt} = -h || ${opt} = --help ]]; then
+                  echo "Usage:\n run_cmb_minimize [options] parfile"
+                  echo "Options:"
+                  echo " -h [--help]  print this help message"
+                  echo " -d [--debug] debug mode"
+                  echo " -D [--devel] devel mode"
+                  echo " --dry-run do not start qsub jobs"
+                  echo " --parameter-name set the name of the parameter to profile"
+                  echo " --parameter-range set the parameter's range to profile"
+                  echo " --nchain     set number of qjob chains"
+                  echo " --ncore      set number of qjob cores"
+                  return 0
+              elif [[ ${opt} = -d || ${opt} = --debug ]]; then
+                  pkgtools::msg_using_debug
+              elif [[ ${opt} = -D || ${opt} = --devel ]]; then
+                  pkgtools::msg_using_devel
+              elif [[ ${opt} = --dry-run ]]; then
+                  dry_run=true
+              elif [[ ${opt} = --nchain ]]; then
+                  shift 1
+                  nchain="$1"
+              elif [[ ${opt} = --ncore ]]; then
+                  shift 1
+                  ncore="$1"
+              fi
+          else
+              parfile="${token}"
+          fi
+          shift 1
+      done
+
+      if [ -z "${parfile}" ]; then
+          pkgtools::msg_error "Missing parameter file!"
+          pkgtools::at_function_exit
+          return 1
+      elif [ ! -f "${parfile}" ]; then
+          pkgtools::msg_error "Parameter file '${parfile}' does not exist!"
+          pkgtools::at_function_exit
+          return 1
+      fi
+      # Make sure PWD is added
+      local parfile_dir=$(dirname ${parfile})
+      if [[ ${parfile_dir} = . ]]; then
+          parfile_dir=$PWD
+          parfile=$PWD/${parfile}
+      fi
+      local parfile_base=$(basename ${parfile})
+      local parfile_name=${parfile_base%.*}
+
+      # Create output directory
+      local minimize_dir=${parfile_dir}/${parfile_name}_${parameter_name}_min
+      if [ -d ${minimize_dir} ]; then
+          pkgtools::msg_warning "Directory '${minimize_dir}' already exist!"
+          pkgtools::yesno_question "Do you want to remove it ?"
+          if $(pkgtools::answer_is_no); then
+              pkgtools::at_function_exit
+              return 0
+          fi
+          rm -rf ${minimize_dir}
+      fi
+      mkdir -p ${minimize_dir}
+
+      pkgtools::msg_notice "Parameter file     : ${parfile}"
+      pkgtools::msg_notice "Minimize directory : ${minimize_dir}"
+      pkgtools::msg_notice "CC jobs setup :"
+      pkgtools::msg_notice " - Number of chains : ${nchain}"
+      pkgtools::msg_notice " - Number of cores  : ${ncore}"
+      pkgtools::msg_notice " - Queue type       : ${queue}"
+      pkgtools::msg_notice " - Project type     : ${project}"
+      pkgtools::yesno_question "Start jobs ?"
+      if $(pkgtools::answer_is_no); then
+          pkgtools::at_function_exit
+          return 0
+      fi
+
+      # Create job script
+      {
+          echo "#$ -l sps=1"
+          echo "#$ -l os=sl6"
+          echo "#$ -j y"
+          echo "#$ -R y"
+          echo "#$ -t 1-$nchain"
+          echo "#$ -N ${parfile_name}_${run_name}"
+          # echo "#$ -m be"
+          echo
+          echo "echo \"running on : \$(uname -a)\""
+          echo "source $(dirname $(which python))/activate"
+          echo "export OMP_NUM_THREADS=$ncore"
+          echo "cd \$TMPDIR"
+          echo "cp ${parfile} profile.par"
+          echo "cp ${profile_exe} ."
+          echo "cp ${CAMELROOT}/work/tools/awk/genrand.awk ."
+          echo
+          echo "current_profile=profile\${SGE_TASK_ID}.par"
+          echo "if [ \${SGE_TASK_ID} -eq 1 ]; then"
+          echo "cp profile.par \${current_profile}"
+          echo "else"
+          echo "awk -v seed=\$RANDOM -f genrand.awk profile.par > \${current_profile}"
+          echo "fi"
+          echo
+          echo "cp \${current_profile} $PWD"
+          echo
+          echo "./Profile \${current_profile} ${parameter_name} ${par} ${par} 1 best_fit > $PWD/output\${SGE_TASK_ID}.log 2>&1"
+          echo
+          echo "cp best_fit $PWD/best_fit\${SGE_TASK_ID}.txt"
+          echo
+          echo "qstat -j \${JOB_ID} -nenv"
+      } >> minimize.sh
+
+      # Running job
+      if ! ${dry_run}; then
+          qsub -j y -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD minimize.sh
+      fi
+      pkgtools::at_function_exit
+      return 0
   }
 #+END_SRC
 **** Postamble
