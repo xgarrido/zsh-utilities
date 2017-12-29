@@ -285,10 +285,10 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
                "blue,magenta,yellow", "bold,bold,normal"],
               ["(^total.*) (speedup.*)",
                "green,cyan", "bold,normal"],
-              [ "^[a-zA-Z].*", "yellow", "normal"],
+              [ "^[\.a-zA-Z].*", "yellow", "normal"],
               [ "(^.*) (.*%)(.*/s)(.*:.*:.*).*(\(xfr#.*\))",
                 "blue,green,magenta,green",
-                "bold,conceal,normal,normal,conceal"],
+                "bold,conceal,normal,normal,conceal"]
         ]
 #+END_SRC
 
@@ -353,13 +353,11 @@ python code to cron syntax.
   cron.command('cp /home/garrido/.emacs.d/tmp/session/emacs.desktop /home/garrido/.emacs.d/tmp/session/emacs-`date +\%Y-\%m-\%d`.desktop', every='monthly')
   cron.command('DISPLAY=:0 /home/garrido/.bin/mybackup --profile lal', every='1.day', at='13:00')
   cron.command('DISPLAY=:0 /home/garrido/.bin/mybackup --profile usb', every='1.day', at='13:00')
-  cron.command('DISPLAY=:0 /home/garrido/.config/openbox/scripts/change-wallpaper fade', every='hourly')
   if __name__ == '__main__':
       cron.run('update')
 #+END_SRC
 
 #+RESULTS:
-: [write] crontab file updated
 
 ** fzf
 fzf is a general-purpose command-line fuzzy finder. See
@@ -451,7 +449,7 @@ From https://lebkowski.name/docker-volumes/
       docker images --no-trunc | grep '<none>' | awk '{ print $3 }' | xargs -r docker rmi --force
 
       # remove unused volumes:
-      sudo find '/var/lib/docker/volumes/' -mindepth 1 -maxdepth 1 -type d | grep -vFf <(
+      sudo find '/home/garrido/Development/docker.d/volumes/' -mindepth 1 -maxdepth 1 -type d | grep -vFf <(
               docker ps -aq | xargs docker inspect | jq -r '.[] | .Mounts | .[] | .Name | select(.)'
           ) | xargs -r rm -fr
   }
@@ -469,9 +467,7 @@ From https://lebkowski.name/docker-volumes/
       local _file=$(basename $1)
       docker run --rm  -v $_path:/home/acroread/Documents:rw \
              -v /tmp/.X11-unix:/tmp/.X11-unix \
-             -e uid=$(id -u) \
-             -e gid=$(id -g) \
-             -e DISPLAY=unix$DISPLAY \
+             -e DISPLAY=$DISPLAY \
              -e FILE='/home/acroread/Documents/'$_file \
              --name acroread \
              chrisdaish/acroread
