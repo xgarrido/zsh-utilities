@@ -1104,7 +1104,7 @@ function root/mergeTree () {
       local dry_run=false
       local minimize_exe=$CAMELROOT/$CMTCONFIG/Minimize
       local parfile
-      local nchain=10
+      local nchain=5
       local ncore=8
       local queue=mc_long
       local project=P_planck
