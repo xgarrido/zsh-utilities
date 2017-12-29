@@ -1119,8 +1119,6 @@ function root/mergeTree () {
                   echo " -d [--debug] debug mode"
                   echo " -D [--devel] devel mode"
                   echo " --dry-run do not start qsub jobs"
-                  echo " --parameter-name set the name of the parameter to profile"
-                  echo " --parameter-range set the parameter's range to profile"
                   echo " --nchain     set number of qjob chains"
                   echo " --ncore      set number of qjob cores"
                   return 0
