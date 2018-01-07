@@ -800,6 +800,25 @@ Astrophysics Data System.
   compdef _tikz2pdf plot2pdf
 #+END_SRC
 
+** Music edition
+*** Convert flac to mp3
+#+BEGIN_SRC sh
+  function flac2mp3() {
+      if [[ "$1" == "" ]]; then
+          echo "Usage: flac2mp3 [flac files ...]"
+          echo
+          return 1
+      fi
+
+      if (( $+commands[parallel] )); then
+          parallel ffmpeg -i {} -qscale:a 0 {.}.mp3 ::: $1/**/*.flac
+      else
+        pkgtools::msg_error "Missing parallel package!"
+        return 1
+      fi
+      return 0
+  }
+#+END_SRC
 ** Mounting/unmounting USB drives
 #+BEGIN_SRC sh
   function usb_umount()
