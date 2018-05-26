@@ -419,7 +419,7 @@ db.
           elif [[ "$1" == "cern" ]]; then
               server_name="xgarrido@lxplus.cern.ch"
           elif [[ "$1" == "lyon" ]]; then
-              server_name="garrido@ccage.in2p3.fr"
+              server_name="garrido@cca.in2p3.fr"
           elif [[ $1 == ccige* ]]; then
               server_name="garrido@$1.in2p3.fr"
           elif [[ $1 == ccage* ]]; then
@@ -490,8 +490,7 @@ db.
   {
       local -a _machines
       _machines=(
-          ccage:'CC Lyon job machines'
-          ccige:'CC Lyon interactive machines'
+          lyon:'CC Lyon job machines'
           laptop:'Laptop machine'
           mac:'iMac machine'
           syno:'Synology server @ home'
