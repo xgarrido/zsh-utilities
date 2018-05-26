@@ -6,10 +6,9 @@
 This is part of the [[file:zsh-utilities.org][Zsh Utilities]].
 
 * Zsh Utilities - Modules
-This file adds some configuration to external resources. Each program
-configuration is done item per item. The preamble is just here to ensure the
-binary is present. Thus each item is embedded between a preamble and postamble
-block code which is a basic =if= command.
+This file adds some configuration to external resources. Each program configuration is done item per
+item. The preamble is just here to ensure the binary is present. Thus each item is embedded between
+a preamble and postamble block code which is a basic =if= command.
 
 ** dotfiles
 [[http://pypi.python.org/pypi/dotfiles/][dotfiles]] is a tool to make managing your dotfile symlinks in $HOME easy,

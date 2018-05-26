@@ -236,7 +236,7 @@ function root/mergeTree () {
           done
       }
       local _config=$SNAILWARE_SIMULATION_DIR/snemo_simulation_configuration/current
-      local _flressource=$(flquery --resourcedir | tr -d '\n')
+      local _flressource=$(flquery --resourcedir | tr -d '\n' | sed 's/\(.*Falaise-.*\)-\(.*\)-\(.*\)\/\(.*\)/\1\/\4/')
       local _bxdll=$(bxquery --libdir | tr -d '\n')
       local _fldll=$(flquery --libdir | tr -d '\n')
       --bxdpp_processing                                         \
@@ -276,7 +276,7 @@ function root/mergeTree () {
           fi
       }
       _arguments                                                                                              \
-          {-P,--logging-priority}'[set logging priority]:logging:->log'                                       \
+          {-P,--logging}'[set logging priority]:logging:->log'                                                \
           {-l,--load-dll}'[set a DLL to be loaded]'                                                           \
           {-L,--dlls-config}'[set the DLL loader configuration file]:file:_files -g \*.conf'                  \
           {-%,--modulo}'[set the modulo print period for data record]:number'                                 \
