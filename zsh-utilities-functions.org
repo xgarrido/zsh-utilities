@@ -818,6 +818,24 @@ Astrophysics Data System.
       return 0
   }
 #+END_SRC
+*** Google music uploader
+#+BEGIN_SRC sh
+  function google-music-uploader()
+  {
+    if [ ! -d /tmp/gmusic ]; then
+      pkgtools::msg_notice "Creating virtual env for gmusicapi"
+      python3 -m venv /tmp/gmusic
+    fi
+    source /tmp/gmusic/bin/activate
+    pip install google-music-manager-uploader
+    if [ ! -f ~/.auth.key ]; then
+        google-music-auth ~/.auth.key
+    fi
+    sed -i -e 's/eth0/wlp2s0/' /tmp/gmusic/lib/python3.6/site-packages/google_music_manager_uploader/uploader_daemon.py
+    google-music-upload -d /home/garrido/Musique -a ~/.auth.key -r
+  }
+#+END_SRC
+
 ** Mounting/unmounting USB drives
 #+BEGIN_SRC sh
   function usb_umount()
