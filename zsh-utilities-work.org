@@ -698,6 +698,231 @@ function root/mergeTree () {
   pkgtools::reset_variable MKLROOT ${intel_compiler_library}/mkl
   pkgtools::add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
 #+END_SRC
+**** Build parameter file
+***** Wrapper
+#+BEGIN_SRC sh
+  function build_parfile()
+  {
+      pkgtools::default_values
+      pkgtools::at_function_enter build_parfile
+
+      local engine
+      local likelihood
+      local spectrum
+      local output_parfile
+      local setup_file
+      while [ -n "$1" ]; do
+          local token="$1"
+          if [ ${token[0,1]} = - ]; then
+              local opt=${token}
+              if [[ ${opt} = -h || ${opt} = --help ]]; then
+                  echo "Usage:\n build_parfile [options]"
+                  echo "Options:"
+                  echo " -h [--help]  print this help message"
+                  echo " -d [--debug] debug mode"
+                  echo " -D [--devel] devel mode"
+                  echo " --engine          set Boltzmann engine (mandatory)"
+                  echo " --likelihood      set likelihood type (mandatory)"
+                  echo " --spectrum        set data spectrum (mandatory)"
+                  echo " --setup-file      set path to the file holding parameter default values"
+                  echo " --output-file     set output parfile name"
+                  return 0
+              elif [[ ${opt} = -d || ${opt} = --debug ]]; then
+                  pkgtools::msg_using_debug
+              elif [[ ${opt} = -D || ${opt} = --devel ]]; then
+                  pkgtools::msg_using_devel
+              elif [[ ${opt} = --output-file ]]; then
+                  shift 1
+                  output_parfile="$1"
+              elif [[ ${opt} = -e || ${opt} = --engine ]]; then
+                  shift 1
+                  engine="$1"
+              elif [[ ${opt} = -l || ${opt} = --likelihood ]]; then
+                  shift 1
+                  likelihood="$1"
+              elif [[ ${opt} = -s || ${opt} = --spectrum ]]; then
+                  shift 1
+                  spectrum="$1"
+              elif [[ ${opt} = --setup-file ]]; then
+                  shift 1
+                  setup_file="$1"
+              fi
+          else
+              parfile="${token}"
+          fi
+          shift 1
+      done
+
+      if [ -z ${engine} ]; then
+          pkgtools::msg_error "Missing engine!"
+          pkgtools::at_function_exit
+          return 1
+      fi
+      if [ -z ${likelihood} ]; then
+          pkgtools::msg_error "Missing likelihood type!"
+          pkgtools::at_function_exit
+          return 1
+      fi
+
+      local parfile
+      local sep="###############################################################"
+      function add_header() {
+          parfile+="# -*- mode: conf-unix; -*-\n"
+          parfile+="${sep}\n"
+          parfile+="# Automagically generated $(date)\n"
+          parfile+="# from ${setup_file} with the following options:\n"
+          parfile+="#     Boltzmann engine : ${engine}\n"
+          parfile+="#             spectrum : ${spectrum}\n"
+          parfile+="#           likelihood : ${likelihood}\n"
+          parfile+="${sep}\n\n"
+      }
+      function add_title() {
+          local title="$1"
+          parfile+="${sep}\n"
+          parfile+="# ${title}\n"
+      }
+
+      local section
+      local subsection
+      local stream
+      local reset=true
+      function org::extract_section() {
+          [[ ${reset} ]] && stream=$(cat ${setup_file})
+          function org::extract_section_level() {
+              grep $section <<< ${stream} | grep -o "*" | grep -c .
+          }
+          local level=$(org::extract_section_level)
+          pkgtools::msg_devel "section=$section"
+          pkgtools::msg_devel "level=$level"
+          stream=$(sed -E -n '/^\*.{'$((level-1))'}.*'${section}'/,/^\*.{,'$((level-1))'} /p' <<< ${stream})
+          pkgtools::msg_devel "stream=${stream}"
+      }
+
+      function extract_params() {
+          org::extract_section
+          if [[ ! -z ${subsection} ]]; then
+              reset=false section=${subsection} org::extract_section
+          fi
+          parfile+=$(grep -v '^|-\|^*' <<< ${stream} | sed -e 's/|//g' -e 's/^[ \t]*//' -e '/^[A-Z]/d' -e '/^\s*$/d')
+          parfile+="\n\n"
+          section=
+          subsection=
+      }
+
+      local file_type
+      function extract_file() {
+          local file
+          if [[ ${file_type} = clikfile ]]; then
+              file=$(cat ${setup_file} | grep "${file_type} " | awk -F'|' '{gsub(" ", "", $4); print $4}')
+          else
+              file=$(cat ${setup_file} | grep "${file_type:l}.*${spectrum}" | awk -F'|' '{gsub(" ", "", $4); print $4}')
+          fi
+          pkgtools::msg_devel "file type = ${file_type}"
+          pkgtools::msg_devel "file = ${file}"
+          parfile+="${file_type}=${file}\n\n"
+      }
+
+      # Write file
+      add_header
+
+      # Boltzmann engine
+      add_title "Boltzmann engine"
+      parfile+="engine=${engine}\n\n"
+      if [[ ${engine} = class ]]; then
+          section="CLASS setup" extract_params
+          parfile=$(sed -e 's#\(precisionFile\) *\(.*\)#\1=\2#g' <<< ${parfile})
+      elif [[ ${engine} = pico ]]; then
+          section="PICO setup" extract_params
+      fi
+
+      # Cosmological model
+      add_title "Cosmological model"
+      section="Cosmological model" extract_params
+
+      # Likelihoods
+      add_title "Likelihoods"
+      add_title "Planck likelihood for low-l"
+      file_type="clikfile" extract_file
+      add_title "Global parameter"
+      section="Likelihood parameters" subsection="Global parameter" extract_params
+
+      pkgtools::msg_devel "likelihood = ${likelihood:l}"
+      if [[ ${likelihood:l} = hillipop ]]; then
+          add_title "Hillipop likelihood"
+          file_type="${likelihood}" extract_file
+          section="Hillipop likelihood" subsection="General parameters" extract_params
+          if [[ ${spectrum} = TT ]]; then
+              parfile=$(sed -e 's#\(par\)\(.*Adust\(PP\|TP\).*nui\).*#fix\2 0.0#' <<< ${parfile})
+          fi
+          if [[ ${likelihood} = HiLLiPOP ]]; then
+              section="Legacy" extract_params
+          elif [[ ${likelihood} = Hillipop ]]; then
+              section="source modeling" extract_params
+          fi
+      else
+          add_title "Planck likelihood for high-l"
+          file_type="clikfile2" extract_file
+      fi
+
+      # Fitter & output options
+      add_title "Fitter & output options"
+      section="Fitter" extract_params
+      section="Output" extract_params
+      parfile=$(sed -e 's#\(remove_cosmo_limits\) *\(.*\)#\1=\2#g' <<< ${parfile})
+      parfile=$(sed -e 's#\(doHesse\) *\(.*\)#\1=\2#g' <<< ${parfile})
+
+      if [[ -z ${output_parfile} ]]; then
+          echo -e $parfile
+      else
+          echo -e $parfile > ${output_parfile}
+      fi
+
+      pkgtools::at_function_exit
+      return 0
+  }
+#+END_SRC
+***** Completion
+#+BEGIN_SRC sh
+  compdef _build_parfile build_parfile
+  function _build_parfile()
+  {
+      _arguments                                                                                  \
+          {-h,--help}'[print this help message]'                                                  \
+          {-d,--debug}'[debug mode]'                                                              \
+          {-D,--devel}'[devel mode]'                                                              \
+          '--output-file[set output parfile name]'                                                \
+          {-s,--spectrum}'[set data spectrum (mandatory)]:spectrum:->spectrum'                    \
+          {-e,--engine}'[set Boltzmann engine (mandatory)]:engine:->engine'                       \
+          {-l,--likelihood}'[set likelihood type (mandatory)]:likelihood:->likelihood'            \
+          '--setup-file[set the path to the file holding parameter default values]:file:_files -g \*.org' \
+          && ret=0
+      case $state in
+          engine)
+              _engines=(
+                  "pico"
+                  "class"
+              )
+              _values 'CMB engines' $_engines && ret=0
+              ;;
+          likelihood)
+              _likes=(
+                  "clik"
+                  "Hillipop"
+                  "HiLLiPOP"
+              )
+              _values 'CMB likelihoods' $_likes && ret=0
+              ;;
+          spectrum)
+              _specs=(
+                  "TT"
+                  "ALL"
+              )
+              _values 'Data spectrum' $_specs && ret=0
+              ;;
+      esac
+      return ret
+  }
+#+END_SRC
 **** Run MCMC jobs
 ***** Wrapper
 #+BEGIN_SRC sh
