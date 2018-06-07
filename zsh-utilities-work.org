@@ -898,19 +898,21 @@ function root/mergeTree () {
           && ret=0
       case $state in
           engine)
+            local -a _engines
               _engines=(
-                  "pico"
-                  "class"
+                  pico:"Parameters for the Impatient Cosmologist"
+                  class:"Cosmic Linear Anisotropy Solving System"
               )
-              _values 'CMB engines' $_engines && ret=0
+              _describe -t _engines 'CMB engines' _engines && ret=0
               ;;
           likelihood)
+              local -a _likes
               _likes=(
-                  "clik"
-                  "Hillipop"
-                  "HiLLiPOP"
+                  clik:"Planck official likelihood"
+                  Hillipop:"Hillipop likelihood with source modeling"
+                  HiLLiPOP:"Default Hillipop likelihood"
               )
-              _values 'CMB likelihoods' $_likes && ret=0
+              _describe -t _likes 'CMB likelihoods' _likes && ret=0
               ;;
           spectrum)
               _specs=(
