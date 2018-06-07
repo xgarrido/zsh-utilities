@@ -687,10 +687,6 @@ function root/mergeTree () {
   pkgtools::unset_variable CFLAGS
   pkgtools::reset_variable LDLAGS "--no-warn-search-mismatch"
 
-  # Set pip cache directory
-  mkdir -p /tmp/garrido.d
-  pkgtools::reset_variable PIP_DOWNLOAD_CACHE /tmp/garrido.d
-
   # MKL
   local intel_compiler_library=/usr/local/intel/compilers_and_libraries/linux
   pkgtools::add_path_to_PATH ${intel_compiler_library}/bin/intel64
