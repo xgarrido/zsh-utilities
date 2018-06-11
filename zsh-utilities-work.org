@@ -811,7 +811,7 @@ function root/mergeTree () {
           if [[ ${file_type} = clikfile ]]; then
               file=$(cat ${setup_file} | grep "${file_type} " | awk -F'|' '{gsub(" ", "", $4); print $4}')
           else
-              file=$(cat ${setup_file} | grep "${file_type:l}.*${spectrum}" | awk -F'|' '{gsub(" ", "", $4); print $4}')
+              file=$(cat ${setup_file} | grep "${file_type:l}.*|.*${spectrum}.*|.*|" | awk -F'|' '{gsub(" ", "", $4); print $4}')
           fi
           pkgtools::msg_devel "file type = ${file_type}"
           pkgtools::msg_devel "file = ${file}"
@@ -858,6 +858,18 @@ function root/mergeTree () {
       else
           add_title "Planck likelihood for high-l"
           file_type="clikfile2" extract_file
+          if [[ ${spectrum} = TT ]]; then
+              section="Planck likelihood" subsection="TT parameters" extract_params
+          fi
+      fi
+
+      # MCMC priors
+      add_title "MCMC priors"
+      section="General prior" extract_params
+      if [[ ${likelihood:l} = hillipop ]]; then
+          section="Hillipop priors" extract_params
+      elif [[ ${likelihood} = clik ]]; then
+          section="Planck priors" extract_params
       fi
 
       # Fitter & output options
