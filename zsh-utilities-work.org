@@ -904,7 +904,7 @@ function root/mergeTree () {
           {-h,--help}'[print this help message]'                                                  \
           {-d,--debug}'[debug mode]'                                                              \
           {-D,--devel}'[devel mode]'                                                              \
-          '--output-file[set output parfile name]'                                                \
+          '--output-file[set output parfile name]:file:_files -g \*.par'                          \
           {-s,--spectrum}'[set data spectrum (mandatory)]:spectrum:->spectrum'                    \
           {-e,--engine}'[set Boltzmann engine (mandatory)]:engine:->engine'                       \
           {-l,--likelihood}'[set likelihood type (mandatory)]:likelihood:->likelihood'            \
