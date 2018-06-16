@@ -853,9 +853,9 @@ function root/mergeTree () {
               parfile=$(sed -e 's#\(par\)\(.*Adust\(PP\|TP\).*nui\).*#fix\2 0.0#' <<< ${parfile})
           fi
           if [[ ${likelihood} = HiLLiPOP ]]; then
-              section="Legacy" extract_params
+              section="Hillipop likelihood" subsection="Legacy" extract_params
           elif [[ ${likelihood} = Hillipop ]]; then
-              section="source modeling" extract_params
+              section="Hillipop likelihood" subsection="source modeling" extract_params
           fi
       else
           add_title "Planck likelihood for high-l"
@@ -870,7 +870,10 @@ function root/mergeTree () {
       add_title "MCMC priors"
       section="General prior" extract_params
       if [[ ${likelihood:l} = hillipop ]]; then
-          section="Hillipop priors" extract_params
+          section="Hillipop priors" subsection="General parameters" extract_params
+          if [[ ${likelihood} = Hillipop ]]; then
+              section="Hillipop priors" subsection="source modeling" extract_params
+          fi
       elif [[ ${likelihood} = clik ]]; then
           section="Planck priors" subsection="General priors" extract_params
           if [[ ${spectrum} = ALL ]]; then
