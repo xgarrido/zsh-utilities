@@ -868,7 +868,7 @@ function root/mergeTree () {
 
       # MCMC priors
       add_title "MCMC priors"
-      section="General prior" extract_params
+      section="MCMC priors" subsection="Global prior" extract_params
       if [[ ${likelihood:l} = hillipop ]]; then
           section="Hillipop priors" subsection="General parameters" extract_params
           if [[ ${likelihood} = Hillipop ]]; then
