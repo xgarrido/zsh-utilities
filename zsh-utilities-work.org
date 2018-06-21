@@ -707,6 +707,9 @@ function root/mergeTree () {
       local spectrum
       local output_parfile
       local setup_file
+      local with_bao=false
+      local with_sn=false
+      local with_lensing=false
       while [ -n "$1" ]; do
           local token="$1"
           if [ ${token[0,1]} = - ]; then
@@ -720,6 +723,9 @@ function root/mergeTree () {
                   echo " --engine          set Boltzmann engine (mandatory)"
                   echo " --likelihood      set likelihood type (mandatory)"
                   echo " --spectrum        set data spectrum (mandatory)"
+                  echo " --with-bao        add BAO likelihood"
+                  echo " --with-sn         add SNIA likelihood"
+                  echo " --with-lensing    add lensing likelihood"
                   echo " --setup-file      set path to the file holding parameter default values"
                   echo " --output-file     set output parfile name"
                   return 0
@@ -739,6 +745,12 @@ function root/mergeTree () {
               elif [[ ${opt} = -s || ${opt} = --spectrum ]]; then
                   shift 1
                   spectrum="$1"
+              elif [[ ${opt} = --with-bao ]]; then
+                  with_bao=true
+              elif [[ ${opt} = --with-sn ]]; then
+                  with_sn=true
+              elif [[ ${opt} = --with-lensing ]]; then
+                  with_lensing=true
               elif [[ ${opt} = --setup-file ]]; then
                   shift 1
                   setup_file="$1"
@@ -770,6 +782,19 @@ function root/mergeTree () {
           parfile+="#     Boltzmann engine : ${engine}\n"
           parfile+="#             spectrum : ${spectrum}\n"
           parfile+="#           likelihood : ${likelihood}\n"
+          if [[ ${with_bao} || ${with_sn} || ${with_lensing} ]]; then
+              parfile+="#      add likelihoods : "
+              if ${with_bao}; then
+                  parfile+="BAO "
+              fi
+              if ${with_sn}; then
+                  parfile+="SN "
+              fi
+              if ${with_lensing}; then
+                  parfile+="Lensing "
+              fi
+              parfile+="\n"
+          fi
           parfile+="${sep}\n\n"
       }
       function add_title() {
@@ -810,10 +835,10 @@ function root/mergeTree () {
       local file_type
       function extract_file() {
           local file
-          if [[ ${file_type} = clikfile ]]; then
-              file=$(cat ${setup_file} | grep "${file_type} " | awk -F'|' '{gsub(" ", "", $4); print $4}')
-          else
+          if [[ ${file_type:l} = hillipop || ${file_type} = clikfile2 ]]; then
               file=$(cat ${setup_file} | grep "${file_type:l}.*|.*${spectrum}.*|.*|" | awk -F'|' '{gsub(" ", "", $4); print $4}')
+          else
+              file=$(cat ${setup_file} | grep "${file_type} " | awk -F'|' '{gsub(" ", "", $4); print $4}')
           fi
           pkgtools::msg_devel "file type = ${file_type}"
           pkgtools::msg_devel "file = ${file}"
@@ -866,6 +891,22 @@ function root/mergeTree () {
           fi
       fi
 
+      # Add. likelihoods
+      if ${with_bao}; then
+        add_title "BAO likelihood"
+        file_type="BAOFile" extract_file
+        file_type="BAO_3DFile" extract_file
+      fi
+      if ${with_sn}; then
+        add_title "SNIa likelihood"
+        file_type="JLA_SNIA_File" extract_file
+        section="SNIA likelihood" extract_params
+      fi
+      if ${with_lensing}; then
+        add_title "Lensing likelihood"
+        file_type="lensing_file" extract_file
+      fi
+
       # MCMC priors
       add_title "MCMC priors"
       section="MCMC priors" subsection="Global prior" extract_params
@@ -898,6 +939,7 @@ function root/mergeTree () {
       return 0
   }
 #+END_SRC
+
 ***** Completion
 #+BEGIN_SRC sh
   compdef _build_parfile build_parfile
@@ -907,6 +949,9 @@ function root/mergeTree () {
           {-h,--help}'[print this help message]'                                                  \
           {-d,--debug}'[debug mode]'                                                              \
           {-D,--devel}'[devel mode]'                                                              \
+          '--with-bao[add BAO likelihood]'                                                        \
+          '--with-sn[add SNIA likelihood]'                                                        \
+          '--with-lensing[add lensing likelihood]'                                                \
           '--output-file[set output parfile name]:file:_files -g \*.par'                          \
           {-s,--spectrum}'[set data spectrum (mandatory)]:spectrum:->spectrum'                    \
           {-e,--engine}'[set Boltzmann engine (mandatory)]:engine:->engine'                       \
