@@ -826,7 +826,7 @@ function root/mergeTree () {
           if [[ ! -z ${subsection} ]]; then
               reset=false section=${subsection} org::extract_section
           fi
-          parfile+=$(grep -v '^|-\|^*' <<< ${stream} | sed -e 's/|//g' -e 's/^[ \t]*//' -e '/^[A-Z]/d' -e '/^\s*$/d')
+          parfile+=$(grep -v "^|-\|^*\|^#" <<< ${stream} | sed -e 's/|//g' -e 's/^[ \t]*//' -e '/^[A-Z]/d' -e '/^\s*$/d')
           parfile+="\n\n"
           section=
           subsection=
@@ -979,6 +979,7 @@ function root/mergeTree () {
           spectrum)
               _specs=(
                   "TT"
+                  "TE"
                   "ALL"
               )
               _values 'Data spectrum' $_specs && ret=0
