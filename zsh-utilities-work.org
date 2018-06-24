@@ -854,6 +854,7 @@ function root/mergeTree () {
       if [[ ${engine} = class ]]; then
           section="CLASS setup" extract_params
           parfile=$(sed -e 's#\(precisionFile\) *\(.*\)#\1=\2#g' <<< ${parfile})
+          parfile=$(sed -e 's#\(do_mPk\) *\(.*\)#\1=\2#g' <<< ${parfile})
       elif [[ ${engine} = pico ]]; then
           section="PICO setup" extract_params
       fi
