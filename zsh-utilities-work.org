@@ -697,10 +697,10 @@ function root/mergeTree () {
 **** Build parameter file
 ***** Wrapper
 #+BEGIN_SRC sh
-  function build_parfile()
+  function build_cmb_parfile()
   {
       pkgtools::default_values
-      pkgtools::at_function_enter build_parfile
+      pkgtools::at_function_enter build_cmb_parfile
 
       local engine
       local likelihood
@@ -927,8 +927,10 @@ function root/mergeTree () {
       add_title "Fitter & output options"
       section="Fitter" extract_params
       section="Output" extract_params
-      parfile=$(sed -e 's#\(remove_cosmo_limits\) *\(.*\)#\1=\2#g' <<< ${parfile})
-      parfile=$(sed -e 's#\(doHesse\) *\(.*\)#\1=\2#g' <<< ${parfile})
+      local params=("remove_cosmo_limits" "doHesse" "nitermax" "set_stra" "set_tol")
+      for p in ${params}; do
+          parfile=$(sed -e 's#\('${p}'\) *\(.*\)#\1=\2#g' <<< ${parfile})
+      done
 
       if [[ -z ${output_parfile} ]]; then
           echo -e $parfile
@@ -981,6 +983,7 @@ function root/mergeTree () {
               _specs=(
                   "TT"
                   "TE"
+                  "EE"
                   "ALL"
               )
               _values 'Data spectrum' $_specs && ret=0
