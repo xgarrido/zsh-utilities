@@ -618,84 +618,9 @@ function root/mergeTree () {
       pkgtools::remove_path_to_PATH ~/Workdir/NEMO/supernemo/snware/brew/cadfaelbrew/bin
   }
 #+END_SRC
-** Lyon ccali setup
-*** Preamble
-#+BEGIN_SRC sh
-  if [[ $HOSTNAME = cc* ]]; then
-#+END_SRC
-
-*** =qsub= aliases
-#+BEGIN_SRC sh
-  alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
-  alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
-#+END_SRC
-*** SuperNEMO configuration
-#+BEGIN_SRC sh
-  function do_nemo_setup()
-  {
-      alias qjob_nemo_user='echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| tail -n+3 | grep nemo | awk "{print \$5}" | sort | uniq -c'
-      alias qjob_summary='qjob_my_total; qjob_my_run; qjob_nemo_user'
-
-      # Unset to start from fresh config.
-      pkgtools::unset_variable LD_LIBRARY_PATH
-      pkgtools::unset_variable PATH
-      pkgtools::unset_variable CFLAGS
-
-      # bin directories
-      pkgtools::add_path_to_PATH /usr/bin
-      pkgtools::add_path_to_PATH /bin
-
-      # # Use up-to-date gcc
-      # local gcc_version=5.2.0
-      # local gcc_dir=/usr/local/gcc/${gcc_version}
-      # pkgtools::add_path_to_PATH  ${gcc_dir}/bin
-      # pkgtools::add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib64
-      # pkgtools::reset_variable LIBRARY_PATH ${gcc_dir}/lib64
-
-      # Set brew cache directory (default ~/.cache)
-      pkgtools::reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/software/brew/.cache
-      # pkgtools::reset_variable HOMEBREW_TEMP ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.tmp
-      pkgtools::reset_variable HOMEBREW_MAKE_JOBS 4
-      # pkgtools::reset_variable HOMEBREW_CC gcc-${gcc_version:0:1}
-      # pkgtools::reset_variable HOMEBREW_CXX g++-${gcc_version:0:1}
-  }
-#+END_SRC
-*** CMB configuration
-**** Preamble
-#+BEGIN_SRC sh
-  function do_cmb_setup()
-  {
-#+END_SRC
-**** Aliases
-#+BEGIN_SRC  sh
-  alias qjob_planck_user='echo "Number of jobs run by Planck users"; qstat -u \* -ext -s r| tail -n+3 | grep planck | awk "{print \$5}" | sort | uniq -c'
-  alias qjob_summary='qjob_my_total; qjob_my_run; qjob_planck_user'
-#+END_SRC
-**** Environment variables
-#+BEGIN_SRC sh
-  # Unset to start from fresh config.
-  pkgtools::unset_variable LD_LIBRARY_PATH
-  pkgtools::unset_variable PATH
-
-  # bin directories
-  pkgtools::add_path_to_PATH /usr/bin
-  pkgtools::add_path_to_PATH /bin
-
-  # Unset planck PYHTONHOME
-  pkgtools::unset_variable PYTHONHOME
-  pkgtools::unset_variable PYTHONPATH
-  pkgtools::unset_variable CFLAGS
-  pkgtools::reset_variable LDLAGS "--no-warn-search-mismatch"
-
-  # MKL
-  local intel_compiler_library=/usr/local/intel/compilers_and_libraries/linux
-  pkgtools::add_path_to_PATH ${intel_compiler_library}/bin/intel64
-  pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
-  pkgtools::reset_variable MKLROOT ${intel_compiler_library}/mkl
-  pkgtools::add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
-#+END_SRC
-**** Build parameter file
-***** Wrapper
+** CMB setup
+*** Build CMB parameter file
+**** Wrapper
 #+BEGIN_SRC sh
   function build_cmb_parfile()
   {
@@ -715,7 +640,7 @@ function root/mergeTree () {
           if [ ${token[0,1]} = - ]; then
               local opt=${token}
               if [[ ${opt} = -h || ${opt} = --help ]]; then
-                  echo "Usage:\n build_parfile [options]"
+                  echo "Usage:\n build_cmb_parfile [options]"
                   echo "Options:"
                   echo " -h [--help]  print this help message"
                   echo " -d [--debug] debug mode"
@@ -943,7 +868,7 @@ function root/mergeTree () {
   }
 #+END_SRC
 
-***** Completion
+**** Completion
 #+BEGIN_SRC sh
   compdef _build_parfile build_parfile
   function _build_parfile()
@@ -991,6 +916,82 @@ function root/mergeTree () {
       esac
       return ret
   }
+#+END_SRC
+** Lyon ccali setup
+*** Preamble
+#+BEGIN_SRC sh
+  if [[ $HOSTNAME = cc* ]]; then
+#+END_SRC
+
+*** =qsub= aliases
+#+BEGIN_SRC sh
+  alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
+  alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
+#+END_SRC
+*** SuperNEMO configuration
+#+BEGIN_SRC sh
+  function do_nemo_setup()
+  {
+      alias qjob_nemo_user='echo "Number of jobs run by NEMO users"; qstat -u \* -ext -s r| tail -n+3 | grep nemo | awk "{print \$5}" | sort | uniq -c'
+      alias qjob_summary='qjob_my_total; qjob_my_run; qjob_nemo_user'
+
+      # Unset to start from fresh config.
+      pkgtools::unset_variable LD_LIBRARY_PATH
+      pkgtools::unset_variable PATH
+      pkgtools::unset_variable CFLAGS
+
+      # bin directories
+      pkgtools::add_path_to_PATH /usr/bin
+      pkgtools::add_path_to_PATH /bin
+
+      # # Use up-to-date gcc
+      # local gcc_version=5.2.0
+      # local gcc_dir=/usr/local/gcc/${gcc_version}
+      # pkgtools::add_path_to_PATH  ${gcc_dir}/bin
+      # pkgtools::add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib64
+      # pkgtools::reset_variable LIBRARY_PATH ${gcc_dir}/lib64
+
+      # Set brew cache directory (default ~/.cache)
+      pkgtools::reset_variable HOMEBREW_CACHE ${SCRATCH_DIR}/workdir/supernemo/software/brew/.cache
+      # pkgtools::reset_variable HOMEBREW_TEMP ${SCRATCH_DIR}/workdir/supernemo/snware/brew/.tmp
+      pkgtools::reset_variable HOMEBREW_MAKE_JOBS 4
+      # pkgtools::reset_variable HOMEBREW_CC gcc-${gcc_version:0:1}
+      # pkgtools::reset_variable HOMEBREW_CXX g++-${gcc_version:0:1}
+  }
+#+END_SRC
+*** CMB configuration
+**** Preamble
+#+BEGIN_SRC sh
+  function do_cmb_setup()
+  {
+#+END_SRC
+**** Aliases
+#+BEGIN_SRC  sh
+  alias qjob_planck_user='echo "Number of jobs run by Planck users"; qstat -u \* -ext -s r| tail -n+3 | grep planck | awk "{print \$5}" | sort | uniq -c'
+  alias qjob_summary='qjob_my_total; qjob_my_run; qjob_planck_user'
+#+END_SRC
+**** Environment variables
+#+BEGIN_SRC sh
+  # Unset to start from fresh config.
+  pkgtools::unset_variable LD_LIBRARY_PATH
+  pkgtools::unset_variable PATH
+
+  # bin directories
+  pkgtools::add_path_to_PATH /usr/bin
+  pkgtools::add_path_to_PATH /bin
+
+  # Unset planck PYHTONHOME
+  pkgtools::unset_variable PYTHONHOME
+  pkgtools::unset_variable PYTHONPATH
+  pkgtools::unset_variable CFLAGS
+  pkgtools::reset_variable LDLAGS "--no-warn-search-mismatch"
+
+  # MKL
+  local intel_compiler_library=/usr/local/intel/compilers_and_libraries/linux
+  pkgtools::add_path_to_PATH ${intel_compiler_library}/bin/intel64
+  pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
+  pkgtools::reset_variable MKLROOT ${intel_compiler_library}/mkl
+  pkgtools::add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
 #+END_SRC
 **** Run MCMC jobs
 ***** Wrapper
