@@ -761,7 +761,7 @@ function root/mergeTree () {
       function extract_file() {
           local file
           if [[ ${file_type:l} = hillipop || ${file_type} = clikfile2 ]]; then
-              file=$(cat ${setup_file} | grep "${file_type:l}.*|.*${spectrum}.*|.*|" | awk -F'|' '{gsub(" ", "", $4); print $4}')
+              file=$(cat ${setup_file} | grep "${file_type:l}.*| *${spectrum} *|.*|" | awk -F'|' '{gsub(" ", "", $4); print $4}')
           else
               file=$(cat ${setup_file} | grep "${file_type} " | awk -F'|' '{gsub(" ", "", $4); print $4}')
           fi
