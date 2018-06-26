@@ -812,6 +812,12 @@ function root/mergeTree () {
               section="Planck likelihood" subsection="EE parameters" extract_params
           elif [[ ${spectrum} = TE ]]; then
               section="Planck likelihood" subsection="TE parameters" extract_params
+          elif [[ ${spectrum} = TE+EE ]]; then
+              section="Planck likelihood" subsection="TE parameters" extract_params
+              section="Planck likelihood" subsection="EE parameters" extract_params
+          elif [[ ${spectrum} = TT+EE ]]; then
+              section="Planck likelihood" subsection="TT parameters" extract_params
+              section="Planck likelihood" subsection="EE parameters" extract_params
           elif [[ ${spectrum} = ALL ]]; then
               section="Planck likelihood" subsection="TT parameters" extract_params
               section="Planck likelihood" subsection="EE parameters" extract_params
@@ -848,6 +854,12 @@ function root/mergeTree () {
               section="Planck priors" subsection="EE priors" extract_params
           elif [[ ${spectrum} = TE ]]; then
               section="Planck priors" subsection="TE priors" extract_params
+          elif [[ ${spectrum} = TE+EE ]]; then
+              section="Planck priors" subsection="TE priors" extract_params
+              section="Planck priors" subsection="EE priors" extract_params
+          elif [[ ${spectrum} = TT+EE ]]; then
+              section="Planck priors" subsection="TT priors" extract_params
+              section="Planck priors" subsection="EE priors" extract_params
           elif [[ ${spectrum} = ALL ]]; then
               section="Planck priors" subsection="TT priors" extract_params
               section="Planck priors" subsection="EE priors" extract_params
