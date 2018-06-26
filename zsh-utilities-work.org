@@ -1468,6 +1468,7 @@ function root/mergeTree () {
       local ncore=8
       local queue=mc_long
       local project=P_planck
+      local yes=false
       while [ -n "$1" ]; do
           local token="$1"
           if [ ${token[0,1]} = - ]; then
@@ -1482,6 +1483,7 @@ function root/mergeTree () {
                   echo " --run-local  do not send jobs to CC farms"
                   echo " --nchain     set number of qjob chains"
                   echo " --ncore      set number of qjob cores"
+                  echo " --yes        do not ask question"
                   return 0
               elif [[ ${opt} = -d || ${opt} = --debug ]]; then
                   pkgtools::msg_using_debug
@@ -1497,6 +1499,8 @@ function root/mergeTree () {
               elif [[ ${opt} = --ncore ]]; then
                   shift 1
                   ncore="$1"
+              elif [[ ${opt} = --yes ]]; then
+                  yes=true
               fi
           else
               parfile="${token}"
@@ -1542,12 +1546,13 @@ function root/mergeTree () {
       pkgtools::msg_notice " - Number of cores : ${ncore}"
       pkgtools::msg_notice " - Queue type : ${queue}"
       pkgtools::msg_notice " - Project type : ${project}"
-      pkgtools::yesno_question "Start jobs ?"
-      if $(pkgtools::answer_is_no); then
-          pkgtools::at_function_exit
-          return 0
+      if ! ${yes}; then
+          pkgtools::yesno_question "Start jobs ?"
+          if $(pkgtools::answer_is_no); then
+              pkgtools::at_function_exit
+              return 0
+          fi
       fi
-
       pkgtools::enter_directory ${minimize_dir}
 
       # Create job script
