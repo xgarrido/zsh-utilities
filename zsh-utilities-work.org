@@ -805,11 +805,6 @@ function root/mergeTree () {
           elif [[ ${likelihood} = Hillipop ]]; then
               section="Hillipop likelihood" subsection="source modeling" extract_params
           fi
-          # if [[ ${spectrum} = TT ]]; then
-          #     parfile=$(sed -e 's#^\(par\)\(.*Adust\(PP\|TP\).*nui \+\).*#fix\20.0#' <<< ${parfile})
-          # elif [[ ${spectrum} = TE ]]; then
-          #     parfile=$(sed -e 's@^\(par\)\( *Aps\(100\|143\|217\)x\(100\|143\|217\).*nui \+\).*@fix\20.0@' <<< ${parfile})
-          # fi
       else
           add_title "Planck likelihood for high-l"
           file_type="clikfile2" extract_file
@@ -866,9 +861,28 @@ function root/mergeTree () {
               if [[ ${spectrum} = TE ]]; then
                   echo -e ${parfile} > ${tmpfile}
                   parfile=$(cat ${tmpfile} | awk '/par +(Aps|Asz|Acib|AdustTT|AdustPP|Aksz|Aszxcib)/ {split($0, w, " ", s);print "fix"s[1]w[2]s[2]w[3]s[3]w[4];next}1')
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/gauss1 +(Aps|Asz|Acib|AdustTT|AdustPP|Aksz|Aszxcib)/ {next}1')
               elif [[ ${spectrum} = TT ]]; then
                   echo -e ${parfile} > ${tmpfile}
                   parfile=$(cat ${tmpfile} | awk '/par +(AdustTP|AdustPP)/ {split($0, w, " ", s);print "fix"s[1]w[2]s[2]w[3]s[3]w[4];next}1')
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/gauss1 +(AdustTP|AdustPP)/ {next}1')
+              elif [[ ${spectrum} = EE ]]; then
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/par +(Aps|Asz|Acib|AdustTT|AdustTP|Aksz|Aszxcib)/ {split($0, w, " ", s);print "fix"s[1]w[2]s[2]w[3]s[3]w[4];next}1')
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/gauss1 +(Aps|Asz|Acib|AdustTT|AdustTP|Aksz|Aszxcib)/ {next}1')
+              elif [[ ${spectrum} = TE+EE ]]; then
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/par +(Aps|Asz|Acib|AdustTT|Aksz|Aszxcib)/ {split($0, w, " ", s);print "fix"s[1]w[2]s[2]w[3]s[3]w[4];next}1')
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/gauss1 +(Aps|Asz|Acib|AdustTT|Aksz|Aszxcib)/ {next}1')
+              elif [[ ${spectrum} = TT+EE ]]; then
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/par +(Aps|Asz|Acib|AdustTP|Aksz|Aszxcib)/ {split($0, w, " ", s);print "fix"s[1]w[2]s[2]w[3]s[3]w[4];next}1')
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/gauss1 +(Aps|Asz|Acib|AdustTP|Aksz|Aszxcib)/ {next}1')
               fi
               rm ${tmpfile}
           fi
@@ -927,6 +941,8 @@ function root/mergeTree () {
                   "TT"
                   "TE"
                   "EE"
+                  "TE+EE"
+                  "TT+EE"
                   "ALL"
               )
               _values 'Data spectrum' $_specs && ret=0
