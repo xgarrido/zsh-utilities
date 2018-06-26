@@ -800,14 +800,16 @@ function root/mergeTree () {
           add_title "Hillipop likelihood"
           file_type="${likelihood}" extract_file
           section="Hillipop likelihood" subsection="General parameters" extract_params
-          if [[ ${spectrum} = TT ]]; then
-              parfile=$(sed -e 's#\(par\)\(.*Adust\(PP\|TP\).*nui\).*#fix\2 0.0#' <<< ${parfile})
-          fi
           if [[ ${likelihood} = HiLLiPOP ]]; then
               section="Hillipop likelihood" subsection="Legacy" extract_params
           elif [[ ${likelihood} = Hillipop ]]; then
               section="Hillipop likelihood" subsection="source modeling" extract_params
           fi
+          # if [[ ${spectrum} = TT ]]; then
+          #     parfile=$(sed -e 's#^\(par\)\(.*Adust\(PP\|TP\).*nui \+\).*#fix\20.0#' <<< ${parfile})
+          # elif [[ ${spectrum} = TE ]]; then
+          #     parfile=$(sed -e 's@^\(par\)\( *Aps\(100\|143\|217\)x\(100\|143\|217\).*nui \+\).*@fix\20.0@' <<< ${parfile})
+          # fi
       else
           add_title "Planck likelihood for high-l"
           file_type="clikfile2" extract_file
@@ -819,18 +821,18 @@ function root/mergeTree () {
 
       # Add. likelihoods
       if ${with_bao}; then
-        add_title "BAO likelihood"
-        file_type="BAOFile" extract_file
-        file_type="BAO_3DFile" extract_file
+          add_title "BAO likelihood"
+          file_type="BAOFile" extract_file
+          file_type="BAO_3DFile" extract_file
       fi
       if ${with_sn}; then
-        add_title "SNIa likelihood"
-        file_type="JLA_SNIA_File" extract_file
-        section="SNIA likelihood" extract_params
+          add_title "SNIa likelihood"
+          file_type="JLA_SNIA_File" extract_file
+          section="SNIA likelihood" extract_params
       fi
       if ${with_lensing}; then
-        add_title "Lensing likelihood"
-        file_type="lensing_file" extract_file
+          add_title "Lensing likelihood"
+          file_type="lensing_file" extract_file
       fi
 
       # MCMC priors
@@ -856,6 +858,22 @@ function root/mergeTree () {
       for p in ${params}; do
           parfile=$(sed -e 's#\('${p}'\) *\(.*\)#\1=\2#g' <<< ${parfile})
       done
+
+      # Post process
+      function post_process() {
+          if [[ ${likelihood:l} = hillipop ]]; then
+              local tmpfile=$(mktemp)
+              if [[ ${spectrum} = TE ]]; then
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/par +(Aps|Asz|Acib|AdustTT|AdustPP|Aksz|Aszxcib)/ {split($0, w, " ", s);print "fix"s[1]w[2]s[2]w[3]s[3]w[4];next}1')
+              elif [[ ${spectrum} = TT ]]; then
+                  echo -e ${parfile} > ${tmpfile}
+                  parfile=$(cat ${tmpfile} | awk '/par +(AdustTP|AdustPP)/ {split($0, w, " ", s);print "fix"s[1]w[2]s[2]w[3]s[3]w[4];next}1')
+              fi
+              rm ${tmpfile}
+          fi
+      }
+      post_process
 
       if [[ -z ${output_parfile} ]]; then
           echo -e $parfile
