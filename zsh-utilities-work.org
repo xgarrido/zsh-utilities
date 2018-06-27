@@ -808,7 +808,9 @@ function root/mergeTree () {
       else
           add_title "Planck likelihood for high-l"
           file_type="clikfile2" extract_file
-          if [[ ${spectrum} = EE ]]; then
+          if [[ ${spectrum} = TT ]]; then
+              section="Planck likelihood" subsection="TT parameters" extract_params
+          elif [[ ${spectrum} = EE ]]; then
               section="Planck likelihood" subsection="EE parameters" extract_params
           elif [[ ${spectrum} = TE ]]; then
               section="Planck likelihood" subsection="TE parameters" extract_params
@@ -850,7 +852,9 @@ function root/mergeTree () {
               section="Hillipop priors" subsection="source modeling" extract_params
           fi
       elif [[ ${likelihood} = clik ]]; then
-          if [[ ${spectrum} = EE ]]; then
+          if [[ ${spectrum} = TT ]]; then
+              section="Planck priors" subsection="TT priors" extract_params
+          elif [[ ${spectrum} = EE ]]; then
               section="Planck priors" subsection="EE priors" extract_params
           elif [[ ${spectrum} = TE ]]; then
               section="Planck priors" subsection="TE priors" extract_params
