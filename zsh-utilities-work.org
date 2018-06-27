@@ -1480,9 +1480,9 @@ function root/mergeTree () {
                   echo " -d [--debug] debug mode"
                   echo " -D [--devel] devel mode"
                   echo " --dry-run    do not start qsub jobs"
-                  echo " --run-local  do not send jobs to CC farms"
                   echo " --nchain     set number of qjob chains"
                   echo " --ncore      set number of qjob cores"
+                  echo " --local      do not send jobs to CC farms"
                   echo " --yes        do not ask question"
                   return 0
               elif [[ ${opt} = -d || ${opt} = --debug ]]; then
@@ -1491,14 +1491,14 @@ function root/mergeTree () {
                   pkgtools::msg_using_devel
               elif [[ ${opt} = --dry-run ]]; then
                   dry_run=true
-              elif [[ ${opt} = --run-local ]]; then
-                  run_local=true
               elif [[ ${opt} = --nchain ]]; then
                   shift 1
                   nchain="$1"
               elif [[ ${opt} = --ncore ]]; then
                   shift 1
                   ncore="$1"
+              elif [[ ${opt} = --local ]]; then
+                  run_local=true
               elif [[ ${opt} = --yes ]]; then
                   yes=true
               fi
