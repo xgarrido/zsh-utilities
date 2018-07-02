@@ -1051,11 +1051,16 @@ function root/mergeTree () {
   pkgtools::reset_variable LDLAGS "--no-warn-search-mismatch"
 
   # MKL
-  local intel_compiler_library=/usr/local/intel/compilers_and_libraries/linux
+  local intel_compiler_library=/usr/local/intel/2018/compilers_and_libraries/linux
   pkgtools::add_path_to_PATH ${intel_compiler_library}/bin/intel64
   pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/lib/intel64
   pkgtools::reset_variable MKLROOT ${intel_compiler_library}/mkl
   pkgtools::add_path_to_LD_LIBRARY_PATH $MKLROOT/lib/intel64
+
+  pkgtools::add_path_to_PATH ${intel_compiler_library}/mpi/bin64
+  pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/mpi/lib64
+
+
 #+END_SRC
 **** Run MCMC jobs
 ***** Wrapper
