@@ -1606,10 +1606,12 @@ function root/mergeTree () {
             chmod u+x minimize.sh
             for ((i=1; i<=${nchain};i++)); do
                 local dir=$PWD
+                TMPDIR=$(mktemp -d)
                 (
-                    cd $TMPDIR; TMPDIR=$(mktemp -d)
-                    SGE_TASK_ID=$i ${dir}/minimize.sh &
+                    cd $TMPDIR
+                    SGE_TASK_ID=$i ${dir}/minimize.sh
                 )
+                rm -fr $TMPDIR
                 sleep 0
             done
         fi
