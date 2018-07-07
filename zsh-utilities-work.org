@@ -1619,6 +1619,26 @@ function root/mergeTree () {
       return 0
   }
 #+END_SRC
+***** Completion
+#+BEGIN_SRC sh
+  compdef _run_cmb_minimize run_cmb_minimize
+  function _run_cmb_minimize ()
+  {
+      _arguments                                                       \
+          {-h,--help}'[print this help message]'                       \
+          {-d,--debug}'[debug mode]'                                   \
+          {-D,--devel}'[devel mode]'                                   \
+          '--dry-run[do not start qsub jobs]'                          \
+          '--nchain[set number of qjob chains]'                        \
+          '--ncore[set number of qjob cores]'                          \
+          '--local[do it locally]'                                     \
+          '--yes[force execution with no question]'                    \
+          '*:file:_files -g \*.par'                                    \
+          && ret=0
+
+      return ret
+  }
+#+END_SRC
 **** Postamble
 #+BEGIN_SRC sh
   }
