@@ -622,7 +622,7 @@ function root/mergeTree () {
 *** Build CMB parameter file
 **** Wrapper
 #+BEGIN_SRC sh
-  function build_cmb_parfile()
+  function cmb::build_parfile()
   {
       pkgtools::default_values
       pkgtools::at_function_enter build_cmb_parfile
@@ -980,6 +980,34 @@ function root/mergeTree () {
       esac
       return ret
   }
+#+END_SRC
+*** Upload parameter files/download results
+#+BEGIN_SRC sh
+  function --cmb::updown()
+  {
+      if [[ ! -f .cmb_updown ]]; then
+          pkgtools::msg_error "Missing .cmb_updown file!"
+          return 1
+      fi
+      # Grab destination
+      local to=$(cat .cmb_updown)/.
+      local from=$PWD/.
+      pkgtools::msg_devel "To $to"
+      pkgtools::msg_devel "From $from"
+      if [[ $1 = down ]]; then
+        rsync-synchronize $to $from
+      elif [[ $1 = up ]]; then
+        rsync-synchronize $from $to
+      else
+        pkgtools::msg_error "Missing modes (either up or down)!"
+        return 1
+      fi
+      return 0
+  }
+
+  alias cmb::download='--cmb::updown down'
+  alias cmb::upload='--cmb::updown up'
+  alias cmb::updownload='--cmb::updown up && --cmb::updown down'
 #+END_SRC
 ** Lyon ccali setup
 *** Preamble
