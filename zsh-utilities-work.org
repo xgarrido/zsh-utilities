@@ -625,7 +625,7 @@ function root/mergeTree () {
   function cmb::build_parfile()
   {
       pkgtools::default_values
-      pkgtools::at_function_enter build_cmb_parfile
+      pkgtools::at_function_enter cmb::build_parfile
 
       local engine
       local likelihood
@@ -640,7 +640,7 @@ function root/mergeTree () {
           if [ ${token[0,1]} = - ]; then
               local opt=${token}
               if [[ ${opt} = -h || ${opt} = --help ]]; then
-                  echo "Usage:\n build_cmb_parfile [options]"
+                  echo "Usage:\n cmb::build_parfile [options]"
                   echo "Options:"
                   echo " -h [--help]  print this help message"
                   echo " -d [--debug] debug mode"
@@ -932,8 +932,8 @@ function root/mergeTree () {
 
 **** Completion
 #+BEGIN_SRC sh
-  compdef _build_parfile build_parfile
-  function _build_parfile()
+  compdef _cmb::build_parfile cmb::build_parfile
+  function _cmb::build_parfile()
   {
       _arguments                                                                                  \
           {-h,--help}'[print this help message]'                                                  \
