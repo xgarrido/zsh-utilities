@@ -707,7 +707,7 @@ function root/mergeTree () {
           parfile+="#     Boltzmann engine : ${engine}\n"
           parfile+="#             spectrum : ${spectrum}\n"
           parfile+="#           likelihood : ${likelihood}\n"
-          if [[ ${with_bao} || ${with_sn} || ${with_lensing} ]]; then
+          if ${with_bao} || ${with_sn} || ${with_lensing} ; then
               parfile+="#      add likelihoods : "
               if ${with_bao}; then
                   parfile+="BAO "
