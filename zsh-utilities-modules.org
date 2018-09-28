@@ -450,7 +450,7 @@ From https://lebkowski.name/docker-volumes/
       # remove unused volumes:
       sudo find '/home/garrido/Development/docker.d/volumes/' -mindepth 1 -maxdepth 1 -type d | grep -vFf <(
               docker ps -aq | xargs docker inspect | jq -r '.[] | .Mounts | .[] | .Name | select(.)'
-          ) | xargs -r rm -fr
+          ) | xargs -r sudo rm -fr
   }
 #+END_SRC
 *** Aliases
