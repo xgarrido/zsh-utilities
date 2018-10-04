@@ -1020,6 +1020,10 @@ function root/mergeTree () {
   alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
   alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
 #+END_SRC
+*** General env. variables
+#+BEGIN_SRC sh
+  pkgtools::reset_variable SINGULARITY_CACHEDIR=$SCRATCH_DIR/.singularity
+#+END_SRC
 *** SuperNEMO configuration
 #+BEGIN_SRC sh
   function do_nemo_setup()
