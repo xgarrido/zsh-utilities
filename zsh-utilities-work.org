@@ -1105,12 +1105,6 @@ function root/mergeTree () {
       pkgtools::default_values
       pkgtools::at_function_enter run_cmb_mcmc
 
-      if [[ ${PKGMAN_SETUP_DONE} != cmb ]]; then
-          pkgtools::msg_error "CMB configuration not setup!"
-          pkgtools::at_function_exit
-          return 1
-      fi
-
       local mcmc=$CAMELROOT/$CMTCONFIG/mcmc
       local parfile
       local nsamples=500000
@@ -1118,6 +1112,8 @@ function root/mergeTree () {
       local ncore=8
       local queue=mc_long
       local project=P_planck
+      local with_singularity=false
+      local singularity_img="cmb_ubuntu1604.simg"
       while [ -n "$1" ]; do
           local token="$1"
           if [ ${token[0,1]} = - ]; then
@@ -1145,12 +1141,23 @@ function root/mergeTree () {
               elif [[ ${opt} = --ncore ]]; then
                   shift 1
                   ncore="$1"
+              elif [[ ${opt} = --with-singularity ]]; then
+                  with_singularity=true
+              elif [[ ${opt} = --singularity-image ]]; then
+                  shift 1
+                  singularity_img="$1"
               fi
           else
               parfile="${token}"
           fi
           shift 1
       done
+
+      if [[ ${PKGMAN_SETUP_DONE} != cmb && ${with_singularity} = false ]]; then
+          pkgtools::msg_error "CMB configuration not setup!"
+          pkgtools::at_function_exit
+          return 1
+      fi
 
       if [ -z ${parfile} ]; then
           pkgtools::msg_error "Missing parameter file!"
@@ -1204,7 +1211,11 @@ function root/mergeTree () {
           echo "dim=$ndim"
           echo "algo=ada"
           echo "length=$nsamples"
-          echo "proposal_cov=$PWD/$(basename ${covfile})"
+          if ${with_singularity}; then
+              echo "proposal_cov=/mnt/${parfile_name}_MC/$(basename ${covfile})"
+          else
+              echo "proposal_cov=$PWD/$(basename ${covfile})"
+          fi
           echo "ts=10000"
           echo "t0=2000"
           echo "scale=0.001"
@@ -1216,46 +1227,82 @@ function root/mergeTree () {
       if [[ ${sysname} = sl7 ]]; then
           sysname="cl7"
       fi
-      {
-          echo "#$ -l sps=1"
-          echo "#$ -l os=${sysname}"
-          echo "#$ -j y"
-          echo "#$ -R y"
-          echo "#$ -t 1-$nchain"
-          echo "#$ -N ${parfile_name}"
-          # echo "#$ -m be"
-          echo
-          echo "echo \"running on : \$(uname -a)\""
-          echo "source $(dirname $(which python))/activate"
-          echo "export OMP_NUM_THREADS=$ncore"
-          echo "cd \$TMPDIR"
-          echo "cp ${mcmc} ."
-          echo "cp $PWD/${parfile_base} mcmc\${SGE_TASK_ID}.par"
-          echo "cp $PWD/${parfile_base/.par/.cov} ."
-          echo "echo \"seed=\$RANDOM\" >> mcmc\${SGE_TASK_ID}.par"
-          echo
-          echo "cp mcmc\${SGE_TASK_ID}.par $PWD"
-          echo
-          echo "./mcmc mcmc\${SGE_TASK_ID}.par $PWD/samples\${SGE_TASK_ID}.txt > $PWD/output\${SGE_TASK_ID}.log 2>&1"
-          echo
-          echo "cp ar_vs_length.txt $PWD/ar_vs_length\${SGE_TASK_ID}.txt"
-          echo "cp scale_vs_length.txt $PWD/scale_vs_length\${SGE_TASK_ID}.txt"
-          echo "cp corr.txt $PWD/corr\${SGE_TASK_ID}.txt"
-          echo
-          echo "qstat -j \${JOB_ID} -nenv"
-      } >> ${parfile_name}.sh
 
+      if ${with_singularity}; then
+          local singularity_software_path="/home/cmb/software"
+          {
+              echo "#!/bin/bash"
+              echo "source ${singularity_software_path}/cmb_setup.sh"
+              echo "cd /mnt/${parfile_name}_MC"
+              echo "cp ${parfile_base} mcmc\${SGE_TASK_ID}.par"
+              echo "echo \"seed=\$RANDOM\" >> mcmc\${SGE_TASK_ID}.par"
+              echo
+              echo "mcmc mcmc\${SGE_TASK_ID}.par samples\${SGE_TASK_ID}.txt > output\${SGE_TASK_ID}.log 2>&1"
+              echo
+              echo "cp ar_vs_length.txt ar_vs_length\${SGE_TASK_ID}.txt"
+              echo "cp scale_vs_length.txt scale_vs_length\${SGE_TASK_ID}.txt"
+              echo "cp corr.txt corr\${SGE_TASK_ID}.txt"
+              echo
+          } >> ${parfile_name}.sh && chmod u+x ${parfile_name}.sh
+          {
+              echo "#$ -l sps=1"
+              echo "#$ -l os=${sysname}"
+              echo "#$ -j y"
+              echo "#$ -R y"
+              echo "#$ -t 1-$nchain"
+              echo "#$ -N ${parfile_name}"
+              echo -n "SINGULARITYENV_SGE_TASK_ID=\${SGE_TASK_ID} singularity exec -B /sps/planck/camel/CentOS7/data:/home/cmb/data "
+              echo -n "-B $(dirname $PWD):/mnt --cleanenv $SINGULARITY_CACHEDIR/${singularity_img} /mnt/${parfile_name}_MC/${parfile_name}.sh"
+              echo
+          } >> ${parfile_name}_singularity.sh
+      else
+          {
+              echo "#$ -l sps=1"
+              echo "#$ -l os=${sysname}"
+              echo "#$ -j y"
+              echo "#$ -R y"
+              echo "#$ -t 1-$nchain"
+              echo "#$ -N ${parfile_name}"
+              # echo "#$ -m be"
+              echo
+              echo "echo \"running on : \$(uname -a)\""
+              echo "source $(dirname $(which python))/activate"
+              echo "export OMP_NUM_THREADS=$ncore"
+              echo "cd \$TMPDIR"
+              echo "cp ${mcmc} ."
+              echo "cp $PWD/${parfile_base} mcmc\${SGE_TASK_ID}.par"
+              echo "cp $PWD/${parfile_base/.par/.cov} ."
+              echo "echo \"seed=\$RANDOM\" >> mcmc\${SGE_TASK_ID}.par"
+              echo
+              echo "cp mcmc\${SGE_TASK_ID}.par $PWD"
+              echo
+              echo "./mcmc mcmc\${SGE_TASK_ID}.par $PWD/samples\${SGE_TASK_ID}.txt > $PWD/output\${SGE_TASK_ID}.log 2>&1"
+              echo
+              echo "cp ar_vs_length.txt $PWD/ar_vs_length\${SGE_TASK_ID}.txt"
+              echo "cp scale_vs_length.txt $PWD/scale_vs_length\${SGE_TASK_ID}.txt"
+              echo "cp corr.txt $PWD/corr\${SGE_TASK_ID}.txt"
+              echo
+              echo "qstat -j \${JOB_ID} -nenv"
+          } >> ${parfile_name}.sh
+      fi
       pkgtools::msg_notice "Parameter file  : ${parfile}"
       pkgtools::msg_notice "Covariance file : ${covfile}"
       pkgtools::msg_notice "MCMC directory  : ${mcmc_dir}"
       pkgtools::msg_notice "CC jobs setup :"
-      pkgtools::msg_notice " - Number of chains : ${nchain}"
-      pkgtools::msg_notice " - Number of cores  : ${ncore}"
-      pkgtools::msg_notice " - Queue type       : ${queue}"
-      pkgtools::msg_notice " - Project type     : ${project}"
+      pkgtools::msg_notice " - Number of chains  : ${nchain}"
+      pkgtools::msg_notice " - Number of cores   : ${ncore}"
+      pkgtools::msg_notice " - Queue type        : ${queue}"
+      pkgtools::msg_notice " - Project type      : ${project}"
+      if ${with_singularity}; then
+          pkgtools::msg_notice " - Singularity image : $SINGULARITY_CACHEDIR/${singularity_img}"
+      fi
       pkgtools::yesno_question "Start jobs ?"
       if $(pkgtools::answer_is_yes); then
-          qsub -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD ${parfile_name}.sh
+        if ${with_singularity}; then
+            qsub -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD ${parfile_name}_singularity.sh
+        else
+            qsub -P ${project} -pe multicores ${ncore} -q ${queue} -o $PWD ${parfile_name}.sh
+        fi
       fi
 
       pkgtools::exit_directory
@@ -1268,14 +1315,16 @@ function root/mergeTree () {
   compdef _run_cmb_mcmc run_cmb_mcmc
   function _run_cmb_mcmc ()
   {
-      _arguments                                   \
-          {-h,--help}'[print this help message]'   \
-          {-d,--debug}'[debug mode]'               \
-          {-D,--devel}'[devel mode]'               \
-          '--nsamples[set number of MCMC samples]' \
-          '--nchain[set number of qjob chains]'    \
-          '--ncore[set number of qjob cores]'      \
-          '*:file:_files -g \*.par'                \
+      _arguments                                            \
+          {-h,--help}'[print this help message]'            \
+          {-d,--debug}'[debug mode]'                        \
+          {-D,--devel}'[devel mode]'                        \
+          '--nsamples[set number of MCMC samples]'          \
+          '--nchain[set number of qjob chains]'             \
+          '--ncore[set number of qjob cores]'               \
+          '--with-singularity[use singularity]'             \
+          '--singularity-image[set singularity image name]' \
+          '*:file:_files -g "*.par"'                        \
           && ret=0
 
       return ret
