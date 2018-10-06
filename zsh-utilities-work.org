@@ -1023,7 +1023,9 @@ function root/mergeTree () {
 #+END_SRC
 *** General env. variables
 #+BEGIN_SRC sh
-  pkgtools::reset_variable SINGULARITY_CACHEDIR=$SCRATCH_DIR/.singularity
+  pkgtools::reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
+  pkgtools::reset_variable WORKDIR ${SCRATCH_DIR}/workdir
+  pkgtools::reset_variable SINGULARITY_CACHEDIR $SCRATCH_DIR/.singularity
 #+END_SRC
 *** SuperNEMO configuration
 #+BEGIN_SRC sh
