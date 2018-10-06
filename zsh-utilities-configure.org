@@ -115,8 +115,6 @@ way it should be easy to add its own configuration.
   function __configure_lyon_machines ()
   {
       pkgtools::at_function_enter __configure_lyon_machines
-      pkgtools::reset_variable SCRATCH_DIR /sps/nemo/scratch/garrido
-      pkgtools::reset_variable WORKDIR ${SCRATCH_DIR}/workdir
 
       # Redefine new group function
       if (( ! $+functions[newgroup] )); then
