@@ -1019,6 +1019,7 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
   alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
+  alias qdel_all="qstat | tail -n +3 | sort -u -k1,1 | awk '{print \"qdel\",\$1}' | sh"
 #+END_SRC
 *** General env. variables
 #+BEGIN_SRC sh
