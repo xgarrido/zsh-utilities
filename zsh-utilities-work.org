@@ -1099,10 +1099,8 @@ function root/mergeTree () {
   pkgtools::reset_variable MKLLIB ${MKLROOT}/lib/intel64
   pkgtools::add_path_to_LD_LIBRARY_PATH $MKLLIB
 
-  # pkgtools::add_path_to_PATH ${intel_compiler_library}/mpi/bin64
-  # pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/mpi/lib64
-
-
+  pkgtools::add_path_to_PATH ${intel_compiler_library}/mpi/bin64
+  pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/mpi/lib64
 #+END_SRC
 **** Run MCMC jobs
 ***** Wrapper
