@@ -1085,11 +1085,11 @@ function root/mergeTree () {
   pkgtools::unset_variable CFLAGS
   pkgtools::reset_variable LDLAGS "--no-warn-search-mismatch"
 
-  # Use up-to-date gcc
-  local gcc_version=5.2.0
-  local gcc_dir=/usr/local/gcc/${gcc_version}
-  pkgtools::add_path_to_PATH ${gcc_dir}/bin
-  pkgtools::add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib64
+  # # Use up-to-date gcc
+  # local gcc_version=5.2.0
+  # local gcc_dir=/usr/local/gcc/${gcc_version}
+  # pkgtools::add_path_to_PATH ${gcc_dir}/bin
+  # pkgtools::add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib64
 
   # MKL
   local intel_compiler_library=/usr/local/intel/2018/compilers_and_libraries/linux
@@ -1118,7 +1118,7 @@ function root/mergeTree () {
       local queue=mc_long
       local project=P_planck
       local with_singularity=false
-      local singularity_img="cmb_ubuntu1604.simg"
+      local singularity_img="cmb_centos7.simg"
       while [ -n "$1" ]; do
           local token="$1"
           if [ ${token[0,1]} = - ]; then
