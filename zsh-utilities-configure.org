@@ -11,27 +11,6 @@ machine. Using org-mode's folding, each item contains the configuration for a
 given hostname. The function name must be =__configure_$(hostname)= in such a
 way it should be easy to add its own configuration.
 
-** Default configuration
-#+BEGIN_SRC sh
-  function __configure_default ()
-  {
-      pkgtools::at_function_enter __configure_default
-      if $(pkgtools::in_docker); then
-        pkgtools::msg_notice "Configure docker container"
-        local intel_libs=/opt/intel
-        if [ -d ${intel_libs} ]; then
-            pkgtools::reset_variable MKLROOT ${intel_libs}/mkl
-            pkgtools::reset_variable MKLLIB ${MKLROOT}/lib/intel64
-            pkgtools::add_path_to_LD_LIBRARY_PATH ${MKLLIB}
-            pkgtools::reset_variable IOMP5LIB ${intel_libs}/lib/intel64
-            pkgtools::add_path_to_LD_LIBRARY_PATH ${IOMP5LIB}
-        fi
-      fi
-      pkgtools::at_function_exit
-      return 0
-  }
-#+END_SRC
-
 ** Main configuration function
 #+BEGIN_SRC sh
   function __configure_machine ()
@@ -62,6 +41,27 @@ way it should be easy to add its own configuration.
               ;;
       esac
 
+      pkgtools::at_function_exit
+      return 0
+  }
+#+END_SRC
+
+** Default configuration
+#+BEGIN_SRC sh
+  function __configure_default ()
+  {
+      pkgtools::at_function_enter __configure_default
+      if $(pkgtools::in_docker); then
+        pkgtools::msg_notice "Configure docker container"
+        local intel_libs=/opt/intel
+        if [ -d ${intel_libs} ]; then
+            pkgtools::reset_variable MKLROOT ${intel_libs}/mkl
+            pkgtools::reset_variable MKLLIB ${MKLROOT}/lib/intel64
+            pkgtools::add_path_to_LD_LIBRARY_PATH ${MKLLIB}
+            pkgtools::reset_variable IOMP5LIB ${intel_libs}/lib/intel64
+            pkgtools::add_path_to_LD_LIBRARY_PATH ${IOMP5LIB}
+        fi
+      fi
       pkgtools::at_function_exit
       return 0
   }
