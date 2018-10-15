@@ -11,41 +11,6 @@ machine. Using org-mode's folding, each item contains the configuration for a
 given hostname. The function name must be =__configure_$(hostname)= in such a
 way it should be easy to add its own configuration.
 
-** Main configuration function
-#+BEGIN_SRC sh
-  function __configure_machine ()
-  {
-      pkgtools::at_function_enter __configure_machine
-
-      # This must be done by default
-      export HOSTNAME=$(hostname)
-
-      case "$HOSTNAME" in
-          garrido-laptop|pc-91089|nb-garrido)
-              __configure_laptop
-              ;;
-          lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
-              __configure_lal_machines
-              ;;
-          ccige*|ccage*|cc*)
-              __configure_lyon_machines
-              ;;
-          *)
-              type __configure_$(hostname) | grep -q "shell function" > /dev/null 2>&1
-              if [ $? -eq 0 ]; then
-                  __configure_$(hostname)
-              else
-                  pkgtools::msg_debug "No configuration for machine '$(hostname)' has been found ! Use default one"
-                  __configure_default
-              fi
-              ;;
-      esac
-
-      pkgtools::at_function_exit
-      return 0
-  }
-#+END_SRC
-
 ** Default configuration
 #+BEGIN_SRC sh
   function __configure_default ()
@@ -155,6 +120,41 @@ way it should be easy to add its own configuration.
 
       # qjob/qstat for everybody
       pkgtools::add_path_to_PATH /opt/sge/bin/lx-amd64
+
+      pkgtools::at_function_exit
+      return 0
+  }
+#+END_SRC
+
+** Main configuration function
+#+BEGIN_SRC sh
+  function __configure_machine ()
+  {
+      pkgtools::at_function_enter __configure_machine
+
+      # This must be done by default
+      export HOSTNAME=$(hostname)
+
+      case "$HOSTNAME" in
+          garrido-laptop|pc-91089|nb-garrido)
+              __configure_laptop
+              ;;
+          lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
+              __configure_lal_machines
+              ;;
+          ccige*|ccage*|cc*)
+              __configure_lyon_machines
+              ;;
+          *)
+              type __configure_$(hostname) | grep -q "shell function" > /dev/null 2>&1
+              if [ $? -eq 0 ]; then
+                  __configure_$(hostname)
+              else
+                  pkgtools::msg_debug "No configuration for machine '$(hostname)' has been found ! Use default one"
+                  __configure_default
+              fi
+              ;;
+      esac
 
       pkgtools::at_function_exit
       return 0
