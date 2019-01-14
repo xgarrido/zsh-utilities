@@ -1091,6 +1091,12 @@ function root/mergeTree () {
   # pkgtools::add_path_to_PATH ${gcc_dir}/bin
   # pkgtools::add_path_to_LD_LIBRARY_PATH ${gcc_dir}/lib64
 
+  # Use python 3.6.5
+  local python_version=3.6.5
+  local python_dir=/usr/local/python/${python_version}
+  pkgtools::add_path_to_PATH ${python_dir}/bin
+  pkgtools::add_path_to_LD_LIBRARY_PATH ${python_dir}/lib
+
   # MKL
   local intel_compiler_library=/usr/local/intel/2018/compilers_and_libraries/linux
   pkgtools::reset_variable IOMP5LIB ${intel_compiler_library}/lib/intel64
