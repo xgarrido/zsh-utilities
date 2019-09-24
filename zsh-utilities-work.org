@@ -1078,6 +1078,7 @@ function root/mergeTree () {
   # bin directories
   pkgtools::add_path_to_PATH /usr/bin
   pkgtools::add_path_to_PATH /bin
+  pkgtools::add_path_to_PATH $HOME/.local/bin
 
   # Unset planck PYHTONHOME
   pkgtools::unset_variable PYTHONHOME
