@@ -1019,7 +1019,7 @@ function root/mergeTree () {
 #+BEGIN_SRC sh
   alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
   alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
-  alias qdel_all="qstat | tail -n +3 | sort -u -k1,1 | awk '{print \"qdel\",\$1}' | sh"
+  alias qdel_all="qstat | tail -n +3 | grep -v QLOGIN | sort -u -k1,1 | awk '{print \"qdel\",\$1}' | sh"
 #+END_SRC
 *** General env. variables
 #+BEGIN_SRC sh
@@ -1100,11 +1100,11 @@ function root/mergeTree () {
 
   # MKL
   local intel_compiler_library=/usr/local/intel/2018/compilers_and_libraries/linux
-  pkgtools::reset_variable IOMP5LIB ${intel_compiler_library}/lib/intel64
-  pkgtools::add_path_to_LD_LIBRARY_PATH ${IOMP5LIB}
-  pkgtools::reset_variable MKLROOT ${intel_compiler_library}/mkl
-  pkgtools::reset_variable MKLLIB ${MKLROOT}/lib/intel64
-  pkgtools::add_path_to_LD_LIBRARY_PATH $MKLLIB
+  # pkgtools::reset_variable IOMP5LIB ${intel_compiler_library}/lib/intel64
+  # pkgtools::add_path_to_LD_LIBRARY_PATH ${IOMP5LIB}
+  # pkgtools::reset_variable MKLROOT ${intel_compiler_library}/mkl
+  # pkgtools::reset_variable MKLLIB ${MKLROOT}/lib/intel64
+  # pkgtools::add_path_to_LD_LIBRARY_PATH $MKLLIB
 
   pkgtools::add_path_to_PATH ${intel_compiler_library}/mpi/bin64
   pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/mpi/lib64
