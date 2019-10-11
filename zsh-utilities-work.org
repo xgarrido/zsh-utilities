@@ -1009,6 +1009,72 @@ function root/mergeTree () {
   alias cmb::upload='--cmb::updown up'
   alias cmb::updownload='--cmb::updown up && --cmb::updown down'
 #+END_SRC
+*** Create link to MCMC for =GetDist=
+#+BEGIN_SRC sh
+  function cmb::link_mcmc()
+  {
+    for f in mcmc.?.?.txt; do
+      ln -sf $f ${f/.?.txt/.txt}
+    done
+    for f in mcmc*.updated.yaml; do
+      ln -sf $f mcmc.updated.yaml
+      break
+    done
+  }
+#+END_SRC
+
+*** Reorganize output directory
+#+BEGIN_SRC sh
+  function cmb::reorganize_mcmc()
+  {
+    local args=($@)
+    rm=false
+    if [[ ${args[(r)--rm]} ]]; then
+      rm=true
+      copy=true
+    fi
+    copy=false
+    if [[ ${args[(r)--copy]} ]]; then
+      copy=true
+    fi
+    for f in $@; do
+        if [[ ${f:0:1} == "-" ]]; then
+          continue
+        fi
+        newpath=$(echo $f | awk -F_ '{for (i=1;i<NF;i++) printf("%s_",$i)}')
+        newpath=${newpath:0:-1}
+        mkdir -p ${newpath}
+        nbr=$(echo $f | awk -F_ '{print $NF}')
+        (
+          cd ${newpath}
+          if ${copy}; then
+            rm -f ./mcmc.${nbr}.txt ./mcmc.updated.yaml
+            cp ../$f/mcmc*.txt ./mcmc.${nbr}.txt
+            cp ../$f/mcmc.updated.yaml .
+            pkls=(../$f/*.pkl(N))
+            for g in $pkls; do
+              name=$(basename $g)
+              cp $g ${name/.pkl/.${nbr}.pkl}
+            done
+            logs=(../$f/*.log(N))
+            for g in $logs; do
+              name=$(basename $g)
+              cp $g ${name/.log/.${nbr}.log}
+            done
+          else
+              ln -sf ../$f/mcmc*.txt ./mcmc.${nbr}.txt
+              if [ ! -f ./mcmc.updated.yaml ]; then
+                  ln -sf ../$f/mcmc.updated.yaml
+              fi
+          fi
+        )
+        if ${rm}; then
+            rm -rf $f
+        fi
+    done
+    pkgtools::msg_notice "Reorganization of directory $1 and others done"
+  }
+#+END_SRC
 ** Lyon ccali setup
 *** Preamble
 #+BEGIN_SRC sh
