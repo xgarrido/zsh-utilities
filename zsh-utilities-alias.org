@@ -80,7 +80,7 @@ In case =glances= is installed (see https://github.com/nicolargo/glances), use
 it as replacement for top command
 #+BEGIN_SRC sh
   if (( $+commands[glances] )); then
-      alias top='glances --percpu --process-short-name'
+      alias top='glances --percpu --process-short-name --fs-free-space'
   fi
 #+END_SRC
 ** Terminal pager program

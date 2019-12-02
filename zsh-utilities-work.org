@@ -1037,42 +1037,60 @@ function root/mergeTree () {
     if [[ ${args[(r)--copy]} ]]; then
       copy=true
     fi
+    newpath=
+    if [[ ${args[(r)--no-new-path]} ]]; then
+      newpath=.
+    fi
     for f in $@; do
         if [[ ${f:0:1} == "-" ]]; then
           continue
         fi
-        newpath=$(echo $f | awk -F_ '{for (i=1;i<NF;i++) printf("%s_",$i)}')
-        newpath=${newpath:0:-1}
-        mkdir -p ${newpath}
+        fn=$(basename $f)
+        if [[ -z ${newpath} ]]; then
+            newpath=$(echo $f | awk -F_ '{for (i=1;i<NF;i++) printf("%s_",$i)}')
+            newpath=${newpath:0:-1}
+            mkdir -p ${newpath}
+        fi
+        dirpath=$(dirname $newpath)
         nbr=$(echo $f | awk -F_ '{print $NF}')
+        re='^[0-9]+$'
+        if ! [[ ${nbr} =~ ${re} ]] ; then
+            continue
+        fi
         (
           cd ${newpath}
           if ${copy}; then
-            rm -f ./mcmc.${nbr}.txt ./mcmc.updated.yaml
-            cp ../$f/mcmc*.txt ./mcmc.${nbr}.txt
-            cp ../$f/mcmc.updated.yaml .
-            pkls=(../$f/*.pkl(N))
+            exts=(checkpoint covmat input.yaml)
+            for ext in ${exts}; do
+                cp ${dirpath}/$fn/mcmc.${ext} ./mcmc.${nbr}.${ext}
+            done
+            cp ${dirpath}/$fn/mcmc*.txt ./mcmc.${nbr}.txt
+            cp ${dirpath}/$fn/mcmc.updated.yaml .
+            pkls=(${dirpath}/$fn/*.pkl(N))
             for g in $pkls; do
               name=$(basename $g)
               cp $g ${name/.pkl/.${nbr}.pkl}
             done
-            logs=(../$f/*.log(N))
+            logs=(${dirpath}/$fn/*.log(N))
             for g in $logs; do
               name=$(basename $g)
               cp $g ${name/.log/.${nbr}.log}
             done
           else
-              ln -sf ../$f/mcmc*.txt ./mcmc.${nbr}.txt
+              ln -sf ${dirpath}/$fn/mcmc*.txt ./mcmc.${nbr}.txt
+              if [ ! -f ./mcmc.${nbr}.updated.yaml ]; then
+                  ln -sf ${dirpath}/$fn/mcmc.updated.yaml ./mcmc.${nbr}.updated.yaml
+              fi
               if [ ! -f ./mcmc.updated.yaml ]; then
-                  ln -sf ../$f/mcmc.updated.yaml
+                  ln -sf ${dirpath}/$fn/mcmc.updated.yaml ./mcmc.updated.yaml
               fi
           fi
         )
         if ${rm}; then
             rm -rf $f
         fi
+        pkgtools::msg_notice "Reorganization of directory $fn and others done"
     done
-    pkgtools::msg_notice "Reorganization of directory $1 and others done"
   }
 #+END_SRC
 ** Lyon ccali setup

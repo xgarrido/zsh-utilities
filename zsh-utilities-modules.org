@@ -359,16 +359,13 @@ python code to cron syntax.
 #+RESULTS:
 
 ** fzf
-fzf is a general-purpose command-line fuzzy finder. See
-[[https://github.com/junegunn/fzf]]
+fzf is a general-purpose command-line fuzzy finder. See [[https://github.com/junegunn/fzf]]
 
-*** Source file
-#+BEGIN_SRC sh
-  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-#+END_SRC
 *** Preamble
 #+BEGIN_SRC sh
   if (( $+commands[fzf] )); then
+      [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
+      [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 #+END_SRC
 *** Use =ag=
 #+BEGIN_SRC sh
@@ -378,8 +375,11 @@ fzf is a general-purpose command-line fuzzy finder. See
 #+END_SRC
 *** Color scheme
 #+BEGIN_SRC sh
-  export FZF_DEFAULT_OPTS='--color=16,info:4,pointer:3,bg+:15'
+  export FZF_DEFAULT_OPTS="--color=16,info:4,pointer:3,bg+:-1"
 #+END_SRC
+
+#+RESULTS:
+
 *** =z= - changing directory with fasd
 #+BEGIN_SRC sh
   z() {
@@ -394,7 +394,13 @@ fzf is a general-purpose command-line fuzzy finder. See
       (
           cd ~
           local out file key
-          IFS=$'\n' out=$(fzf --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
+          IFS=$'\n' out=$(fzf --query="$1" --exit-0 --expect=ctrl-o,ctrl-e --preview '[[ $(file --mime {}) =~ binary ]] &&
+                 echo {} is a binary file ||
+                 (bat --style=numbers --color=always {} ||
+                  highlight -O ansi -l {} ||
+                  coderay {} ||
+                  rougify {} ||
+                  cat {}) 2> /dev/null | head -500')
           key=$(head -1 <<< "$out")
           file=$(head -2 <<< "$out" | tail -1)
           if [ -n "$file" ]; then

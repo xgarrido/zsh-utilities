@@ -428,7 +428,7 @@ db.
               ssh_option="-p 1234"
               server_name="garrido@r17187.ovh.net"
           elif [[ "$1" == "laptop" ]]; then
-              server_name="garrido@nb-nemo6.lal.in2p3.fr"
+              server_name="garrido@134.158.76.120"
           elif [[ "$1" == "mac" ]]; then
               ssh_option="-p 24"
               server_name="garrido@xgarrido.dyndns.org"
@@ -592,7 +592,7 @@ db.
   }
 #+END_SRC
 *** Convert Le Monde article
-#+BEGIN_SRC shell
+#+BEGIN_SRC shell :tangle no
   function convert_lemonde()
   {
       cat $1 | awk '
