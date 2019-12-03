@@ -1182,16 +1182,16 @@ function root/mergeTree () {
   # pkgtools::add_path_to_PATH ${python_dir}/bin
   # pkgtools::add_path_to_LD_LIBRARY_PATH ${python_dir}/lib
 
-  # MKL
-  local intel_compiler_library=/usr/local/intel/2018/compilers_and_libraries/linux
-  pkgtools::reset_variable IOMP5LIB ${intel_compiler_library}/lib/intel64
-  pkgtools::add_path_to_LD_LIBRARY_PATH ${IOMP5LIB}
-  pkgtools::reset_variable MKLROOT ${intel_compiler_library}/mkl
-  pkgtools::reset_variable MKLLIB ${MKLROOT}/lib/intel64
-  pkgtools::add_path_to_LD_LIBRARY_PATH $MKLLIB
+  # # MKL
+  # local intel_compiler_library=/usr/local/intel/2018/compilers_and_libraries/linux
+  # pkgtools::reset_variable IOMP5LIB ${intel_compiler_library}/lib/intel64
+  # pkgtools::add_path_to_LD_LIBRARY_PATH ${IOMP5LIB}
+  # pkgtools::reset_variable MKLROOT ${intel_compiler_library}/mkl
+  # pkgtools::reset_variable MKLLIB ${MKLROOT}/lib/intel64
+  # pkgtools::add_path_to_LD_LIBRARY_PATH $MKLLIB
 
-  pkgtools::add_path_to_PATH ${intel_compiler_library}/mpi/bin64
-  pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/mpi/lib64
+  # pkgtools::add_path_to_PATH ${intel_compiler_library}/mpi/bin64
+  # pkgtools::add_path_to_LD_LIBRARY_PATH ${intel_compiler_library}/mpi/lib64
 #+END_SRC
 **** Run MCMC jobs
 ***** Wrapper
