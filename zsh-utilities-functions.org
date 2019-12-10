@@ -427,7 +427,7 @@ db.
           elif [[ "$1" == "ovh" ]]; then
               ssh_option="-p 1234"
               server_name="garrido@r17187.ovh.net"
-          elif [[ "$1" == "laptop" ]]; then
+          elif [[ "$1" == "dell-xps" ]]; then
               server_name="garrido@134.158.76.120"
           elif [[ "$1" == "mac" ]]; then
               ssh_option="-p 24"
@@ -491,7 +491,7 @@ db.
       local -a _machines
       _machines=(
           lyon:'CC Lyon job machines'
-          laptop:'Laptop machine'
+          dell-xps:'Laptop Dell XPS'
           mac:'iMac machine'
           syno:'Synology server @ home'
           rpi:'Raspberry Pi'
