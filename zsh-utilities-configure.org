@@ -136,7 +136,7 @@ way it should be easy to add its own configuration.
       export HOSTNAME=$(hostname)
 
       case "$HOSTNAME" in
-          garrido-laptop|pc-91089|nb-garrido)
+          garrido-laptop|pc-91089|nb-garrido|garrido-xps)
               __configure_laptop
               ;;
           lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
