@@ -831,7 +831,7 @@ Astrophysics Data System.
     if [ ! -f ~/.auth.key ]; then
         google-music-auth ~/.auth.key
     fi
-    sed -i -e 's/eth0/wlp2s0/' /tmp/gmusic/lib/python3.7/site-packages/google_music_manager_uploader/uploader_daemon.py
+    sed -i -e 's/eth0/wlp2s0/' /tmp/gmusic/lib/python3.8/site-packages/google_music_manager_uploader/uploader_daemon.py
     google-music-upload -d /home/garrido/Musique -a ~/.auth.key -r
   }
 #+END_SRC
