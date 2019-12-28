@@ -10,23 +10,6 @@ This file adds some configuration to external resources. Each program configurat
 item. The preamble is just here to ensure the binary is present. Thus each item is embedded between
 a preamble and postamble block code which is a basic =if= command.
 
-** dotfiles
-[[http://pypi.python.org/pypi/dotfiles/][dotfiles]] is a tool to make managing your dotfile symlinks in $HOME easy,
-allowing you to keep all your dotfiles in a single directory.
-*** Preamble
-#+BEGIN_SRC sh
-  if (( $+commands[dotfiles] )); then
-#+END_SRC
-
-*** Aliases
-#+BEGIN_SRC sh :tangle no
-  alias dotfiles='dotfiles -R ~/Development/github.com/xgarrido/dotfiles'
-#+END_SRC
-*** Postamble
-#+BEGIN_SRC sh
-  fi
-#+END_SRC
-
 ** fasd
 [[https://github.com/clvv/fasd][fasd]] is a command-line productivity booster, offers quick access to files and directories,
 inspired by autojump, z and v. Most of the following code is stolen from [[https://github.com/sorin-ionescu/prezto/tree/master/modules/fasd][prezto]].
