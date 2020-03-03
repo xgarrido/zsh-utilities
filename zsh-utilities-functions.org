@@ -1405,3 +1405,10 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
       done
   }
 #+END_SRC
+*** Get current IP
+#+BEGIN_SRC shell
+  function get_ip()
+  {
+      dig +short myip.opendns.com @resolver1.opendns.com
+  }
+#+END_SRC
