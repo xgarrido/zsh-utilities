@@ -225,10 +225,10 @@ generic function name given the linux system installed : "debian-like" system or
       fi
 
       while [ -n "$1" ]; do
-          local base="$(basename $1)"
+          local base="$(basename \"$1\")"
           local filename="${base%%.*}"
           local file="${base%.*}"
-          local dir="$(dirname $1)/$filename"
+          local dir="$(dirname \"$1\")/$filename"
           local ext="${base#*.}"
           if [[ ! -d "$dir" && ! -f "$file" ]]; then
               pkgtools::msg_warning "'$dir' is not a valid directory/file"
@@ -421,6 +421,8 @@ db.
               server_name="xgarrido@lxplus.cern.ch"
           elif [[ "$1" == "lyon" ]]; then
               server_name="garrido@cca.in2p3.fr"
+          elif [[ "$1" == "nersc" ]]; then
+              server_name="xgarrido@cori.nersc.gov"
           elif [[ $1 == ccige* ]]; then
               server_name="garrido@$1.in2p3.fr"
           elif [[ $1 == ccage* ]]; then
@@ -492,6 +494,7 @@ db.
       local -a _machines
       _machines=(
           lyon:'CC Lyon job machines'
+          nersc:'NERSC machines'
           dell-xps:'Laptop Dell XPS'
           mac:'iMac machine'
           syno:'Synology server @ home'
