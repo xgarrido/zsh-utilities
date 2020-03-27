@@ -136,6 +136,7 @@ way it should be easy to add its own configuration.
       {
           if [ -z $1 ]; then
               echo "ERROR: Missing directory"
+              return 1
           fi
 
           # chmod 755 $(find $1 -type d)
