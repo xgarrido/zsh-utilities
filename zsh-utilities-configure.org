@@ -126,6 +126,29 @@ way it should be easy to add its own configuration.
   }
 #+END_SRC
 
+** NERSC machines configuration
+#+BEGIN_SRC sh
+  function __configure_nersc_machines ()
+  {
+      pkgtools::at_function_enter __configure_nersc_machines
+
+      function fix_permissions()
+      {
+          if [ -z $1 ]; then
+              echo "ERROR: Missing directory"
+          fi
+
+          # chmod 755 $(find $1 -type d)
+          # chmod 644 $(find $PWD -type f)
+          find $1 -type d -print0 | xargs -0 chmod 755
+          find $1 -type f -print0 | xargs -0 chmod 644
+      }
+
+      pkgtools::at_function_exit
+      return 0
+  }
+#+END_SRC
+
 ** Main configuration function
 #+BEGIN_SRC sh
   function __configure_machine ()
@@ -145,6 +168,9 @@ way it should be easy to add its own configuration.
           ccige*|ccage*|cc*)
               __configure_lyon_machines
               ;;
+          cori*)
+            __configure_nersc_machines
+            ;;
           *)
               type __configure_$(hostname) | grep -q "shell function" > /dev/null 2>&1
               if [ $? -eq 0 ]; then
