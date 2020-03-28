@@ -99,7 +99,7 @@ generic function name given the linux system installed : "debian-like" system or
       function upgrade ()
       {
           pkgtools::at_function_enter upgrade
-          ${__pkg_mgr} -Suy && pkg-notify "Upgrade done"
+          ${__pkg_mgr} -Suy --noconfirm && pkg-notify "Upgrade done"
           pkgtools::at_function_exit
           return 0
       }
