@@ -72,11 +72,11 @@ inspired by autojump, z and v. Most of the following code is stolen from [[https
 #+BEGIN_SRC sh
   function rsync ()
   {
-      if (( $+commands[colout] )); then
-          $(pkgtools::get_binary_path rsync) $@ 2>&1 | colout -t rsync -T ${zsh_utilities_dir}
-      else
+      # if (( $+commands[colout] )); then
+      #     $(pkgtools::get_binary_path rsync) $@ 2>&1 | colout -t rsync -T ${zsh_utilities_dir}
+      # else
           $(pkgtools::get_binary_path rsync) $@
-      fi
+      # fi
   }
   local _rsync_cmd='noglob rsync --verbose --progress --human-readable --compress --archive --hard-links --one-file-system'
 
