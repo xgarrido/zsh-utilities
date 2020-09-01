@@ -324,6 +324,31 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
 ** plan
 [[https://github.com/fengsp/plan][plan]] is a python package for writing and deploying cron jobs. =plan= will convert
 python code to cron syntax.
+
+If the following error occurs 
+#+BEGIN_EXAMPLE
+~/.local/lib/python3.8/site-packages/plan/core.py in read_crontab(self)
+    206 
+    207             if returncode != 0:
+--> 208                 raise PlanError("couldn't read crontab")
+    209         except OSError:
+    210             raise PlanError("couldn't read crontab; please make sure you "
+
+PlanError: couldn't read crontab
+#+END_EXAMPLE
+you first need to create an entry in crontab. So you have to do =sudo EDITOR=nano crontab -u $USER -e=
+and close the empty file. You should get 
+
+#+BEGIN_EXAMPLE
+no crontab for garrido - using an empty one
+crontab: no changes made to crontab
+#+END_EXAMPLE
+
+Make sure to use =nano= and not =vi= or =emacs=. To make sure everything goes well you can check that
+=crontab -l= works well (otherwise it would say no crontab for USER) and a USER directory within
+/var/spool/cron must have been created
+
+
 *** Cron syntax
 #+BEGIN_SRC python :results output :tangle no
   from plan import Plan
@@ -335,11 +360,13 @@ python code to cron syntax.
   cron.command('cp /home/garrido/.emacs.d/tmp/session/emacs.desktop /home/garrido/.emacs.d/tmp/session/emacs-`date +\%Y-\%m-\%d`.desktop', every='monthly')
   cron.command('DISPLAY=:0 /home/garrido/.bin/mybackup --profile lal', every='1.day', at='13:00')
   cron.command('DISPLAY=:0 /home/garrido/.bin/mybackup --profile usb', every='1.day', at='13:00')
+  cron.command('DISPLAY=:0 /home/garrido/.bin/mybackup --profile orico', every='1.day', at='6:00')
   if __name__ == '__main__':
       cron.run('update')
 #+END_SRC
 
 #+RESULTS:
+: [write] crontab file updated
 
 ** fzf
 fzf is a general-purpose command-line fuzzy finder. See [[https://github.com/junegunn/fzf]]
