@@ -427,18 +427,8 @@ db.
               server_name="garrido@$1.in2p3.fr"
           elif [[ $1 == ccage* ]]; then
               server_name="garrido@$1.in2p3.fr"
-          elif [[ "$1" == "ovh" ]]; then
-              ssh_option="-p 1234"
-              server_name="garrido@r17187.ovh.net"
           elif [[ "$1" == "dell-xps" ]]; then
               server_name="garrido@134.158.76.120"
-          elif [[ "$1" == "mac" ]]; then
-              ssh_option="-p 24"
-              server_name="garrido@xgarrido.dyndns.org"
-          elif [[ "$1" == "syno" ]]; then
-              server_name="garrido@xgarrido.synology.me"
-              # elif [[ "$1" == "debian" ]]; then
-              #     server_name="debian@xgarrido.dyndns.org"
           elif [[ "$1" == "rpi" ]]; then
               server_name="osmc@xgarrido.ddns.net"
           elif [[ "$1" == "lx3" ]]; then
@@ -496,8 +486,6 @@ db.
           lyon:'CC Lyon job machines'
           nersc:'NERSC machines'
           dell-xps:'Laptop Dell XPS'
-          mac:'iMac machine'
-          syno:'Synology server @ home'
           rpi:'Raspberry Pi'
           lx3:'lxplus machine @ LAL'
           nemo3:'nemo3 machine @ LAL'
