@@ -107,7 +107,7 @@ generic function name given the linux system installed : "debian-like" system or
       function upgrade-aur ()
       {
           pkgtools::at_function_enter upgrade-aur
-          ${__pkg_mgr} -Suya --devel && pkg-notify "Upgrade done"
+          ${__pkg_mgr} -Suya --devel --noconfirm && pkg-notify "Upgrade done"
           pkgtools::at_function_exit
           return 0
       }
