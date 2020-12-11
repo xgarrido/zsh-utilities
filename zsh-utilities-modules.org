@@ -534,3 +534,18 @@ From https://lebkowski.name/docker-volumes/
 #+BEGIN_SRC sh
   fi
 #+END_SRC
+** exa
+*** Preamble
+#+BEGIN_SRC sh
+  if (( $+commands[exa] )); then
+#+END_SRC
+*** Alias
+#+BEGIN_SRC sh
+  alias ls="exa"
+  alias ll="ls --long --git"
+  alias la="ll -a"
+#+END_SRC
+*** Postamble
+#+BEGIN_SRC sh
+  fi
+#+END_SRC
