@@ -1830,6 +1830,22 @@ function root/mergeTree () {
   fi
 #+END_SRC
 
+** Openstack
+Implementation of J. Peloton data sheet
+https://gist.github.com/JulienPeloton/bb77476623a090c60ee1b7c2a2791699
+
+#+BEGIN_SRC sh
+  function start_openstack()
+  {
+    if [ ! -d /tmp/vdata ]; then
+      pkgtools::msg_notice "Creating virtual env. for openstack dev."
+      python -m venv /tmp/vdata && source /tmp/vdata/bin/activate
+      pip install -U pip python-openstackclient python-glanceclient
+    fi
+    pkgtools::msg_notice "Setting permissions"
+    source ~/.certs/os_lal.rc
+  }
+#+END_SRC
 ** Activate g++ warnings
 #+BEGIN_SRC sh
   function activate_cxxflags ()
