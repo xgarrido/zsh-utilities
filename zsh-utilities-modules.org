@@ -542,7 +542,7 @@ From https://lebkowski.name/docker-volumes/
 *** Alias
 #+BEGIN_SRC sh
   alias ls="exa"
-  alias ll="ls --long --git"
+  alias ll="ls --long --git --sort time"
   alias la="ll -a"
 #+END_SRC
 *** Postamble
