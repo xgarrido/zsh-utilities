@@ -429,18 +429,15 @@ db.
               server_name="garrido@$1.in2p3.fr"
           elif [[ "$1" == "dell-xps" ]]; then
               server_name="garrido@134.158.76.120"
-          elif [[ "$1" == "rpi" ]]; then
+          elif [[ "$1" == "osmc" ]]; then
               server_name="osmc@xgarrido.ddns.net"
+          elif [[ "$1" == "rpi" ]]; then
+              server_name="ubuntu@xgarrido.ddns.net"
+              ssh_option="-p 23"
           elif [[ "$1" == "lx3" ]]; then
               server_name="garrido@lx3.lal.in2p3.fr"
-          elif [[ "$1" == "daq-nemo" ]]; then
-              server_name="bipolal@pc-nemo12.lal.in2p3.fr"
-          elif [[ "$1" == "daq-lsm" ]]; then
-              server_name="nemoacq@lsmlx5.in2p3.fr"
           elif [[ $1 == pc-nemo* ]]; then
               server_name="nemo@$1"
-          elif [[ $1 == pc-91089 ]]; then
-              server_name="garrido@$1"
           elif [[ $1 == pc-mag ]]; then
               server_name="xavier.garrido@tp-ssh1.dep-informatique.u-psud.fr"
           elif [[ $1 == nemo* ]]; then
@@ -486,15 +483,11 @@ db.
           lyon:'CC Lyon job machines'
           nersc:'NERSC machines'
           dell-xps:'Laptop Dell XPS'
-          rpi:'Raspberry Pi'
+          rpi:'Ubuntu - Raspberry Pi'
+          osmc:'OSMC - Raspberry Pi'
           lx3:'lxplus machine @ LAL'
           nemo3:'nemo3 machine @ LAL'
           nemo4:'nemo4 machine @ LAL'
-          pc-91089:'PC server machine @ LAL'
-          pc-nemo4:'V. Treytak machine'
-          pc-nemo5:'H. Gomez machine'
-          pc-nemo6:'Student machine'
-          pc-nemo8:'G. Eurin machine'
           pc-mag:'Magistère machine'
       )
       _describe -t _machines 'SSH machines' _machines && ret=0
