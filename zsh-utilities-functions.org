@@ -430,7 +430,7 @@ db.
           elif [[ "$1" == "dell-xps" ]]; then
               server_name="garrido@134.158.76.120"
           elif [[ "$1" == "osmc" ]]; then
-              server_name="osmc@xgarrido.ddns.net"
+              server_name="xgarrido@xgarrido.ddns.net"
           elif [[ "$1" == "rpi" ]]; then
               server_name="ubuntu@xgarrido.ddns.net"
               ssh_option="-p 23"
