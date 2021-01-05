@@ -477,6 +477,7 @@ From https://lebkowski.name/docker-volumes/
           pkgtools::msg_error "Missing pdf file!"
           return 1
       fi
+      xhost +local:docker
       local _path=$(dirname $1)
       [[ $_path = . ]] && _path=$PWD
       local _file=$(basename $1)
