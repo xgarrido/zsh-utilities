@@ -544,7 +544,7 @@ From https://lebkowski.name/docker-volumes/
 #+BEGIN_SRC sh
   alias ls="exa"
   alias ll="ls --long --git --sort time"
-  alias la="ll -a"
+  alias lla="ll -a"
 #+END_SRC
 *** Postamble
 #+BEGIN_SRC sh
