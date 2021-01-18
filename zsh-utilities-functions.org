@@ -435,7 +435,7 @@ db.
               server_name="ubuntu@xgarrido.ddns.net"
               ssh_option="-p 23"
           elif [[ "$1" == "lx3" ]]; then
-              server_name="garrido@lx3.lal.in2p3.fr"
+              server_name="xgarrido@lx3.lal.in2p3.fr"
           elif [[ $1 == pc-nemo* ]]; then
               server_name="nemo@$1"
           elif [[ $1 == pc-mag ]]; then
