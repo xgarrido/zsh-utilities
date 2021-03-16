@@ -181,6 +181,7 @@ generic function name given the linux system installed : "debian-like" system or
               (*.tar.zma|*.tlz) tar --lzma --help &> /dev/null \
                   && tar --lzma -xvf "$1" \
                   || lzcat "$1" | tar xvf - ;;
+              (*.tar.zstd) tar -I zstd -xvf "$1";;
               (*.tar) tar xvf "$1" ;;
               (*.gz) gunzip "$1" ;;
               (*.bz2) bunzip2 "$1" ;;
