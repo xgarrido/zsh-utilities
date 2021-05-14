@@ -112,3 +112,8 @@ Options for =less= program are the following
 #+BEGIN_SRC sh
   alias transmission-rpi="transmission-remote-gtk"
 #+END_SRC
+
+** youtube-dl audio
+#+BEGIN_SRC sh
+  alias youtube-dl-audio='youtube-dl --ignore-errors --output "%(title)s.%(ext)s" --extract-audio --audio-format mp3'
+#+END_SRC
