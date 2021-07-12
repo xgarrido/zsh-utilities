@@ -231,7 +231,7 @@ generic function name given the linux system installed : "debian-like" system or
           local file="${base%.*}"
           local dir="$(dirname \"$1\")/$filename"
           local ext="${base#*.}"
-          if [[ ! -d "$dir" && ! -f "$file" ]]; then
+          if [[ ! -d "$dir" || ! -f "$file" ]]; then
               pkgtools::msg_warning "'$dir' is not a valid directory/file"
               shift
               continue
