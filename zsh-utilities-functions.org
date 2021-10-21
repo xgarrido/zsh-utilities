@@ -435,14 +435,10 @@ db.
           elif [[ "$1" == "rpi" ]]; then
               server_name="ubuntu@xgarrido.ddns.net"
               ssh_option="-p 23"
-          elif [[ "$1" == "lx3" ]]; then
-              server_name="xgarrido@lx3.lal.in2p3.fr"
-          elif [[ $1 == pc-nemo* ]]; then
-              server_name="nemo@$1"
+          elif [[ "$1" == "lal" ]]; then
+              server_name="xgarrido@ssh-ubuntu1.ijclab.in2p3.fr"
           elif [[ $1 == pc-mag ]]; then
               server_name="xavier.garrido@tp-ssh1.dep-informatique.u-psud.fr"
-          elif [[ $1 == nemo* ]]; then
-              server_name="garrido@$1.lal.in2p3.fr"
               # else
               #     if [ "${HOSTNAME}" = "garrido-laptop" ]; then
               #         server_name="garrido@localhost"
@@ -486,9 +482,7 @@ db.
           dell-xps:'Laptop Dell XPS'
           rpi:'Ubuntu - Raspberry Pi'
           osmc:'OSMC - Raspberry Pi'
-          lx3:'lxplus machine @ LAL'
-          nemo3:'nemo3 machine @ LAL'
-          nemo4:'nemo4 machine @ LAL'
+          lal:'lxplus machine @ LAL'
           pc-mag:'Magistère machine'
       )
       _describe -t _machines 'SSH machines' _machines && ret=0
