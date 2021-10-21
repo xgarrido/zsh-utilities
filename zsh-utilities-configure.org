@@ -64,6 +64,9 @@ way it should be easy to add its own configuration.
       # Set EDITOR
       pkgtools::reset_variable EDITOR "ec"
 
+      # Set __pycache__ directory
+      pkgtools::reset_variable PYTHONPYCACHEPREFIX $HOME/.cache/cpython/
+
       pkgtools::at_function_exit
       return 0
   }
