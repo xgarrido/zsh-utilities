@@ -1024,7 +1024,7 @@ function root/mergeTree () {
 #+END_SRC
 
 *** Reorganize output directory
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :tangle no
   function cmb::reorganize_mcmc()
   {
     local args=($@)
