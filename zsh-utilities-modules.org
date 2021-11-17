@@ -520,8 +520,9 @@ From https://lebkowski.name/docker-volumes/
           prof)
               local -a _profiles
               _profiles=(
-                  lal:'LAL machine (via lx3)'
+                  lal:'LAL machine'
                   usb:'USB hard disk'
+                  orico:'Orico hard disk'
               )
               _describe -t _profiles 'Backup profiles' _profiles
               ;;
