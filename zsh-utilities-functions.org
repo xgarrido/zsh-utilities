@@ -438,7 +438,7 @@ db.
           elif [[ "$1" == "lal" ]]; then
               server_name="xgarrido@ssh-ubuntu1.ijclab.in2p3.fr"
           elif [[ $1 == pc-mag ]]; then
-              server_name="xavier.garrido@tp-ssh1.dep-informatique.u-psud.fr"
+              server_name="xavier.garrido@ssh1.pgip.universite-paris-saclay.fr"
               # else
               #     if [ "${HOSTNAME}" = "garrido-laptop" ]; then
               #         server_name="garrido@localhost"
