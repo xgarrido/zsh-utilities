@@ -1425,3 +1425,14 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
       pkgtools::msg_info "Virtual env. created and sourced!"
   }
 #+END_SRC
+
+** Update python virtual env
+#+BEGIN_SRC sh
+  function update_venv()
+  {
+      python -m pip install --upgrade pip
+      python -m pip freeze | awk -F= '{print "python -m pip install --upgrade",$1}' | sh 
+      pkgtools::msg_info "Update python env"
+  }
+#+END_SRC
+
