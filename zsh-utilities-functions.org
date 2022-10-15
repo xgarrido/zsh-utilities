@@ -21,6 +21,9 @@ generic function name given the linux system installed : "debian-like" system or
       if pkgtools::has_binary apt-fast; then
           __pkg_mgr="apt-fast"
           return 0
+      elif pkgtools::has_binary apt; then
+          __pkg_mgr="apt"
+          return 0
       elif pkgtools::has_binary apt-get; then
           __pkg_mgr="apt-get"
           return 0
