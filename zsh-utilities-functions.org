@@ -855,7 +855,7 @@ Astrophysics Data System.
 ** Better =ls= with =git= support
 Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
 
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :tangle no
   zmodload zsh/datetime
   zmodload -F zsh/stat b:zstat
 
@@ -1157,7 +1157,7 @@ Original work done by [[https://github.com/supercrabtree/k][supercrabtree]]
   # http://upload.wikimedia.org/wikipedia/en/1/15/Xterm_256color_chart.svg
 #+END_SRC
 ** Better =tree= with =git= support
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :tangle no
   function t()
   {
       arguments="$@"

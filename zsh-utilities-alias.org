@@ -17,7 +17,6 @@ This file defines some basic but nevertheless fundamental aliases.
 
 ** List Segments aka =ls= command
 #+BEGIN_SRC sh
-  alias l='k'
   alias ll='ls -ltrh'
   alias la='ls -rtha'
   alias lla='ls -rthal'

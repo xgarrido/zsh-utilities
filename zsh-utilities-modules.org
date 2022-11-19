@@ -512,8 +512,6 @@ From https://lebkowski.name/docker-volumes/
           {-d,--debug}'[enable debug mode]'              \
           {-D,--devel}'[enable devel mode]'              \
           '--profile[set the profile]:profile:->prof'    \
-          '--source[set the source directory]'           \
-          '--destination[set the destination directory]' \
           && ret=0
 
       case $state in
