@@ -1101,9 +1101,12 @@ function root/mergeTree () {
 
 *** =qsub= aliases
 #+BEGIN_SRC sh
-  alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
-  alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
-  alias qdel_all="qstat | tail -n +3 | grep -v QLOGIN | sort -u -k1,1 | awk '{print \"qdel\",\$1}' | sh"
+  # alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
+  # alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
+  # alias qdel_all="qstat | tail -n +3 | grep -v QLOGIN | sort -u -k1,1 | awk '{print \"qdel\",\$1}' | sh"
+  alias sjob_my_total='echo -ne "Total number of jobs: ";squeue | tail -n+2 | wc -l'
+  alias sjob_my_run='echo -ne "Number of running jobs: ";squeue -t R | tail -n+2 | wc -l'
+  alias scancel_all="scancel $(squeue | awk '{print $1}' | awk -F_ '{print $1}' | grep -v JOBID | sort -u | tr '\n' ' ')"
 #+END_SRC
 *** General env. variables
 #+BEGIN_SRC sh
