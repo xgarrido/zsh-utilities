@@ -1431,11 +1431,19 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 
 ** Update python virtual env
 #+BEGIN_SRC sh
-  function update_venv()
+  function upgrade_venv()
   {
+      pkgtools::msg_info "Upgrading pip first"
       python -m pip install --upgrade pip
-      python -m pip freeze | awk -F= '{print "python -m pip install --upgrade",$1}' | sh 
-      pkgtools::msg_info "Update python env"
+      while read -r line; do
+          if [[ $line == *"@"* ]]; then
+              continue
+          fi
+          name=$(echo $line | cut -d= -f1)
+          pkgtools::msg_info "Upgrading ${name}..."
+          python -m pip install --upgrade ${name} | grep --line-buffered -E -v "Requirement already satisfied:|Defaulting to user"
+      done <<< $(pip freeze)
+      pkgtools::msg_info "Upgrade python env done"
   }
 #+END_SRC
 
