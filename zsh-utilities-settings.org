@@ -32,3 +32,8 @@ This file provides some default settings for =zsh= (currently not so much).
   bindkey "^[[1;3C" forward-word
   bindkey "^[[1;3D" backward-word
 #+END_SRC
+
+** zsh autosuggestions default colors
+#+BEGIN_SRC sh
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=white"
+#+END_SRC
