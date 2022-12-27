@@ -1394,9 +1394,33 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
       dig +short myip.opendns.com @resolver1.opendns.com
   }
 #+END_SRC
+** Activate virtual env
+#+BEGIN_SRC sh
+  function activate-venv()
+  {
+      dir=pyenv
+      while [ -n "$1" ]; do
+          token="$1"
+          if [[ "${token[1]}" = "-" ]]; then
+              opt=${token}
+              if [ "${opt}" = "--dir" ]; then
+                  shift 1
+                  dir="$1"
+              else
+                  pkgtools::msg_warning "Ignoring option '${opt}' !"
+              fi
+          else
+              arg=${token}
+          fi
+          shift
+      done
+      source ${dir}/bin/activate
+  }
+#+END_SRC
+
 ** Create python virtual env
 #+BEGIN_SRC sh
-  function create_venv()
+  function create-venv()
   {
       dir=pyenv
       install_scientific=false
@@ -1405,7 +1429,8 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
           if [[ "${token[1]}" = "-" ]]; then
               opt=${token}
               if [ "${opt}" = "--dir" ]; then
-                  dir=1
+                  shift 1
+                  dir="$1"
               elif [ "${opt}" = "--install-scientific" ]; then
                   install_scientific=true
               else
@@ -1414,7 +1439,7 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
           else
               arg=${token}
           fi
-          shift
+          shift 1
       done
 
       if [ -d ${dir} ]; then
@@ -1431,7 +1456,7 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 
 ** Update python virtual env
 #+BEGIN_SRC sh
-  function upgrade_venv()
+  function upgrade-venv()
   {
       pkgtools::msg_info "Upgrading pip first"
       python -m pip install --upgrade pip
@@ -1441,8 +1466,8 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
           fi
           name=$(echo $line | cut -d= -f1)
           pkgtools::msg_info "Upgrading ${name}..."
-          python -m pip install --upgrade ${name} | grep --line-buffered -E -v "Requirement already satisfied:|Defaulting to user"
-      done <<< $(pip freeze)
+          python -m pip install --upgrade ${name} | grep --color=never --line-buffered -E -v "Requirement already satisfied:|Defaulting to user"
+      done <<< $(pip freeze | grep -E -v "#|^-e")
       pkgtools::msg_info "Upgrade python env done"
   }
 #+END_SRC
