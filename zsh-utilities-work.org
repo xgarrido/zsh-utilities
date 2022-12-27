@@ -2344,3 +2344,83 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
   }
   compdef '_files -g "*.cxx"' parse_cpp_program_options
 #+END_SRC
+
+** Create html page from jupyter notebook
+#+BEGIN_SRC sh
+  if (( $+commands[jupyter-nbconvert] )); then
+      function nbconvert()
+      {
+          notebooks=()
+          template="the-lab"
+          icon="f085"
+          open=false
+          while [ -n "$1" ]; do
+              token="$1"
+              if [[ ${token} == "-h" || ${token} == "--help" ]]; then
+                  return 0
+              elif [[ ${token} == "-d" || ${token} == "--debug" ]]; then
+                  pkgtools::msg_using_debug
+              elif [[ ${token} == "-D" || ${token} == "--devel" ]]; then
+                  pkgtools::msg_using_devel
+              elif [[ ${token} == "-v" || "${token}" == "--verbose" ]]; then
+                  pkgtools::msg_using_verbose
+              elif [[ ${token} == "-W" || "${token}" == "--no-warning" ]]; then
+                  pkgtools::msg_not_using_warning
+              elif [[ ${token} == "-q" || "${token}" == "--quiet" ]]; then
+                  pkgtools::msg_using_quiet
+                  export PKGTOOLS_MSG_QUIET=1
+              elif [[ ${token} == "-o" || "${token}" == "--open-browser" ]]; then
+                  open=true
+              elif [[ ${token} == "--template" ]]; then
+                  shift 1
+                  template="$1"
+              elif [[ ${token} == "--icon" ]]; then
+                  shift 1
+                  icon="$1"
+              else
+                  notebooks+=(${token})
+              fi
+              shift 1
+          done
+
+          if [[ -z $notebooks ]]; then
+              pkgtools::msg_error "Missing notebook files!"
+          fi
+
+          for notebook in ${notebooks[@]}; do
+              jupyter nbconvert ${notebook} --to html --template ${template}
+              html_file=${notebook%.ipynb}.html
+              sed -i -e "s/&#182;/#/" -e "s/f085/"${icon}"/" ${html_file}
+              if ${open}; then
+                  xdg-open ${html_file}
+              fi
+          done
+      }
+      # Connect completion system
+      compdef _nbconvert nbconvert
+
+      function _nbconvert ()
+      {
+          local ret=1 state
+
+          _arguments -C                                                           \
+                     {-v,--verbose}'[verbose output]'                             \
+                     {-h,--help}'[print help message]'                            \
+                     {-o,--open-browser}'[open browser after conversion]'         \
+                     '--template[set the nbconvert template]:template:->template' \
+                     "*:filename: _alternative 'files:file:_files -g \"*.ipynb\"'" && ret=0
+
+          case $state in
+              template)
+                  local -a _templates
+                  _templates=(
+                      cnu-voila:'CNU template'
+                      act:'ACT template'
+                      the-lab:'Default theme'
+                  )
+                  _describe -t _templates 'Templates' _templates
+                  ;;
+          esac
+      }
+  fi
+#+END_SRC
