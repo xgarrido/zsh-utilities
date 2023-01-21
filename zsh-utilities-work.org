@@ -2354,6 +2354,8 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
           template="the-lab"
           icon="f085"
           open=false
+          create_gist=false
+          privacy="--private"
           while [ -n "$1" ]; do
               token="$1"
               if [[ ${token} == "-h" || ${token} == "--help" ]]; then
@@ -2369,6 +2371,10 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
               elif [[ ${token} == "-q" || "${token}" == "--quiet" ]]; then
                   pkgtools::msg_using_quiet
                   export PKGTOOLS_MSG_QUIET=1
+              elif [[ ${token} == "-g" || "${token}" == "--gist" ]]; then
+                  create_gist=true
+              elif [[ ${token} == "-p" || "${token}" == "--public" ]]; then
+                  privacy="--no-private"
               elif [[ ${token} == "-o" || "${token}" == "--open-browser" ]]; then
                   open=true
               elif [[ ${token} == "--template" ]]; then
@@ -2388,10 +2394,48 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
           fi
 
           for notebook in ${notebooks[@]}; do
-              jupyter nbconvert ${notebook} --to html --template ${template}
+              pkgtools::msg_info "Converting ipynb to html..."
+              ret=$(jupyter nbconvert ${notebook} --to html --template ${template})
+              if pkgtools::last_command_fails; then
+                  pkgtools::msg_error "Conversion ipynb to html fails!"
+                  break
+              fi
               html_file=${notebook%.ipynb}.html
               sed -i -e "s/&#182;/#/" -e "s/f085/"${icon}"/" ${html_file}
-              if ${open}; then
+              if ${create_gist}; then
+                  updated=false
+                  # Start notebook file with _ to make it appear first in gist
+                  cp ${notebook} "/tmp/_${notebook}"
+                  notebook="/tmp/_${notebook}"
+                  desc=$(sed -nE 's/^<title>(.*)<\/title>.*$/\1/p' ${html_file})
+                  while read -r line; do
+                      gist_html=$(echo $line | cut -d ' ' -f 1)
+                      gist_id=$(echo ${gist_html} | rev | cut -d '/' -f 1 | rev)
+                      gist_desc=$(echo $line | cut -d ' ' -f 2- | sed 's/(secret)//')
+                      gist_link=$(echo ${gist_desc} | cut -d ' ' -f 2- | sed 's/.*\(https:.*\)/\1/')
+                      gist_desc=$(echo ${gist_desc} | sed 's/https:.*//;s/[ \t]*$//')
+                      if [[ ${gist_desc} == ${desc} ]]; then
+                          pkgtools::msg_info "Updating gist with id '${gist_id}'"
+                          gist_html=$(gist -u ${gist_id} ${notebook} ${html_file})
+                          updated=true
+                          break
+                      fi
+                  done <<< $(gist -l)
+                  if ! ${updated}; then
+                      pkgtools::msg_info "Creating new gist..."
+                      gist_id=$(gist ${privacy} -d ${desc} ${notebook} ${html_file} | cut -d '/' -f 4)
+                      gist_html="https://htmlpreview.github.io/?https://gist.githubusercontent.com/xgarrido/${gist_id}/raw/${html_file}"
+                      tiny_url=""
+                      while [[ ${tiny_url} != https* ]]; do
+                          tiny_url=$(curl -s "http://tinyurl.com/api-create.php?url=${gist_html}")
+                      done
+                      gist_html=$(gist -u ${gist_id} -d "${desc} ${tiny_url}" ${notebook} ${html_file})
+                      pkgtools::msg_info "Interactive view @ ${tiny_url}"
+                  fi
+                  if ${open}; then
+                    xdg-open ${gist_html}
+                  fi
+              elif ${open}; then
                   xdg-open ${html_file}
               fi
           done
@@ -2424,3 +2468,5 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
       }
   fi
 #+END_SRC
+
+#+RESULTS:
