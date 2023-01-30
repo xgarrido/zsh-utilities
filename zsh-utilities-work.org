@@ -2356,33 +2356,38 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
           open=false
           create_gist=false
           privacy="--private"
+          opts=""
           while [ -n "$1" ]; do
               token="$1"
-              if [[ ${token} == "-h" || ${token} == "--help" ]]; then
-                  return 0
-              elif [[ ${token} == "-d" || ${token} == "--debug" ]]; then
-                  pkgtools::msg_using_debug
-              elif [[ ${token} == "-D" || ${token} == "--devel" ]]; then
-                  pkgtools::msg_using_devel
-              elif [[ ${token} == "-v" || "${token}" == "--verbose" ]]; then
-                  pkgtools::msg_using_verbose
-              elif [[ ${token} == "-W" || "${token}" == "--no-warning" ]]; then
-                  pkgtools::msg_not_using_warning
-              elif [[ ${token} == "-q" || "${token}" == "--quiet" ]]; then
-                  pkgtools::msg_using_quiet
-                  export PKGTOOLS_MSG_QUIET=1
-              elif [[ ${token} == "-g" || "${token}" == "--gist" ]]; then
-                  create_gist=true
-              elif [[ ${token} == "-p" || "${token}" == "--public" ]]; then
-                  privacy="--no-private"
-              elif [[ ${token} == "-o" || "${token}" == "--open-browser" ]]; then
-                  open=true
-              elif [[ ${token} == "--template" ]]; then
-                  shift 1
-                  template="$1"
-              elif [[ ${token} == "--icon" ]]; then
-                  shift 1
-                  icon="$1"
+              if [[ ${token:0:1} == "-" ]]; then
+                  if [[ ${token} == "-h" || ${token} == "--help" ]]; then
+                      return 0
+                  elif [[ ${token} == "-d" || ${token} == "--debug" ]]; then
+                      pkgtools::msg_using_debug
+                  elif [[ ${token} == "-D" || ${token} == "--devel" ]]; then
+                      pkgtools::msg_using_devel
+                  elif [[ ${token} == "-v" || "${token}" == "--verbose" ]]; then
+                      pkgtools::msg_using_verbose
+                  elif [[ ${token} == "-W" || "${token}" == "--no-warning" ]]; then
+                      pkgtools::msg_not_using_warning
+                  elif [[ ${token} == "-q" || "${token}" == "--quiet" ]]; then
+                      pkgtools::msg_using_quiet
+                      export PKGTOOLS_MSG_QUIET=1
+                  elif [[ ${token} == "-g" || "${token}" == "--gist" ]]; then
+                      create_gist=true
+                  elif [[ ${token} == "-p" || "${token}" == "--public" ]]; then
+                      privacy="--no-private"
+                  elif [[ ${token} == "-o" || "${token}" == "--open-browser" ]]; then
+                      open=true
+                  elif [[ ${token} == "--template" ]]; then
+                      shift 1
+                      template="$1"
+                  elif [[ ${token} == "--icon" ]]; then
+                      shift 1
+                      icon="$1"
+                  else
+                      opts+="${token} "
+                  fi
               else
                   notebooks+=(${token})
               fi
@@ -2395,7 +2400,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
 
           for notebook in ${notebooks[@]}; do
               pkgtools::msg_info "Converting ipynb to html..."
-              ret=$(jupyter nbconvert ${notebook} --to html --template ${template})
+              jupyter nbconvert ${notebook} $(echo ${opts}) --to html --template ${template}
               if pkgtools::last_command_fails; then
                   pkgtools::msg_error "Conversion ipynb to html fails!"
                   break
@@ -2433,7 +2438,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
                       pkgtools::msg_info "Interactive view @ ${tiny_url}"
                   fi
                   if ${open}; then
-                    xdg-open ${gist_html}
+                      xdg-open ${gist_html}
                   fi
               elif ${open}; then
                   xdg-open ${html_file}
@@ -2451,6 +2456,8 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
                      {-v,--verbose}'[verbose output]'                             \
                      {-h,--help}'[print help message]'                            \
                      {-o,--open-browser}'[open browser after conversion]'         \
+                     {-g,--gist}'[upload/update the gist]'         \
+                     {-p,--public}'[make the gist public]'         \
                      '--template[set the nbconvert template]:template:->template' \
                      "*:filename: _alternative 'files:file:_files -g \"*.ipynb\"'" && ret=0
 
