@@ -2428,7 +2428,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
                   done <<< $(gist -l)
                   if ! ${updated}; then
                       pkgtools::msg_info "Creating new gist..."
-                      gist_id=$(gist ${privacy} -d ${desc} ${notebook} ${html_file} | cut -d '/' -f 4)
+                      gist_id=$(gist ${privacy} -d ${desc} ${notebook} ${html_file} | rev | cut -d '/' -f 1 | rev)
                       gist_html="https://htmlpreview.github.io/?https://gist.githubusercontent.com/xgarrido/${gist_id}/raw/${html_file}"
                       tiny_url=""
                       while [[ ${tiny_url} != https* ]]; do
