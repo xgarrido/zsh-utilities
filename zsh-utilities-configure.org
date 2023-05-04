@@ -135,18 +135,18 @@ way it should be easy to add its own configuration.
   {
       pkgtools::at_function_enter __configure_nersc_machines
 
-      function fix_permissions()
-      {
-          if [ -z $1 ]; then
-              echo "ERROR: Missing directory"
-              return 1
-          fi
+      # function fix_permissions()
+      # {
+      #     if [ -z $1 ]; then
+      #         echo "ERROR: Missing directory"
+      #         return 1
+      #     fi
 
-          # chmod 755 $(find $1 -type d)
-          # chmod 644 $(find $PWD -type f)
-          find $1 -type d -print0 | xargs -0 chmod 755
-          find $1 -type f -print0 | xargs -0 chmod 644
-      }
+      #     # chmod 755 $(find $1 -type d)
+      #     # chmod 644 $(find $PWD -type f)
+      #     find $1 -type d -print0 | xargs -0 chmod 755
+      #     find $1 -type f -print0 | xargs -0 chmod 644
+      # }
 
       pkgtools::at_function_exit
       return 0
@@ -172,7 +172,7 @@ way it should be easy to add its own configuration.
           ccige*|ccage*|cc*)
               __configure_lyon_machines
               ;;
-          cori*)
+          cori*|perlmutter*)
             __configure_nersc_machines
             ;;
           *)
