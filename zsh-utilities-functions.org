@@ -426,7 +426,7 @@ db.
           elif [[ "$1" == "lyon" ]]; then
               server_name="garrido@cca.in2p3.fr"
           elif [[ "$1" == "nersc" ]]; then
-              server_name="xgarrido@cori.nersc.gov"
+              server_name="xgarrido@perlmutter-p1.nersc.gov"
           elif [[ $1 == ccige* ]]; then
               server_name="garrido@$1.in2p3.fr"
           elif [[ $1 == ccage* ]]; then
