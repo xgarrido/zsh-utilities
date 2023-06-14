@@ -1266,7 +1266,8 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
       python3 -m venv /tmp/youtube-dl
     fi
     source /tmp/youtube-dl/bin/activate
-    pip install youtube-dl
+    pip install --upgrade --force-reinstall "git+https://github.com/ytdl-org/youtube-dl.git"
+    #pip install youtube-dl
     /tmp/youtube-dl/bin/youtube-dl $@
   }
 #+END_SRC
