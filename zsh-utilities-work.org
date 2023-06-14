@@ -2352,7 +2352,8 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
       {
           notebooks=()
           template="the-lab"
-          icon="f085"
+          icon=""
+          # icon="f085"
           open=false
           create_gist=false
           privacy="--private"
