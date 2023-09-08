@@ -1265,10 +1265,26 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
       pkgtools::msg_notice "Creating virtual env for youtube-dl"
       python3 -m venv /tmp/youtube-dl
       source /tmp/youtube-dl/bin/activate
-      pip install --upgrade --force-reinstall "git+https://github.com/ytdl-org/youtube-dl.git"
+      # pip install --upgrade --force-reinstall "git+https://github.com/ytdl-org/youtube-dl.git"
+      pip install --upgrade --force-reinstall "git+https://github.com/yt-dlp/yt-dlp.git"
     fi
     #pip install youtube-dl
-    /tmp/youtube-dl/bin/youtube-dl $@
+    /tmp/youtube-dl/bin/yt-dlp $@
+  }
+#+END_SRC
+
+** webm to mp3
+#+BEGIN_SRC sh
+  function webm2mp3()
+  {
+      for f in *.webm; do
+          if [ ! -f ${f/webm/mp3} ]; then
+              pkgtools::msg_notice "Converting $f..."
+              ffmpeg -i "$f" -ab 160k -ar 44100 "${f/webm/mp3}"
+              new_name=$(echo $f | sed 's/\(.*\)\( \[.*\)/\1.mp3/')
+              mv "${f/webm/mp3}" "${new_name}"
+          fi
+      done 
   }
 #+END_SRC
 
