@@ -534,14 +534,14 @@ From https://lebkowski.name/docker-volumes/
 #+BEGIN_SRC sh
   fi
 #+END_SRC
-** exa
+** exa/eza
 *** Preamble
 #+BEGIN_SRC sh
-  if (( $+commands[exa] )); then
+  if (( $+commands[eza] )); then
 #+END_SRC
 *** Alias
 #+BEGIN_SRC sh
-  alias ls="exa"
+  alias ls="eza"
   alias ll="ls --long --git --sort time"
   alias lla="ll -a"
 #+END_SRC
