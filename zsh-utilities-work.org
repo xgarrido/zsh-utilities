@@ -2408,6 +2408,18 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
               fi
               html_file=${notebook%.ipynb}.html
               sed -i -e "s/&#182;/#/" -e "s/f085/"${icon}"/" ${html_file}
+              footer="last updated $(date +"%Y-%m-%d")"
+              url=$(git config --get remote.origin.url | sed -e 's#git@\(.*\):#https://\1/#' -e 's#\.git##')
+              if [[ ! -z $url ]]; then
+                  icon="fa-brands fa-git"
+                  if [[ "$url" =~ "gitlab" ]]; then
+                    icon="fa-brands fa-gitlab"
+                  elif [[ "$url" =~ "github" ]]; then
+                    icon="fa-brands fa-github-alt"
+                  fi
+                  footer=$(LC_MESSAGES=en git --no-pager log -1 HEAD --date=short --pretty=format:"<i class=\"${icon}\"></i> version control - commit <a href=\"$url/commit/%H\">%h</a> - %ad")
+              fi
+              sed -i -e "s#@footer@#"${footer}"#" ${html_file}
               if ${create_gist}; then
                   updated=false
                   # Start notebook file with _ to make it appear first in gist
