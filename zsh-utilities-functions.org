@@ -418,18 +418,11 @@ db.
       while [ -n "$1" ]; do
           if [[ "$1" == "-s" ]]; then
               use_screen=1
-          elif [[ "$1" == "fzk" ]]; then
-              ssh_option="-p 24"
-              server_name="augerlogin.fzk.de"
-          elif [[ "$1" == "cern" ]]; then
-              server_name="xgarrido@lxplus.cern.ch"
           elif [[ "$1" == "lyon" ]]; then
               server_name="garrido@cca.in2p3.fr"
           elif [[ "$1" == "nersc" ]]; then
               server_name="xgarrido@perlmutter.nersc.gov"
           elif [[ $1 == ccige* ]]; then
-              server_name="garrido@$1.in2p3.fr"
-          elif [[ $1 == ccage* ]]; then
               server_name="garrido@$1.in2p3.fr"
           elif [[ "$1" == "dell-xps" ]]; then
               server_name="garrido@134.158.76.120"
@@ -464,10 +457,10 @@ db.
 
       if [ ${use_screen} -eq 0 ]; then
           pkgtools::msg_notice "Connecting to ${server_name}..."
-          ssh -Y ${ssh_option} ${server_name} "${append_command}"
+          ssh ${ssh_option} ${server_name} "${append_command}"
       else
           pkgtools::msg_notice "Connecting to ${server_name} with screen support..."
-          screen ssh -Y ${ssh_option} ${server_name}
+          screen ssh ${ssh_option} ${server_name}
       fi
 
       pkgtools::at_function_exit

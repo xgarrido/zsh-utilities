@@ -95,34 +95,31 @@ way it should be easy to add its own configuration.
   {
       pkgtools::at_function_enter __configure_lyon_machines
 
-      # Redefine new group function
-      if (( ! $+functions[newgroup] )); then
-          function newgroup() {
-              . /usr/local/shared/bin/newgroup.sh $@
-          }
-      fi
+      # # Redefine new group function
+      # if (( ! $+functions[newgroup] )); then
+      #     function newgroup() {
+      #         . /usr/local/shared/bin/newgroup.sh $@
+      #     }
+      # fi
 
-      PS3="Choose a setup: "
-      setups=("supernemo" "cmb")
-      select setup in "${setups[@]}"
-      do
-          case $setup in
-              "supernemo")
-                  do_nemo_setup
-                  break
-                  ;;
-              "cmb")
-                  do_cmb_setup
-                  break
-                  ;;
-          esac
-      done
+      # PS3="Choose a setup: "
+      # setups=("supernemo" "cmb")
+      # select setup in "${setups[@]}"
+      # do
+      #     case $setup in
+      #         "supernemo")
+      #             do_nemo_setup
+      #             break
+      #             ;;
+      #         "cmb")
+      #             do_cmb_setup
+      #             break
+      #             ;;
+      #     esac
+      # done
 
       # Homemade software for everybody
       pkgtools::add_path_to_PATH ${SCRATCH_DIR}/software/bin
-
-      # qjob/qstat for everybody
-      pkgtools::add_path_to_PATH /opt/sge/bin/lx-amd64
 
       pkgtools::at_function_exit
       return 0
