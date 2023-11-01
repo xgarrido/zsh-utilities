@@ -2357,6 +2357,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
           open=false
           create_gist=false
           privacy="--private"
+          width="50%"
           opts=""
           while [ -n "$1" ]; do
               token="$1"
@@ -2380,6 +2381,9 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
                       privacy="--no-private"
                   elif [[ ${token} == "-o" || "${token}" == "--open-browser" ]]; then
                       open=true
+                  elif [[ ${token} == "--width" ]]; then
+                      shift 1
+                      width="$1"
                   elif [[ ${token} == "--template" ]]; then
                       shift 1
                       template="$1"
@@ -2408,6 +2412,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
               fi
               html_file=${notebook%.ipynb}.html
               sed -i -e "s/&#182;/#/" -e "s/f085/"${icon}"/" ${html_file}
+              sed -i -e "s/\(<div.*width:\) \(50%\)\(;.*\)/\1 "${width}"\3/" ${html_file}
               footer="last updated $(date +"%Y-%m-%d")"
               url=$(git config --get remote.origin.url | sed -e 's#git@\(.*\):#https://\1/#' -e 's#\.git##')
               if [[ ! -z $url ]]; then
