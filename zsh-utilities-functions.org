@@ -62,7 +62,7 @@ generic function name given the linux system installed : "debian-like" system or
       function upgrade ()
       {
           pkgtools::at_function_enter upgrade
-          sudo ${__pkg_mgr} update && sudo ${__pkg_mgr} upgrade && pkg-notify "Upgrade done"
+          sudo ${__pkg_mgr} update && sudo ${__pkg_mgr} -y upgrade && pkg-notify "Upgrade done"
           pkgtools::at_function_exit
           return 0
       }
@@ -426,11 +426,8 @@ db.
               server_name="garrido@$1.in2p3.fr"
           elif [[ "$1" == "dell-xps" ]]; then
               server_name="garrido@134.158.76.120"
-          elif [[ "$1" == "osmc" ]]; then
-              server_name="osmc@xgarrido.hd.free.fr"
           elif [[ "$1" == "rpi" ]]; then
-              server_name="ubuntu@xgarrido.ddns.net"
-              ssh_option="-p 23"
+              server_name="rpi@xgarrido.hd.free.fr"
           elif [[ "$1" == "lal" ]]; then
               server_name="xgarrido@ssh-ubuntu1.ijclab.in2p3.fr"
           elif [[ $1 == pc-mag ]]; then
@@ -477,7 +474,6 @@ db.
           nersc:'NERSC machines'
           dell-xps:'Laptop Dell XPS'
           rpi:'Ubuntu - Raspberry Pi'
-          osmc:'OSMC - Raspberry Pi'
           lal:'lxplus machine @ LAL'
           pc-mag:'Magistère machine'
       )
