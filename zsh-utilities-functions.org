@@ -1478,3 +1478,14 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
   }
 #+END_SRC
 
+** Fix zsh corrupt file
+#+BEGIN_SRC sh
+  function fix_zsh_history()
+  {
+    pkgtools::msg_info "Fix zsh corrupt file..."
+    mv ~/.zsh_history ~/.zsh_history.bad
+    strings ~/.zsh_history.bad > ~/.zsh_history
+    fc -R ~/.zsh_history
+    rm ~/.zsh_history.bad
+  }
+#+END_SRC
