@@ -2414,7 +2414,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
               html_file=${notebook%.ipynb}.html
               sed -i -e "s/&#182;/#/" -e "s/f085/"${icon}"/" ${html_file}
               sed -i -e "s/\(<div.*width:\) \(50%\)\(;.*\)/\1 "${width}"\3/" ${html_file}
-              footer="last updated $(date +"%Y-%m-%d")"
+              footer="last update $(date +"%Y-%m-%d - %X")"
               url=$(git config --get remote.origin.url | sed -e 's#git@\(.*\):#https://\1/#' -e 's#\.git##')
               if [[ ! -z $url ]]; then
                   icon="fa-brands fa-git"
