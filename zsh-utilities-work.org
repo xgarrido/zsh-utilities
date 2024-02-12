@@ -1107,6 +1107,7 @@ function root/mergeTree () {
   alias sjob_my_total='echo -ne "Total number of jobs: ";squeue | tail -n+2 | wc -l'
   alias sjob_my_run='echo -ne "Number of running jobs: ";squeue -t R | tail -n+2 | wc -l'
   alias scancel_all="scancel \$(squeue | awk '{print \$1}' | awk -F_ '{print \$1}' | grep -v JOBID | sort -u | tr '\n' ' ')"
+  alias slogin="srun -t 0-01:00:00 -n 4 --mem 2G --pty zsh -i"
 #+END_SRC
 *** General env. variables
 #+BEGIN_SRC sh
