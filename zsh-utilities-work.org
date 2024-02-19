@@ -2450,7 +2450,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
                       gist_id=$(gist ${privacy} -d ${desc} ${notebook} ${html_file} | rev | cut -d '/' -f 1 | rev)
                       gist_html="https://htmlpreview.github.io/?https://gist.githubusercontent.com/xgarrido/${gist_id}/raw/${html_file}"
                       tiny_url=""
-                      while [[ ${tiny_url} != https* ]]; do
+                      while [[ ${tiny_url} != http* ]]; do
                           tiny_url=$(curl -s "http://tinyurl.com/api-create.php?url=${gist_html}")
                       done
                       gist_html=$(gist -u ${gist_id} -d "${desc} ${tiny_url}" ${notebook} ${html_file})
