@@ -1464,19 +1464,26 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 #+BEGIN_SRC sh
   function upgrade-venv()
   {
-      pkgtools::msg_info "Upgrading pip first"
-      python -m pip install --upgrade pip
-      while read -r line; do
-          if [[ $line == *"@"* ]]; then
-              continue
-          fi
-          name=$(echo $line | cut -d= -f1)
-          pkgtools::msg_info "Upgrading ${name}..."
-          python -m pip install --upgrade ${name} | grep --color=never --line-buffered -E -v "Requirement already satisfied:|Defaulting to user"
-      done <<< $(pip freeze | grep -E -v "#|^-e")
-      pkgtools::msg_info "Upgrade python env done"
+    pkgtools::msg_info "Upgrading pip first"
+    python -m pip install --upgrade pip
+    while read -r line; do
+      if [[ $line == *"@"* ]]; then
+        continue
+      fi
+      name=$(echo $line | cut -d= -f1)
+      pkgtools::msg_info "Upgrading ${name}..."
+      python -m pip install --upgrade ${name} | grep --color=never --line-buffered -E -v "Requirement already satisfied:|Defaulting to user"
+    done <<< $(pip freeze | grep -E -v "#|^-e")
+    pkgtools::msg_info "Upgrade python env done"
+  }
+  function upgrade-science()
+  {
+    python -m pip install --upgrade numpy pandas scipy matplotlib seaborn $@
+    pkgtools::msg_info "Upgrade python env done"
   }
 #+END_SRC
+
+#+RESULTS:
 
 ** Fix zsh corrupt file
 #+BEGIN_SRC sh
