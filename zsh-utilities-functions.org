@@ -418,6 +418,20 @@ db.
       while [ -n "$1" ]; do
           if [[ "$1" == "-s" ]]; then
               use_screen=1
+          elif [[ "$1" == "ligo" ]]; then
+            server_name=xavier.garrido@ssh.ligo.org
+          elif [[ "$1" == "livingston" ]]; then
+            server_name=xavier.garrido@ldas-grid.ligo-la.caltech.edu
+          elif [[ "$1" == "livingston-dev6" ]]; then
+            server_name=xavier.garrido@ldas-pcdev6.ligo-la.caltech.edu
+          elif [[ "$1" == "hanford" ]]; then
+            server_name=xavier.garrido@ldas-grid.ligo-wa.caltech.edu
+          elif [[ "$1" == "caltech" ]]; then
+            server_name=xavier.garrido@ldas-grid.ligo.caltech.edu
+          elif [[ "$1" == "caltech-dev4" ]]; then
+            server_name=xavier.garrido@ldas-pcdev4.ligo.caltech.edu
+          elif [[ "$1" == "caltech-dev6" ]]; then
+            server_name=xavier.garrido@ldas-pcdev6.ligo.caltech.edu
           elif [[ "$1" == "lyon" ]]; then
               server_name="garrido@cca.in2p3.fr"
           elif [[ "$1" == "nersc" ]]; then
@@ -432,22 +446,6 @@ db.
               server_name="xgarrido@ssh-ubuntu1.ijclab.in2p3.fr"
           elif [[ $1 == pc-mag ]]; then
               server_name="xavier.garrido@ssh1.pgip.universite-paris-saclay.fr"
-              # else
-              #     if [ "${HOSTNAME}" = "garrido-laptop" ]; then
-              #         server_name="garrido@localhost"
-              #         if [ -f /tmp/npu.d/ports ]; then
-              #             ssh_port=$(cat /tmp/npu.d/ports | grep $1 | cut -d' ' -f2)
-              #             ssh_option="-p ${ssh_port}"
-              #         else
-              #             append_command+="$1 "
-              #         fi
-              #     else
-              #         if [[ "$1" == "pc" ]]; then
-              #             server_name="pc-91089.lal.in2p3.fr"
-              #         else
-              #             server_name="$1.lal.in2p3.fr"
-              #         fi
-              #     fi
           fi
           shift 1
       done
@@ -476,6 +474,13 @@ db.
           rpi:'Ubuntu - Raspberry Pi'
           lal:'lxplus machine @ LAL'
           pc-mag:'Magistère machine'
+          ligo:'LIGO machines'
+          livingston:'Livingston job machines'
+          livingston-dev6:'Livingston dev machines'
+          caltech:'Caltech job machines'
+          caltech-dev4:'Caltech dev4 machines'
+          caltech-dev6:'Caltech dev6 machines'
+          hanford:'Hanford job machines'
       )
       _describe -t _machines 'SSH machines' _machines && ret=0
   }
