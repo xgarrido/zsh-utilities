@@ -130,23 +130,53 @@ way it should be easy to add its own configuration.
 #+BEGIN_SRC sh
   function __configure_nersc_machines ()
   {
-      pkgtools::at_function_enter __configure_nersc_machines
+    pkgtools::at_function_enter __configure_nersc_machines
 
-      # function fix_permissions()
-      # {
-      #     if [ -z $1 ]; then
-      #         echo "ERROR: Missing directory"
-      #         return 1
-      #     fi
+    # function fix_permissions()
+    # {
+    #     if [ -z $1 ]; then
+    #         echo "ERROR: Missing directory"
+    #         return 1
+    #     fi
 
-      #     # chmod 755 $(find $1 -type d)
-      #     # chmod 644 $(find $PWD -type f)
-      #     find $1 -type d -print0 | xargs -0 chmod 755
-      #     find $1 -type f -print0 | xargs -0 chmod 644
-      # }
+    #     # chmod 755 $(find $1 -type d)
+    #     # chmod 644 $(find $PWD -type f)
+    #     find $1 -type d -print0 | xargs -0 chmod 755
+    #     find $1 -type f -print0 | xargs -0 chmod 644
+    # }
 
-      pkgtools::at_function_exit
-      return 0
+    function module()
+    {
+      if [ -z "${LMOD_SH_DBG_ON+x}" ]; then
+        case "$-" in
+          ,*v*x*)
+            __lmod_sh_dbg='vx'
+            ;;
+          ,*v*)
+            __lmod_sh_dbg='v'
+            ;;
+          ,*x*)
+            __lmod_sh_dbg='x'
+            ;;
+        esac;
+      fi;
+      if [ -n "${__lmod_sh_dbg:-}" ]; then
+        set +$__lmod_sh_dbg;
+        echo "Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output" 1>&2;
+      fi;
+      eval "$($LMOD_CMD shell "$@")" && eval "$(${LMOD_SETTARG_CMD:-:} -s sh)";
+      __lmod_my_status=$?;
+      if [ -n "${__lmod_sh_dbg:-}" ]; then
+        echo "Shell debugging restarted" 1>&2;
+        set -$__lmod_sh_dbg;
+      fi;
+      unset __lmod_sh_dbg;
+      return $__lmod_my_status
+
+    }
+    
+    pkgtools::at_function_exit
+    return 0
   }
 #+END_SRC
 
