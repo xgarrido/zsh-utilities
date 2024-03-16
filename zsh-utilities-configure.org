@@ -174,7 +174,11 @@ way it should be easy to add its own configuration.
       return $__lmod_my_status
 
     }
-    
+    function ml() 
+    { 
+      eval "$($LMOD_DIR/ml_cmd "$@")"
+    }
+
     pkgtools::at_function_exit
     return 0
   }
