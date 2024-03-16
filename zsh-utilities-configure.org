@@ -189,6 +189,10 @@ way it should be easy to add its own configuration.
       # This must be done by default
       export HOSTNAME=$(hostname)
 
+      if pkgtools::check_variable NERSC_HOST; then
+        export HOSTNAME=perlmutter
+      fi
+      
       case "$HOSTNAME" in
           garrido-laptop|pc-91089|nb-garrido|garrido-xps)
               __configure_laptop
