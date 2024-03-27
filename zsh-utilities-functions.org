@@ -693,7 +693,7 @@ db.
       return 0
   }
 
-  # Connect completion system
+  # completion system
   compdef _eps2tikz eps2tikz
 
   function _eps2tikz ()

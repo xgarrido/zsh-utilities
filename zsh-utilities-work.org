@@ -2346,6 +2346,12 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
   compdef '_files -g "*.cxx"' parse_cpp_program_options
 #+END_SRC
 
+** pyenv
+#+BEGIN_SRC sh
+  # export PYENV_ROOT="$HOME/.pyenv"
+  # [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+  # eval "$(pyenv init -)"
+#+END_SRC
 ** Create html page from jupyter notebook
 #+BEGIN_SRC sh
   function nbconvert()
