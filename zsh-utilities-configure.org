@@ -188,40 +188,46 @@ way it should be easy to add its own configuration.
 #+BEGIN_SRC sh
   function __configure_machine ()
   {
-      pkgtools::at_function_enter __configure_machine
+    pkgtools::at_function_enter __configure_machine
 
-      # This must be done by default
-      export HOSTNAME=$(hostname)
+    # This must be done by default
+    export HOSTNAME=$(hostname)
 
-      if pkgtools::check_variable NERSC_HOST; then
-        export HOSTNAME=perlmutter
-      fi
-      
-      case "$HOSTNAME" in
-          garrido-laptop|pc-91089|nb-garrido|garrido-xps)
-              __configure_laptop
-              ;;
-          lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
-              __configure_lal_machines
-              ;;
-          ccige*|ccage*|cc*)
-              __configure_lyon_machines
-              ;;
-          cori*|perlmutter*)
-            __configure_nersc_machines
-            ;;
-          *)
-              type __configure_$(hostname) | grep -q "shell function" > /dev/null 2>&1
-              if [ $? -eq 0 ]; then
-                  __configure_$(hostname)
-              else
-                  pkgtools::msg_debug "No configuration for machine '$(hostname)' has been found ! Use default one"
-                  __configure_default
-              fi
-              ;;
-      esac
+    if pkgtools::check_variable NERSC_HOST; then
+      export HOSTNAME=perlmutter
+    fi
 
-      pkgtools::at_function_exit
-      return 0
+    case "$HOSTNAME" in
+      garrido-laptop|pc-91089|nb-garrido|garrido-xps)
+        __configure_laptop
+        ;;
+      lx3.lal.in2p3.fr|nemo*.lal.in2p3.fr)
+        __configure_lal_machines
+        ;;
+      ccige*|ccage*|cc*)
+        __configure_lyon_machines
+        ;;
+      cori*|perlmutter*)
+        __configure_nersc_machines
+        ;;
+      ruche*)
+        function module () 
+        {
+          eval $($LMOD_CMD bash "$@") && eval $(${LMOD_SETTARG_CMD:-:} -s sh)
+        }
+        ;;
+      *)
+        type __configure_$(hostname) | grep -q "shell function" > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+          __configure_$(hostname)
+        else
+          pkgtools::msg_debug "No configuration for machine '$(hostname)' has been found ! Use default one"
+          __configure_default
+        fi
+        ;;
+    esac
+
+    pkgtools::at_function_exit
+    return 0
   }
 #+END_SRC
