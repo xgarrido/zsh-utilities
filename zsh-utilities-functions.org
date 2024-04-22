@@ -436,8 +436,8 @@ db.
               server_name="garrido@cca.in2p3.fr"
           elif [[ "$1" == "nersc" ]]; then
               server_name="xgarrido@perlmutter.nersc.gov"
-          elif [[ $1 == ccige* ]]; then
-              server_name="garrido@$1.in2p3.fr"
+          elif [[ "$1" == "ruche" ]]; then
+              server_name="garridox@ruche.mesocentre.universite-paris-saclay.fr"
           elif [[ "$1" == "dell-xps" ]]; then
               server_name="garrido@134.158.76.120"
           elif [[ "$1" == "rpi" ]]; then
@@ -481,6 +481,7 @@ db.
           caltech-dev4:'Caltech dev4 machines'
           caltech-dev6:'Caltech dev6 machines'
           hanford:'Hanford job machines'
+          ruche:'Ruche mesocentre'
       )
       _describe -t _machines 'SSH machines' _machines && ret=0
   }
