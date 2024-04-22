@@ -149,13 +149,13 @@ way it should be easy to add its own configuration.
     {
       if [ -z "${LMOD_SH_DBG_ON+x}" ]; then
         case "$-" in
-          ,*v*x*)
+          *v*x*)
             __lmod_sh_dbg='vx'
             ;;
-          ,*v*)
+          *v*)
             __lmod_sh_dbg='v'
             ;;
-          ,*x*)
+          *x*)
             __lmod_sh_dbg='x'
             ;;
         esac;
