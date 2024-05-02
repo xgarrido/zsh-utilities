@@ -1104,10 +1104,6 @@ function root/mergeTree () {
   # alias qjob_my_total='echo -ne "Total number of jobs: ";qstat | tail -n+3 | wc -l'
   # alias qjob_my_run='echo -ne "Number of running jobs: ";qstat -s r | tail -n+3 | wc -l'
   # alias qdel_all="qstat | tail -n +3 | grep -v QLOGIN | sort -u -k1,1 | awk '{print \"qdel\",\$1}' | sh"
-  alias sjob_my_total='echo -ne "Total number of jobs: ";squeue | tail -n+2 | wc -l'
-  alias sjob_my_run='echo -ne "Number of running jobs: ";squeue -t R | tail -n+2 | wc -l'
-  alias scancel_all="scancel \$(squeue | awk '{print \$1}' | awk -F_ '{print \$1}' | grep -v JOBID | sort -u | tr '\n' ' ')"
-  alias slogin="srun -t 0-01:00:00 -n 4 --mem 2G --pty zsh -i"
 #+END_SRC
 *** General env. variables
 #+BEGIN_SRC sh
@@ -1834,6 +1830,16 @@ function root/mergeTree () {
   fi
 #+END_SRC
 
+** slurm shortcuts
+#+BEGIN_SRC sh
+  if (( $+commands[squeue] )); then
+    alias _squeue='squeue -u $(whoami)'
+    alias sjob_my_total='echo -ne "Total number of jobs: ";_squeue | tail -n+2 | wc -l'
+    alias sjob_my_run='echo -ne "Number of running jobs: ";_squeue -t R | tail -n+2 | wc -l'
+    alias scancel_all="scancel \$(_squeue | awk '{print \$1}' | awk -F_ '{print \$1}' | grep -v JOBID | sort -u | tr '\n' ' ')"
+    alias slogin="srun -t 0-01:00:00 -n 4 --mem 2G --pty zsh -i"
+  fi
+#+END_SRC
 ** Openstack
 Implementation of J. Peloton data sheet
 https://gist.github.com/JulienPeloton/bb77476623a090c60ee1b7c2a2791699
