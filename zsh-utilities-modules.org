@@ -276,7 +276,7 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
 
 *** Wrapping some functions arround =colout=
 **** =cmake=
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :tangle no
   if (( $+commands[cmake] )); then
       function cmake ()
       {
@@ -285,7 +285,7 @@ this file https://nemo.lpc-caen.in2p3.fr/browser/datatools/trunk/include/datatoo
   fi
 #+END_SRC
 **** =ninja=
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :tangle no
   if (( $+commands[ninja] )); then
       function ninja ()
       {
