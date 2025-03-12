@@ -1502,3 +1502,13 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
     rm ~/.zsh_history.bad
   }
 #+END_SRC
+
+** Running syncthing on IJCLab
+#+BEGIN_SRC sh
+  function start_syncthing_ijclab()
+  {
+    pkgtools::msg_info "Starting remote session of syncthing/IJCLab..."
+    ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall syncthing; /users/nemo/garrido/syncthing/bin/syncthing"
+    ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall syncthing"
+  }
+#+END_SRC

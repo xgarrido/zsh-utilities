@@ -2165,7 +2165,7 @@ https://gist.github.com/JulienPeloton/bb77476623a090c60ee1b7c2a2791699
 
 *** Completion function
 #+BEGIN_SRC sh
-  # Connect completion system
+  # completion system
   compdef _make_org_doc make_org_doc
   _make_org_doc () {
       _arguments -C                                                                      \
@@ -2485,7 +2485,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
       fi
     done
   }
-  # Connect completion system
+  # completion system
   compdef _nbconvert nbconvert
 
   function _nbconvert ()
