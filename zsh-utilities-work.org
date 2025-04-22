@@ -2354,15 +2354,16 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
 
 ** Create conda env for gwcosmo
 #+BEGIN_SRC sh
-  function create_gwcosmo_conda()
-  {
-    name=${1:-gwcosmo}
-    conda create -y -n ${name} python=3.10
-    conda activate ${name}
-    python -m pip install git+ssh://git@git.ligo.org/cbc-cosmo/gwcosmo.git
-    python -m pip instal ipykernel
-    python -m ipykernel install --user --name=${name}
-  }
+   function create_gwcosmo_conda()
+   {
+     name=${1:-gwcosmo}
+     conda create -y -n ${name} python=3.10
+     conda env config vars set PYTHONNOUSERSITE=1 -n ${name}
+     conda activate ${name}
+     python -m pip install git+ssh://git@git.ligo.org/cbc-cosmo/gwcosmo.git
+     python -m pip instal ipykernel
+     python -m ipykernel install --user --name=${name}
+   }
 #+END_SRC
 ** Create html page from jupyter notebook
 #+BEGIN_SRC sh
