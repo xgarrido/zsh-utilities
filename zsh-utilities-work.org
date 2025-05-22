@@ -2361,7 +2361,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
      conda env config vars set PYTHONNOUSERSITE=1 -n ${name}
      conda activate ${name}
      python -m pip install git+ssh://git@git.ligo.org/cbc-cosmo/gwcosmo.git
-     python -m pip instal ipykernel
+     python -m pip install ipykernel
      python -m ipykernel install --user --name=${name}
    }
 #+END_SRC
@@ -2442,7 +2442,7 @@ options passed with [[http://www.boost.org/doc/libs/1_55_0/doc/html/program_opti
       sed -i -e "s/\(<div.*width:\) \(50%\)\(;.*\)/\1 "${width}"\3/" ${html_file}
       footer="last update $(date +"%Y-%m-%d - %X %Z")"
       url=$(git config --get remote.origin.url | sed -e 's#git@\(.*\):#https://\1/#' -e 's#\.git##')
-      if [[ ! -z $url && ! no_git_footer ]]; then
+      if [[ ! -z $url && no_git_footer = false ]]; then
         icon="fa-brands fa-git"
         if [[ "$url" =~ "gitlab" ]]; then
           icon="fa-brands fa-gitlab"
