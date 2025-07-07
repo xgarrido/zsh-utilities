@@ -1282,7 +1282,29 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
       done 
   }
 #+END_SRC
+** m4a to mp3
+#+BEGIN_SRC sh
+  function m4a2mp3()
+  {
+    for f in *.m4a; do
+      new_name="${f/m4a/mp3}"
+      if [ ! -f ${new_name} ]; then
+        pkgtools::msg_notice "Converting $f..."
+        ffmpeg -i "$f" -c:v copy -c:a libmp3lame -q:a 4 "${new_name}"
+        _new_name=$(echo $f | sed 's/\(.*\)\( \[.*\)/\1.mp3/')
+        mv "${new_name}" "${_new_name}"
+      fi
+    done 
+  }
+#+END_SRC
+** mp3join
+#+BEGIN_SRC sh
+  function mp3join()
+  {
+    ffmpeg -i "concat:${(j:|:)@[1,-2]}" -acodec copy $@[-1]
+  }
 
+#+END_SRC
 ** Misc.
 *** Grabbing video from mms link
 #+BEGIN_SRC sh
