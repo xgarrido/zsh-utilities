@@ -348,7 +348,6 @@ Make sure to use =nano= and not =vi= or =emacs=. To make sure everything goes we
 =crontab -l= works well (otherwise it would say no crontab for USER) and a USER directory within
 /var/spool/cron must have been created
 
-
 *** Cron syntax
 #+BEGIN_SRC python :results output :tangle no
   from plan import Plan
@@ -356,7 +355,7 @@ Make sure to use =nano= and not =vi= or =emacs=. To make sure everything goes we
   cron = Plan()
 
   # cron.command('DISPLAY=:0 /home/garrido/.config/openbox/scripts/change-wallpaper', every='1.hour')
-  cron.command('DISPLAY=:0 /home/garrido/Development/org-caldav/sync_calendar.sh', every='1.day', at='12:00')
+  # cron.command('DISPLAY=:0 /home/garrido/Development/org-caldav/sync_calendar.sh', every='1.day', at='12:00')
   cron.command('cp /home/garrido/.emacs.d/tmp/session/emacs.desktop /home/garrido/.emacs.d/tmp/session/emacs-`date +\%Y-\%m-\%d`.desktop', every='monthly')
   cron.command('DISPLAY=:0 /home/garrido/.bin/mybackup --profile lal', every='1.day', at='13:00')
   cron.command('DISPLAY=:0 /home/garrido/.bin/mybackup --profile usb', every='1.day', at='13:00')
