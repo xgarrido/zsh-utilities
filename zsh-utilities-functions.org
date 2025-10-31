@@ -1529,8 +1529,12 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 #+BEGIN_SRC sh
   function start_syncthing_ijclab()
   {
+    pkgtools::msg_info "Starting local session of syncthing"
+    killall -q syncthing; syncthing-gtk -w &
     pkgtools::msg_info "Starting remote session of syncthing/IJCLab..."
-    ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall syncthing; /users/nemo/garrido/syncthing/bin/syncthing"
-    ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall syncthing"
+    ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall -q syncthing; /users/nemo/garrido/syncthing/bin/syncthing"
+    pkgtools::msg_info "Kill remaining session"
+    ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall -q syncthing"
+    killall -q syncthing-gtk
   }
 #+END_SRC
