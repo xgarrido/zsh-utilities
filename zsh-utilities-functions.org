@@ -27,11 +27,11 @@ generic function name given the linux system installed : "debian-like" system or
       elif pkgtools::has_binary apt-get; then
           __pkg_mgr="apt-get"
           return 0
-      elif pkgtools::has_binary yaourt; then
-          __pkg_mgr="yaourt"
-          return 1
       elif pkgtools::has_binary yay; then
           __pkg_mgr="yay"
+          return 1
+      elif pkgtools::has_binary yaourt; then
+          __pkg_mgr="yaourt"
           return 1
       elif pkgtools::has_binary pacman; then
           __pkg_mgr="pacman"
