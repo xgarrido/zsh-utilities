@@ -30,6 +30,9 @@ generic function name given the linux system installed : "debian-like" system or
       elif pkgtools::has_binary yaourt; then
           __pkg_mgr="yaourt"
           return 1
+      elif pkgtools::has_binary yay; then
+          __pkg_mgr="yay"
+          return 1
       elif pkgtools::has_binary pacman; then
           __pkg_mgr="pacman"
           return 1
@@ -1527,14 +1530,22 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 
 ** Running syncthing on IJCLab
 #+BEGIN_SRC sh
-  function start_syncthing_ijclab()
+    function start_syncthing_ijclab()
+    {
+      pkgtools::msg_info "Starting local session of syncthing"
+      killall -q syncthing; syncthing &; syncthing browser
+      pkgtools::msg_info "Starting remote session of syncthing/IJCLab..."
+      ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall -q syncthing; /users/nemo/garrido/syncthing/bin/syncthing"
+      pkgtools::msg_info "Kill remaining session"
+      ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall -q syncthing"
+      killall -q syncthing
+    }
+#+END_SRC
+
+** LaTeX to unicode
+#+BEGIN_SRC shell
+  function latex2unicode()
   {
-    pkgtools::msg_info "Starting local session of syncthing"
-    killall -q syncthing; syncthing-gtk -w &
-    pkgtools::msg_info "Starting remote session of syncthing/IJCLab..."
-    ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall -q syncthing; /users/nemo/garrido/syncthing/bin/syncthing"
-    pkgtools::msg_info "Kill remaining session"
-    ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall -q syncthing"
-    killall -q syncthing-gtk
+    python -m unicodeitplus.cli $1
   }
 #+END_SRC
