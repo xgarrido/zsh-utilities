@@ -1509,7 +1509,9 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
   }
   function upgrade-science()
   {
-    python -m pip install --upgrade numpy pandas scipy matplotlib seaborn $@
+    pkgs=(numpy pandas scipy matplotlib seaborn)
+    pkgtools::msg_info "Upgrade following modules: ${pkgs}"
+    python -m pip install --upgrade ${pkgs} $@
     pkgtools::msg_info "Upgrade python env done"
   }
   function upgrade-jupyter()
@@ -1535,16 +1537,16 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 
 ** Running syncthing on IJCLab
 #+BEGIN_SRC sh
-    function start_syncthing_ijclab()
-    {
-      pkgtools::msg_info "Starting local session of syncthing"
-      killall -q syncthing; syncthing &; syncthing browser
-      pkgtools::msg_info "Starting remote session of syncthing/IJCLab..."
-      ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall -q syncthing; /users/nemo/garrido/syncthing/bin/syncthing"
-      pkgtools::msg_info "Kill remaining session"
-      ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall -q syncthing"
-      killall -q syncthing
-    }
+  function start_syncthing_ijclab()
+  {
+    # pkgtools::msg_info "Starting local session of syncthing"
+    # killall -q syncthing; syncthing &; syncthing browser
+    pkgtools::msg_info "Starting remote session of syncthing/IJCLab..."
+    
+    pkgtools::msg_info "Kill remaining session"
+    ssh xgarrido@ssh-ubuntu1.ijclab.in2p3.fr "killall -q syncthing"
+    killall -q syncthing
+  }
 #+END_SRC
 
 ** LaTeX to unicode
