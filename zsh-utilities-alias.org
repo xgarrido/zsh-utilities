@@ -95,11 +95,11 @@ Options for =less= program are the following
   else
       alias more='less -M -N -X'
   fi
-  if pkgtools::has_binary pygmentize; then
-      pkgtools::reset_variable LESSOPEN "| pygmentize %s"
-  else
-      pkgtools::unset_variable LESSOPEN
-  fi
+  # if pkgtools::has_binary pygmentize; then
+  #     pkgtools::reset_variable LESSOPEN "| pygmentize %s"
+  # else
+  #     pkgtools::unset_variable LESSOPEN
+  # fi
 #+END_SRC
 
 ** Python server
