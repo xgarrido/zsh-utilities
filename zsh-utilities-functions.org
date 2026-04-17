@@ -1267,7 +1267,7 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
       pip install --upgrade --force-reinstall "git+https://github.com/yt-dlp/yt-dlp.git"
     fi
     #pip install youtube-dl
-    /tmp/youtube-dl/bin/yt-dlp $@
+    /tmp/youtube-dl/bin/yt-dlp --js-runtimes node $@
   }
 #+END_SRC
 
@@ -1304,7 +1304,7 @@ From [[https://github.com/ael-code/zsh-colored-man-pages/blob/master/colored-man
 #+BEGIN_SRC sh
   function mp3join()
   {
-    ffmpeg -i "concat:${(j:|:)@[1,-2]}" -acodec copy $@[-1]
+    ffmpeg -i "concat:${(j:|:)@[0,-1]}" -acodec copy joined.mp3
   }
 
 #+END_SRC
